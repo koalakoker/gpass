@@ -8,14 +8,34 @@ List of website
       <span class="col">{{wpass.pass}}</span>
       <span class="col">{{wpass.registeredDate}}</span>
       <span class="col">{{wpass.expiriatonDate}}</span>
+      
       <button type="button"
         class="btn"
         *ngIf="isSelected(wpass)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButton($event)">
+        (click)="onButtonEdit()">
         Edit
       </button>
+
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(wpass)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonRemove(wpass)">
+        Remove
+      </button>
+
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(wpass)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonInsert(wpass)">
+        Insert
+      </button>
+      
       <div 
         class="list-group-item-primary"
         *ngIf="edit && isSelected(wpass)">
@@ -25,3 +45,4 @@ List of website
   </ul>
 </div>
 <br>
+{{text}}
