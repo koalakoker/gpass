@@ -11,9 +11,7 @@ export class WebPassListComponent implements OnInit {
 
   list: WebPass[];
   selectedWebPass: WebPass;
-  text: string;
-  edit: boolean;
-  event;
+  edit: boolean = false;
 
   constructor() { }
 
@@ -22,9 +20,11 @@ export class WebPassListComponent implements OnInit {
     this.list = WL.getList();
   }
 
-  onClick(webPass: WebPass) {
+  onSelect(webPass: WebPass) {
+    if (this.selectedWebPass != webPass) {
+      this.edit = false;
+    }
     this.selectedWebPass = webPass;
-    this.text = webPass.url;
   }
 
   onButton(event: MouseEvent) {

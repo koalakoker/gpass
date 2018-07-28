@@ -3,7 +3,7 @@ List of website
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let wpass of list" 
       [class.active]="wpass === selectedWebPass"
-      (click)="onClick(wpass)">
+      (click)="onSelect(wpass)">
       <span class="col">{{wpass.url}}</span>
       <span class="col">{{wpass.pass}}</span>
       <span class="col">{{wpass.registeredDate}}</span>
@@ -13,6 +13,7 @@ List of website
         [class.btn-primary]="primaryBtn(wpass)"
         [class.btn-secondary]="secondaryBtn(wpass)"
         [class.btn-dark]="darkBtn(wpass)"
+        [disabled]="primaryBtn(wpass)"
         (click)="onButton($event)">
         Edit
       </button>
