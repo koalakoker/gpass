@@ -4,10 +4,10 @@ List of website
     <li class="list-group-item" *ngFor="let wpass of list" 
       [class.active]="isSelected(wpass)"
       (click)="onSelect(wpass)">
-      <span class="col">{{wpass.url}}</span>
-      <span class="col">{{wpass.pass}}</span>
-      <span class="col">{{wpass.registeredDate}}</span>
-      <span class="col">{{wpass.expiriatonDate}}</span>
+      <span class="col url">{{wpass.url}}</span>
+      <span class="col pass">{{wpass.pass}}</span>
+      <span class="col date" >{{wpass.registeredDate}}</span>
+      <span class="col date">{{wpass.expiriatonDate}}</span>
       
       <button type="button"
         class="btn"
