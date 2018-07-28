@@ -2,7 +2,7 @@ List of website
 <div *ngIf="true">
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let wpass of list" 
-      [class.active]="wpass === selectedWebPass"
+      [class.active]="isSelected(wpass)"
       (click)="onSelect(wpass)">
       <span class="col">{{wpass.url}}</span>
       <span class="col">{{wpass.pass}}</span>
@@ -16,12 +16,12 @@ List of website
         (click)="onButton($event)">
         Edit
       </button>
+      <div 
+        class="list-group-item-info"
+        *ngIf="edit && isSelected(wpass)">
+        <app-web-pass [webPass]='selectedWebPass'></app-web-pass>
+      </div>
     </li>
   </ul>
 </div>
 <br>
-<div *ngIf="edit">
-Edit data
-<br>
-  <app-web-pass [webPass]='selectedWebPass'></app-web-pass>
-</div>
