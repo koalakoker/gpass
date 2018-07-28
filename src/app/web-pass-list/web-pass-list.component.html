@@ -1,0 +1,27 @@
+List of website
+<div *ngIf="true">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let wpass of list" 
+      [class.active]="wpass === selectedWebPass"
+      (click)="onClick(wpass)">
+      <span class="col">{{wpass.url}}</span>
+      <span class="col">{{wpass.pass}}</span>
+      <span class="col">{{wpass.registeredDate}}</span>
+      <span class="col">{{wpass.expiriatonDate}}</span>
+      <button type="button"
+        class="btn"
+        [class.btn-primary]="primaryBtn(wpass)"
+        [class.btn-secondary]="secondaryBtn(wpass)"
+        [class.btn-dark]="darkBtn(wpass)"
+        (click)="onButton($event)">
+        Edit
+      </button>
+    </li>
+  </ul>
+</div>
+<br>
+<div *ngIf="edit">
+Edit data
+<br>
+  <app-web-pass [webPass]='selectedWebPass'></app-web-pass>
+</div>
