@@ -31,16 +31,7 @@ export class WebPassListComponent implements OnInit {
     this.edit = !this.edit;
   }
 
-  primaryBtn(webPass: WebPass): boolean {
-    return (webPass !== this.selectedWebPass);
+  isSelected(webPass: WebPass): boolean {
+    return (webPass === this.selectedWebPass);
   }
-
-  secondaryBtn(webPass: WebPass): boolean {
-    return ((webPass === this.selectedWebPass ) && (!this.edit));
-  }
-
-  darkBtn(webPass: WebPass): boolean {
-    return ((webPass === this.selectedWebPass ) && (this.edit));
-  }
-
 }

@@ -10,10 +10,9 @@ List of website
       <span class="col">{{wpass.expiriatonDate}}</span>
       <button type="button"
         class="btn"
-        [class.btn-primary]="primaryBtn(wpass)"
-        [class.btn-secondary]="secondaryBtn(wpass)"
-        [class.btn-dark]="darkBtn(wpass)"
-        [disabled]="primaryBtn(wpass)"
+        *ngIf="isSelected(wpass)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
         (click)="onButton($event)">
         Edit
       </button>
