@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Element } from '../modules/element';
-import { ElementService } from '../services/element.service';
 
 @Component({
   selector: 'app-list',
@@ -15,7 +14,7 @@ export class ListComponent implements OnInit {
   edit: boolean = false;
   text: string;
 
-  constructor(private elementService: ElementService) { }
+  constructor() { }
 
   ngOnInit() {    
   }
