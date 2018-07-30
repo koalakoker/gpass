@@ -6,21 +6,13 @@ import { AppComponent } from './app.component';
 import { WebPassEditComponent } from './web-pass-edit/web-pass-edit.component';
 import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
 import { ListComponent } from './list/list.component';
-import { WebPassElementComponent } from './web-pass-element/web-pass-element.component';
-import { ElementComponent } from './element/element.component';
-import { EditComponent } from './edit/edit.component';
-import { TabComponent } from './tab.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebPassEditComponent,
     WebPassListComponent,
-    ListComponent,
-    WebPassElementComponent,
-    ElementComponent,
-    EditComponent,
-    TabComponent
+    ListComponent
   ],
   imports: [
     BrowserModule,
