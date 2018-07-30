@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { WebPass } from '../app/modules/webpass';
-import { WebPassService } from '../app/services/web-pass.service'
+import { WebPass } from '../modules/webpass';
+import { WebPassService } from '../services/web-pass.service'
 
 @Component({
   selector: 'app-web-pass-list',
