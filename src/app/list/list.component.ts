@@ -32,17 +32,15 @@ export class ListComponent implements OnInit {
     this.edit = !this.edit;
   }
 
-  onButtonRemove(listElement: Element) {
-    const i: number = this.list.indexOf(listElement);
+  onButtonRemove(i: number) {
     this.list.splice(i,1);
   }
 
-  onButtonInsert(listElement: Element) {
-    this.onNew.emit([listElement]);
+  onButtonInsert(i: number) {
+    this.onNew.emit([i]);
   }
 
-  onInsert(listElement: Element, newElement: Element) {
-    const i: number = this.list.indexOf(listElement);
+  onInsert(i: number, newElement: Element) {
     this.list.splice(i+1, 0, newElement);
   }
 
@@ -53,13 +51,11 @@ export class ListComponent implements OnInit {
     return list;
   }
 
-  onButtonUp(listElement: Element) {
-    const i: number = this.list.indexOf(listElement);
+  onButtonUp(i: number) {
     this.swap(this.list,i,i-1);
   }
 
-  onButtonDown(listElement: Element) {
-    const i: number = this.list.indexOf(listElement);
+  onButtonDown(i: number) {
     this.swap(this.list, i, i + 1);
   }
 
@@ -67,13 +63,11 @@ export class ListComponent implements OnInit {
     return (listElement === this.selectedListElement);
   }
 
-  isNotFirst(listElement: Element): boolean {
-    const i: number = this.list.indexOf(listElement);
+  isNotFirst(i: number): boolean {
     return (i > 0);
   }
 
-  isNotLast(listElement: Element): boolean {
-    const i: number = this.list.indexOf(listElement);
+  isNotLast(i: number): boolean {
     return (i < this.list.length - 1);
   }
 }

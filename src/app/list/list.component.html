@@ -1,7 +1,7 @@
 List of website
 <div *ngIf="true">
   <ul class="list-group">
-    <li class="list-group-item" *ngFor="let element of list" 
+    <li class="list-group-item" *ngFor="let element of list; let i = index" 
       [class.active]="isSelected(element)"
       (click)="onSelect(element)">
 
@@ -12,7 +12,6 @@ List of website
           [ngTemplateOutlet]="elementTemplate"
           [ngTemplateOutletContext]="{listRet: list, index: list.indexOf(element)}"
       ></ng-container>
-      
       
       <!-- Edit button -->
       <button type="button"
@@ -30,7 +29,7 @@ List of website
         *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonRemove(element)">
+        (click)="onButtonRemove(i)">
         Remove
       </button>
 
@@ -40,27 +39,27 @@ List of website
         *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonInsert(element)">
+        (click)="onButtonInsert(i)">
         Insert
       </button>
 
       <!-- Up -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(element) && isNotFirst(element)"
+        *ngIf="isSelected(element) && isNotFirst(i)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonUp(element)">
+        (click)="onButtonUp(i)">
         Up
       </button>
 
       <!-- Down -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(element) && isNotLast(element)"
+        *ngIf="isSelected(element) && isNotLast(i)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonDown(element)">
+        (click)="onButtonDown(i)">
         Down
       </button>
       
