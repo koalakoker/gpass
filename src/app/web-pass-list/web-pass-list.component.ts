@@ -25,4 +25,13 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   getWebPassList() {
     this.webPassService.getData().subscribe(data => {this.list = data});
   }
+
+  // onButtonInsert(listElement: Element) {
+  //   const i: number = this.list.indexOf(listElement);
+  //   this.list.splice(i+1, 0, new Element());
+  // }
+  onNewFunc(listElement: Element)
+  {
+    this.onInsert(listElement, new WebPass());
+  }
 }

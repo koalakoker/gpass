@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Element } from '../modules/element';
 
 @Component({
@@ -11,6 +11,7 @@ export class ListComponent implements OnInit {
   @Input() elementTemplate;
   @Input() editTemplate;
   @Input()list: Element[];
+  @Output() onNew: EventEmitter<any> = new EventEmitter();
   selectedListElement: Element;
   edit: boolean = false;
   text: string;
@@ -37,8 +38,12 @@ export class ListComponent implements OnInit {
   }
 
   onButtonInsert(listElement: Element) {
+    this.onNew.emit([listElement]);
+  }
+
+  onInsert(listElement: Element, newElement: Element) {
     const i: number = this.list.indexOf(listElement);
-    this.list.splice(i+1, 0, new Element());
+    this.list.splice(i+1, 0, newElement);
   }
 
   swap(list: Element[], i: number, j: number): Element[] {
