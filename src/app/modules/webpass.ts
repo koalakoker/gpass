@@ -1,4 +1,6 @@
-export class WebPass {
+import { Element } from "./element";
+
+export class WebPass extends Element {
 
     id: number;
     url: string;
@@ -30,6 +32,7 @@ export class WebPass {
     }
 
     constructor() {
+        super();
         const today: Date = new Date();
         const expire: Date = new Date();
         expire.setDate(today.getDate() + 30);

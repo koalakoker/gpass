@@ -1,30 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { Element } from '../modules/element';
-import { WebPassService } from '../services/web-pass.service'
-import { ListComponent } from '../list/list.component';
+import { ElementService } from '../services/element.service';
 
 @Component({
-  selector: 'app-web-pass-list',
-  templateUrl: './web-pass-list.component.html',
-  styleUrls: ['./web-pass-list.component.css']
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.css']
 })
-export class WebPassListComponent extends ListComponent implements OnInit {
+export class ListComponent implements OnInit {
 
   list: Element[];
   selectedListElement: Element;
   edit: boolean = false;
   text: string;
 
-  constructor(private webPassService: WebPassService) {
-    super(webPassService);
-  }
+  constructor(private elementService: ElementService) { }
 
   ngOnInit() {
     this.getWebPassList();
   }
 
   getWebPassList() {
-    this.webPassService.getData().subscribe(data => this.list = data);
+    this.elementService.getData().subscribe(data => this.list = data);
   }
 
   onSelect(listElement: Element) {

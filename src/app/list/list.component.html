@@ -1,20 +1,17 @@
 List of website
 <div *ngIf="true">
   <ul class="list-group">
-    <li class="list-group-item" *ngFor="let wpass of list" 
-      [class.active]="isSelected(wpass)"
-      (click)="onSelect(wpass)">
+    <li class="list-group-item" *ngFor="let element of list" 
+      [class.active]="isSelected(element)"
+      (click)="onSelect(element)">
 
       <!-- Data -->
-      <span class="col url">{{wpass.url}}</span>
-      <span class="col pass">{{wpass.pass}}</span>
-      <span class="col date" >{{wpass.registeredDate}}</span>
-      <span class="col date">{{wpass.expiriatonDate}}</span>
+      <!-- To be added -->
       
       <!-- Edit button -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(wpass)"
+        *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
         (click)="onButtonEdit()">
@@ -24,46 +21,46 @@ List of website
       <!-- Remove button -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(wpass)"
+        *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonRemove(wpass)">
+        (click)="onButtonRemove(element)">
         Remove
       </button>
 
       <!-- Insert -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(wpass)"
+        *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonInsert(wpass)">
+        (click)="onButtonInsert(element)">
         Insert
       </button>
 
       <!-- Up -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(wpass) && isNotFirst(wpass)"
+        *ngIf="isSelected(element) && isNotFirst(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonUp(wpass)">
+        (click)="onButtonUp(element)">
         Up
       </button>
 
       <!-- Down -->
       <button type="button"
         class="btn"
-        *ngIf="isSelected(wpass) && isNotLast(wpass)"
+        *ngIf="isSelected(element) && isNotLast(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonDown(wpass)">
+        (click)="onButtonDown(element)">
         Down
       </button>
       
       <div 
         class="list-group-item-primary"
-        *ngIf="edit && isSelected(wpass)">
+        *ngIf="edit && isSelected(element)">
         <app-web-pass-edit [webPass]='selectedWebPass'></app-web-pass-edit>
       </div>
     </li>
