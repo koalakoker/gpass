@@ -1,1 +1,8 @@
-<app-list [list]='list'></app-list>
+<ng-template #elementTemplate let-index="index">
+    [{{index}}]-Url:{{list[index].url}}
+</ng-template>
+  
+<app-list
+    [list]='list'
+    [template]="elementTemplate"
+></app-list>

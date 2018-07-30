@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Element } from '../modules/element';
 import { WebPassService } from '../services/web-pass.service'
 import { ListComponent } from '../list/list.component';
+import { WebPass } from '../modules/webpass';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -10,8 +10,8 @@ import { ListComponent } from '../list/list.component';
 })
 export class WebPassListComponent extends ListComponent implements OnInit {
 
-  list: Element[];
-  selectedListElement: Element;
+  list: WebPass[];
+  selectedListElement: WebPass;
   edit: boolean = false;
   text: string;
 
@@ -27,7 +27,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     this.webPassService.getData().subscribe(data => {this.list = data; this.text=this.list.length.toString()});
   }
 
-  onSelect(listElement: Element) {
+  onSelect(listElement: WebPass) {
     if (this.selectedListElement != listElement) {
       this.edit = false;
     }
@@ -38,43 +38,43 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     this.edit = !this.edit;
   }
 
-  onButtonRemove(listElement: Element) {
+  onButtonRemove(listElement: WebPass) {
     const i: number = this.list.indexOf(listElement);
     this.list.splice(i,1);
   }
 
-  onButtonInsert(listElement: Element) {
+  onButtonInsert(listElement: WebPass) {
     const i: number = this.list.indexOf(listElement);
-    this.list.splice(i+1, 0, new Element());
+    this.list.splice(i+1, 0, new WebPass());
   }
 
-  swap(list: Element[], i: number, j: number): Element[] {
-    const tmp:Element = list[j];
+  swap(list: WebPass[], i: number, j: number): WebPass[] {
+    const tmp:WebPass = list[j];
     list[j] = list[i];
     list[i] = tmp;
     return list;
   }
 
-  onButtonUp(listElement: Element) {
+  onButtonUp(listElement: WebPass) {
     const i: number = this.list.indexOf(listElement);
     this.swap(this.list,i,i-1);
   }
 
-  onButtonDown(listElement: Element) {
+  onButtonDown(listElement: WebPass) {
     const i: number = this.list.indexOf(listElement);
     this.swap(this.list, i, i + 1);
   }
 
-  isSelected(listElement: Element): boolean {
+  isSelected(listElement: WebPass): boolean {
     return (listElement === this.selectedListElement);
   }
 
-  isNotFirst(listElement: Element): boolean {
+  isNotFirst(listElement: WebPass): boolean {
     const i: number = this.list.indexOf(listElement);
     return (i > 0);
   }
 
-  isNotLast(listElement: Element): boolean {
+  isNotLast(listElement: WebPass): boolean {
     const i: number = this.list.indexOf(listElement);
     return (i < this.list.length - 1);
   }

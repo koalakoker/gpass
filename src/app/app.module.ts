@@ -9,7 +9,7 @@ import { ListComponent } from './list/list.component';
 import { WebPassElementComponent } from './web-pass-element/web-pass-element.component';
 import { ElementComponent } from './element/element.component';
 import { EditComponent } from './edit/edit.component';
-import { TListComponent } from './tlist.component'
+import { TabComponent } from './tab.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import { TListComponent } from './tlist.component'
     WebPassElementComponent,
     ElementComponent,
     EditComponent,
-    TListComponent
+    TabComponent
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'gpass';
   opt = true;
   ngOnInit() {
@@ -16,4 +16,10 @@ export class AppComponent implements OnInit {
     { title: 'Item 2' },
     { title: 'Item 3' }
   ];
+
+  @ViewChild('hello') helloTemplate;
+
+  ngAfterViewInit() {
+    console.log(this.helloTemplate);
+  }
 }

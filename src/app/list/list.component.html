@@ -6,7 +6,13 @@ List of website
       (click)="onSelect(element)">
 
       <!-- Data -->
-      <app-web-pass-element [wpass]='element'></app-web-pass-element>
+      <ng-content *ngIf="!template"></ng-content>
+      <ng-container
+          *ngIf="template"
+          [ngTemplateOutlet]="template"
+          [ngTemplateOutletContext]="{listRet: list, index: list.indexOf(element)}"
+      ></ng-container>
+      
       
       <!-- Edit button -->
       <button type="button"

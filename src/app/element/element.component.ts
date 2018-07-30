@@ -1,13 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-element',
-  template: '',
+  template: `
+    <div>
+    <ng-content *ngIf="!template"></ng-content>
+    <ng-container
+        *ngIf="template"
+        [ngTemplateOutlet]="template"
+        [ngTemplateOutletContext]="{data: dataContext}"
+    ></ng-container>
+    </div>
+  `,
   styleUrls: ['./element.component.css']
 })
 export class ElementComponent implements OnInit {
 
-  derivedElementTrigger: string = "<app-web-pass-element></app-web-pass-element>"
+  @Input() template;
+  @Input() dataContext;
 
   constructor() { }
 

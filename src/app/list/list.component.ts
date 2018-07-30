@@ -9,6 +9,7 @@ import { ElementService } from '../services/element.service';
 })
 export class ListComponent implements OnInit {
 
+  @Input() template;
   @Input()list: Element[];
   selectedListElement: Element;
   edit: boolean = false;
