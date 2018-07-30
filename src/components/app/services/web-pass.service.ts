@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs'
-import { WebPass } from './webpass';
-import { WebPassList } from './moka_webpass';
+import { WebPass } from '../modules/webpass';
+import { WebPassList } from '../modules/moka_webpass';
 
 @Injectable({
   providedIn: 'root'

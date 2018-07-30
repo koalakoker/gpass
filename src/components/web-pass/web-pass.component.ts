@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { WebPass } from '../../webpass';
+import { WebPass } from '../app/modules/webpass';
 
 @Component({
   selector: 'app-web-pass',
