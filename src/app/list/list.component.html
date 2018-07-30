@@ -6,10 +6,10 @@ List of website
       (click)="onSelect(element)">
 
       <!-- Data -->
-      <ng-content *ngIf="!template"></ng-content>
+      <ng-content *ngIf="!elementTemplate"></ng-content>
       <ng-container
-          *ngIf="template"
-          [ngTemplateOutlet]="template"
+          *ngIf="elementTemplate"
+          [ngTemplateOutlet]="elementTemplate"
           [ngTemplateOutletContext]="{listRet: list, index: list.indexOf(element)}"
       ></ng-container>
       
@@ -67,7 +67,14 @@ List of website
       <div 
         class="list-group-item-primary"
         *ngIf="edit && isSelected(element)">
-        <app-web-pass-edit [webPass]='selectedWebPass'></app-web-pass-edit>
+        
+        <ng-content *ngIf="!editTemplate"></ng-content>
+        <ng-container
+            *ngIf="editTemplate"
+            [ngTemplateOutlet]="editTemplate"
+            [ngTemplateOutletContext]="{listRet: list, index: list.indexOf(element)}"
+        ></ng-container>
+
       </div>
     </li>
   </ul>

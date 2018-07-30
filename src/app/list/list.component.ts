@@ -8,7 +8,8 @@ import { Element } from '../modules/element';
 })
 export class ListComponent implements OnInit {
 
-  @Input() template;
+  @Input() elementTemplate;
+  @Input() editTemplate;
   @Input()list: Element[];
   selectedListElement: Element;
   edit: boolean = false;

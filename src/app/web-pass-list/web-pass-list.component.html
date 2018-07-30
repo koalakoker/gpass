@@ -5,8 +5,27 @@
     <span class="col date" >{{list[index].registeredDate}}</span>
     <span class="col date"> {{list[index].expiriatonDate}}</span>
 </ng-template>
+
+<!-- Template for edit element -->
+<ng-template #editTemplate let-index="index">
+    <div>
+        <label class="form-group">Url
+          <input class="form-control" [(ngModel)]="list[index].url" placeholder="url">
+        </label><br>
+        <label >Password
+          <input class="form-control" [(ngModel)]="list[index].pass" placeholder="pass">
+        </label><br>
+        <label >registration date:
+          <input class="form-control" [(ngModel)]="list[index].registeredDate" placeholder="date">
+        </label><br>
+        <label >expiration date:
+          <input class="form-control" [(ngModel)]="list[index].expiriatonDate" placeholder="date">
+        </label>
+      </div>
+</ng-template>
   
 <app-list
     [list]='list'
-    [template]="elementTemplate"
+    [elementTemplate]="elementTemplate"
+    [editTemplate]="editTemplate"
 ></app-list>
