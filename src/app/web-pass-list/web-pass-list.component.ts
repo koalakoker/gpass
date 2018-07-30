@@ -24,7 +24,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   }
 
   getWebPassList() {
-    this.webPassService.getData().subscribe(data => this.list = data);
+    this.webPassService.getData().subscribe(data => {this.list = data; this.text=this.list.length.toString()});
   }
 
   onSelect(listElement: Element) {

@@ -10,4 +10,10 @@ export class AppComponent implements OnInit {
   opt = true;
   ngOnInit() {
   }
+
+  items: any[] = [
+    { title: 'Item 1' },
+    { title: 'Item 2' },
+    { title: 'Item 3' }
+  ];
 }

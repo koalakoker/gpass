@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Element } from '../modules/element';
 import { ElementService } from '../services/element.service';
 
@@ -9,19 +9,14 @@ import { ElementService } from '../services/element.service';
 })
 export class ListComponent implements OnInit {
 
-  list: Element[];
+  @Input()list: Element[];
   selectedListElement: Element;
   edit: boolean = false;
   text: string;
 
   constructor(private elementService: ElementService) { }
 
-  ngOnInit() {
-    this.getWebPassList();
-  }
-
-  getWebPassList() {
-    this.elementService.getData().subscribe(data => this.list = data);
+  ngOnInit() {    
   }
 
   onSelect(listElement: Element) {
