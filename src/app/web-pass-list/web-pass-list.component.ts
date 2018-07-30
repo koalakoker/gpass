@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WebPass } from './../../webpass';
-import { WebPassList } from '../../moka_webpass';
+import { WebPassService } from '../../web-pass.service'
 
 @Component({
   selector: 'app-web-pass-list',
@@ -14,11 +14,14 @@ export class WebPassListComponent implements OnInit {
   edit: boolean = false;
   text: string;
 
-  constructor() { }
+  constructor(private webPassService: WebPassService) { }
 
   ngOnInit() {
-    const WL = new WebPassList();
-    this.list = WL.getList();
+    this.getWebPassList();
+  }
+
+  getWebPassList() {
+    this.webPassService.getData().subscribe(data => this.list = data);
   }
 
   onSelect(webPass: WebPass) {
