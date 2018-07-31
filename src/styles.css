@@ -1,24 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
-.list-group .list-group-item .spanColUrl {
-  color: #369;
+.list-group .list-group-item .spanColFixed {
+  color: rgb(0, 10, 145);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 100%;
   float: left;
-  width: 300px;
+  width: 15em;
 }
 
-.list-group .list-group-item .spanColUrlDisabled {
-  color: rgb(114, 114, 114);
+.list-group .list-group-item .spanColFixedDisabled {
+  color: rgb(184, 184, 184);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 100%;
   float: left;
-  width: 300px;
+  width: 15em;
 }
 
-.list-group .list-group-item .spanColPass {
-  color: rgb(97, 2, 105);
+.list-group .list-group-item .spanColFixedSmall {
+  color: rgb(0, 10, 145);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 100%;
   float: left;
-  width: 300px;
+  width: 10em;
+}
+
+.list-group .list-group-item .spanColFixedSmallDisabled {
+  color: rgb(184, 184, 184);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  float: left;
+  width: 10em;
 }

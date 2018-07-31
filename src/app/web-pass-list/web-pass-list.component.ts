@@ -41,33 +41,38 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   getUrl(name: elementName, index: number)
   {
     var str: string;
+    var styleStrPrefix;
     var en: boolean;
     switch (name) {
       case elementName.EN_URL:
         str = this.list[index].url;
         en = str?true:false;
         str = str?str:"Url";
+        styleStrPrefix = "spanColFixed"
         break;
       case elementName.EN_PASS:
         str = this.list[index].pass;
         en = str ? true : false;
         str = str ? str : "Password";
+        styleStrPrefix = "spanColFixed"
         break;
       case elementName.EN_START:
         str = this.list[index].registeredDate;
         en = str ? true : false;
         str = str ? str : "Registration Date";
+        styleStrPrefix = "spanColFixedSmall"
         break;
       case elementName.EN_STOP:
         str = this.list[index].expiriatonDate;
         en = str ? true : false;
         str = str ? str : "Expiration date";
+        styleStrPrefix = "spanColFixedSmall"
         break;
     
       default:
         break;
     }
-    return { value: str, enabled: en ? "spanColUrl" : "spanColUrlDisabled"};
+    return { value: str, enabled: styleStrPrefix + (en==true?"":"Disabled")};
   }
 
 
