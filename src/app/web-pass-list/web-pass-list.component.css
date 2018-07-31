@@ -1,19 +1,5 @@
-ul {
-	list-style-type: none;
-	padding-left: 0px;
-}
-
-ul li span.url { 
-	float: left;
-	width: 300px;
-}
-
-ul li span.pass { 
-	float: left;
-	width: 200px;
-}
-
-ul li span.date { 
-	float: left;
-	width: 100px;
+spanColUrl {
+  color: #369;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 250%;
 }

@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+.list-group .list-group-item .spanColUrl {
+  color: #369;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  float: left;
+  width: 300px;
+}
+
+.list-group .list-group-item .spanColUrlDisabled {
+  color: rgb(114, 114, 114);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  float: left;
+  width: 300px;
+}
+
+.list-group .list-group-item .spanColPass {
+  color: rgb(97, 2, 105);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  float: left;
+  width: 300px;
+}

@@ -1,9 +1,9 @@
 <!-- Template for each element in the list -->
 <ng-template #elementTemplate let-index="index">
-    <span class="col url">  {{list[index].url}}           </span>
-    <span class="col pass"> {{list[index].pass}}          </span>
-    <span class="col date" >{{list[index].registeredDate}}</span>
-    <span class="col date"> {{list[index].expiriatonDate}}</span>
+    <span class="{{getUrl(0, index).enabled}}">{{getUrl(0, index).value}}           </span>
+    <span class="spanColPass">{{getUrl(1, index).value}}          </span>
+    <span class="col date" >{{getUrl(2, index).value}}</span>
+    <span class="col date"> {{getUrl(3, index).value}}</span>
 </ng-template>
 
 <!-- Template for edit element -->
