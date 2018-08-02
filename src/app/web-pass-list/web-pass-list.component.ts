@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { WebPassService } from '../services/web-pass.service'
 import { ListComponent } from '../list/list.component';
 import { WebPass } from '../modules/webpass';
+import { WebPassService } from '../services/web-pass.service';
 
 enum elementName {
   EN_URL = 0,
@@ -21,7 +21,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   selectedListElement: WebPass;
   edit: boolean = false;
 
-  constructor(private webPassService: WebPassService) {
+  constructor(private configService: WebPassService) {
     super();
   }
 
@@ -30,7 +30,10 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   }
 
   getWebPassList() {
-    this.webPassService.getData().subscribe(data => {this.list = data});
+    //this.webPassService.getData().subscribe(datas => {this.list = data});
+    this.configService.getData().subscribe((data: Array<WebPass>) => {
+      this.list = data;
+    })
   }
 
   onNewFunc(i: number)
@@ -57,13 +60,13 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         styleStrPrefix = "spanColFixed"
         break;
       case elementName.EN_START:
-        str = this.list[index].registeredDate;
+        str = this.list[index].registrationDate;
         en = str ? true : false;
         str = str ? str : "Registration Date";
         styleStrPrefix = "spanColFixedSmall"
         break;
       case elementName.EN_STOP:
-        str = this.list[index].expiriatonDate;
+        str = this.list[index].expirationDate;
         en = str ? true : false;
         str = str ? str : "Expiration date";
         styleStrPrefix = "spanColFixedSmall"

@@ -5,8 +5,8 @@ export class WebPass extends Element {
     id: number;
     url: string;
     pass: string;
-    registeredDate: string;
-    expiriatonDate: string;
+    registrationDate: string;
+    expirationDate: string;
 
     format(date: Date): string {
         const dd: number = date.getDate();
@@ -36,7 +36,7 @@ export class WebPass extends Element {
         const today: Date = new Date();
         const expire: Date = new Date();
         expire.setDate(today.getDate() + 30);
-        this.registeredDate = this.format(today);
-        this.expiriatonDate = this.format(expire);
+        this.registrationDate = this.format(today);
+        this.expirationDate = this.format(expire);
     }
 }

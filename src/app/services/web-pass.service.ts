@@ -1,22 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs'
 import { WebPass } from '../modules/webpass';
-import { WebPassList } from '../modules/moka_webpass';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpResponse } from "@angular/common/http";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class WebPassService {
+    constructor(private http: HttpClient) {
+    }
 
-  list: WebPass[];
+    //configUrl = 'http://www.koalakoker.com/angular/assets/db_get_json.php';
+    urlGetData = 'http://192.168.1.129/angular/php/json.php';
 
-  constructor() {
-    const WL: WebPassList = new WebPassList();
-    this.list = WL.getList();
-   }
-   
-   getData(): Observable<WebPass[]> {
-    return of(this.list);
-   }
+    getData() {
+        return this.http.get<Array<WebPass>>(this.urlGetData, {responseType: 'json'});
+    }
 }
-

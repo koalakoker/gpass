@@ -6,22 +6,20 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
 import { ListComponent } from './list/list.component';
-import { ConfigComponent } from './config/config.component';
-import { ConfigService } from './config/config.service';
+import { WebPassService } from './services/web-pass.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebPassListComponent,
-    ListComponent,
-    ConfigComponent
+    ListComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule
   ],
-  providers: [ConfigService],
+  providers: [WebPassService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
