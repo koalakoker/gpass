@@ -16,7 +16,7 @@ function hexToStr($hex){
     return $string;
 }
 
-function chipher($plaintext){
+function chipher($plaintext, $password){
     $method = 'aes-256-cbc';
     
     // Must be exact 32 chars (256 bit)
@@ -28,7 +28,7 @@ function chipher($plaintext){
     return strToHex(openssl_encrypt($plaintext, $method, $password, OPENSSL_RAW_DATA, $iv));
 }
 
-function deChipher($encrypted) {
+function deChipher($encrypted, $password) {
     $method = 'aes-256-cbc';
     
     // Must be exact 32 chars (256 bit)
