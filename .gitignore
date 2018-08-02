@@ -38,4 +38,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-src/php
+src/php/passDB_aru.php
+src/php/passDB_syn.php
