@@ -11,7 +11,8 @@ export class ListComponent implements OnInit {
   @Input() elementTemplate;
   @Input() editTemplate;
   @Input()list: Element[];
-  @Output() onNew: EventEmitter<any> = new EventEmitter();
+  @Output() onNew   : EventEmitter<any> = new EventEmitter();
+  @Output() onRemove: EventEmitter<any> = new EventEmitter();
   selectedListElement: Element;
   edit: boolean = false;
   text: string;
@@ -33,15 +34,16 @@ export class ListComponent implements OnInit {
   }
 
   onButtonRemove(i: number) {
-    this.list.splice(i,1);
+    //this.list.splice(i,1);
+    this.onRemove.emit([i]);
   }
 
   onButtonInsert(i: number) {
     this.onNew.emit([i]);
   }
 
-  onInsert(i: number, newElement: Element) {
-    this.list.splice(i+1, 0, newElement);
+  onInsert(newElement: Element) {
+    this.list.push(newElement);
   }
 
   swap(list: Element[], i: number, j: number): Element[] {

@@ -7,7 +7,8 @@ enum elementName {
   EN_URL = 0,
   EN_PASS = 1,
   EN_START = 2,
-  EN_STOP = 3
+  EN_STOP = 3,
+  EN_ID = 4
 }
 
 @Component({
@@ -38,12 +39,20 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   save(index: number) {
     const webPass = this.list[index];
     this.configService.update(webPass)
-     .subscribe(() => console.log("Done"));
+     .subscribe(() => console.log("Put Done"));
   }
 
   onNewFunc(i: number)
   {
-    this.onInsert(i, new WebPass());
+    const webPass = new WebPass();
+    this.configService.create(webPass).subscribe((webPass) => {this.onInsert(webPass);;console.log("Create Done");});
+  }
+
+  onRemoveFunc(i: number)
+  {
+    const webPass = this.list[i];
+    console.log("Remove: " + webPass.id);
+    this.configService.delete(webPass.id).subscribe((res) => {console.log(res)});
   }
 
   getUrl(name: elementName, index: number)
@@ -74,6 +83,16 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         str = this.list[index].expirationDate;
         en = str ? true : false;
         str = str ? str : "Expiration date";
+        styleStrPrefix = "spanColFixedSmall"
+        break;
+      case elementName.EN_ID:
+        const id = this.list[index].id;
+        if (id)
+        {
+          str = id.toString();
+        }
+        en = str ? true : false;
+        str = str ? str : "ID";
         styleStrPrefix = "spanColFixedSmall"
         break;
     
