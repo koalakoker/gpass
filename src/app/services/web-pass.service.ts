@@ -22,8 +22,8 @@ export class WebPassService {
       });
     }
 
-    create(webPass: WebPass): Observable<any> {
-      return this.http.post<WebPass>(this.urlGetData, webPass, {
+    create(webPass: WebPass): Observable<number> {
+      return this.http.post<number>(this.urlGetData, webPass, {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
@@ -34,9 +34,7 @@ export class WebPassService {
       return this.http.delete(this.urlGetData+"/"+id,{
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
-      }),
-      observe: 'body',
-      responseType: 'text'
+      })
     })
   }
 }

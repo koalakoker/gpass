@@ -34,16 +34,11 @@ export class ListComponent implements OnInit {
   }
 
   onButtonRemove(i: number) {
-    //this.list.splice(i,1);
     this.onRemove.emit([i]);
   }
 
   onButtonInsert(i: number) {
     this.onNew.emit([i]);
-  }
-
-  onInsert(newElement: Element) {
-    this.list.push(newElement);
   }
 
   swap(list: Element[], i: number, j: number): Element[] {

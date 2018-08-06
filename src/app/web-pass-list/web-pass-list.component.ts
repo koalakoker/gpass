@@ -45,14 +45,18 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   onNewFunc(i: number)
   {
     const webPass = new WebPass();
-    this.configService.create(webPass).subscribe((webPass) => {this.onInsert(webPass);;console.log("Create Done");});
+    this.configService.create(webPass).subscribe((id:number) => {
+      webPass.id = id;
+      this.list.push(webPass);
+    });
   }
 
   onRemoveFunc(i: number)
   {
     const webPass = this.list[i];
-    console.log("Remove: " + webPass.id);
-    this.configService.delete(webPass.id).subscribe((res) => {console.log(res)});
+    this.configService.delete(webPass.id).subscribe(() => {
+      this.list.splice(i,1);
+    });
   }
 
   getUrl(name: elementName, index: number)
