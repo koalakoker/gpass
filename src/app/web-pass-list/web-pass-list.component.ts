@@ -18,34 +18,55 @@ enum elementName {
 })
 export class WebPassListComponent extends ListComponent implements OnInit {
 
+  chipher_password: string;
+  logged: boolean = false;
   list: WebPass[];
   selectedListElement: WebPass;
   edit: boolean = false;
+  errorMessage: string = "";
 
   constructor(private configService: WebPassService) {
     super();
   }
 
   ngOnInit() {
+  }
+
+  enter() {
+    this.errorMessage = "";
     this.getWebPassList();
   }
 
+  logOut() {
+    this.logged = false;
+    this.chipher_password = "";
+    this.getWebPassList();
+    this.list = [];
+  }
+
   getWebPassList() {
-    this.configService.get().subscribe((data: Array<WebPass>) => {
-      this.list = data;
-    })
+    this.configService.get(this.chipher_password).subscribe(
+      (data: Array<WebPass>) => {
+        this.list = data;
+        this.logged = true;
+      },
+      err => {
+        this.errorMessage = "The passowrd is not correct";
+        this.chipher_password = "";
+      }
+    )
   }
 
   save(index: number) {
     const webPass = this.list[index];
-    this.configService.update(webPass)
+    this.configService.update(webPass, this.chipher_password)
      .subscribe(() => console.log("Put Done"));
   }
 
   onNewFunc(i: number)
   {
     const webPass = new WebPass();
-    this.configService.create(webPass).subscribe((id:number) => {
+    this.configService.create(webPass, this.chipher_password).subscribe((id:number) => {
       webPass.id = id;
       this.list.push(webPass);
     });
@@ -54,7 +75,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   onRemoveFunc(i: number)
   {
     const webPass = this.list[i];
-    this.configService.delete(webPass.id).subscribe(() => {
+    this.configService.delete(webPass.id, this.chipher_password).subscribe(() => {
       this.list.splice(i,1);
     });
   }
