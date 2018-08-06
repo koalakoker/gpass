@@ -8,14 +8,14 @@ export class WebPassService {
     constructor(private http: HttpClient) {
     }
 
-    urlGetData = 'http://www.koalakoker.com/angular/php/api.php/gpass';
+    urlAddr = 'http://www.koalakoker.com/angular/php/api.php/gpass';
 
-    getData() {
-        return this.http.get<Array<WebPass>>(this.urlGetData, {responseType: 'json'});
+    get() {
+        return this.http.get<Array<WebPass>>(this.urlAddr, {responseType: 'json'});
     }
 
     update(webPass: WebPass): Observable<any> {
-      return this.http.put(this.urlGetData+"/"+webPass.id, webPass, {
+      return this.http.put(this.urlAddr+"/"+webPass.id, webPass, {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
@@ -23,7 +23,7 @@ export class WebPassService {
     }
 
     create(webPass: WebPass): Observable<number> {
-      return this.http.post<number>(this.urlGetData, webPass, {
+      return this.http.post<number>(this.urlAddr, webPass, {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
@@ -31,7 +31,7 @@ export class WebPassService {
     }
   
     delete(id: number): Observable<{}> {
-      return this.http.delete(this.urlGetData+"/"+id,{
+      return this.http.delete(this.urlAddr+"/"+id,{
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
       })

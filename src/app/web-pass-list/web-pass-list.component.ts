@@ -31,7 +31,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   }
 
   getWebPassList() {
-    this.configService.getData().subscribe((data: Array<WebPass>) => {
+    this.configService.get().subscribe((data: Array<WebPass>) => {
       this.list = data;
     })
   }
