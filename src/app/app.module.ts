@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
 import { ListComponent } from './list/list.component';
 import { WebPassService } from './services/web-pass.service';
+import { AppRoutingModule } from '../app-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { WebPassService } from './services/web-pass.service';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [WebPassService],
   bootstrap: [AppComponent]
