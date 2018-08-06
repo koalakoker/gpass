@@ -35,6 +35,12 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     })
   }
 
+  save(index: number) {
+    const webPass = this.list[index];
+    this.configService.update(webPass)
+     .subscribe(() => console.log("Done"));
+  }
+
   onNewFunc(i: number)
   {
     this.onInsert(i, new WebPass());

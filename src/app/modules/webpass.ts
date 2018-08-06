@@ -39,4 +39,9 @@ export class WebPass extends Element {
         this.registrationDate = this.format(today);
         this.expirationDate = this.format(expire);
     }
+
+    mystr(): string {
+        const out: string = "WebPass = id:" + this.id + " url:" + this.url + " pass:" + this.pass + " registration:" + this.registrationDate + " expiration:" + this.expirationDate;
+        return out;
+    }
 }
