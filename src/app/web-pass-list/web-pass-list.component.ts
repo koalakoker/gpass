@@ -97,7 +97,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         }
         en = str ? true : false;
         str = str ? str : "ID";
-        styleStrPrefix = "spanColFixedSmall"
+        styleStrPrefix = "spanColFixedId"
         break;
     
       default:
