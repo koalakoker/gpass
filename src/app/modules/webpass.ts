@@ -1,4 +1,5 @@
 import { Element } from "./element";
+import { GCrypto } from "./gcrypto";
 
 export class WebPass extends Element {
 
@@ -31,17 +32,38 @@ export class WebPass extends Element {
         return days;
     }
 
-    constructor() {
+    constructor(webPass?: WebPass) {
         super();
-        const today: Date = new Date();
-        const expire: Date = new Date();
-        expire.setDate(today.getDate() + 30);
-        this.registrationDate = this.format(today);
-        this.expirationDate = this.format(expire);
+        if (webPass == null)
+        {
+            const today: Date = new Date();
+            const expire: Date = new Date();
+            expire.setDate(today.getDate() + 30);
+            this.registrationDate = this.format(today);
+            this.expirationDate = this.format(expire);
+        }
+        else
+        {
+            this.id = webPass.id;
+            this.url = webPass.url;
+            this.pass = webPass.pass;
+            this.registrationDate = webPass.registrationDate;
+            this.expirationDate = webPass.expirationDate;
+        }
     }
 
     mystr(): string {
         const out: string = "WebPass = id:" + this.id + " url:" + this.url + " pass:" + this.pass + " registration:" + this.registrationDate + " expiration:" + this.expirationDate;
         return out;
+    }
+
+    crypt(key: string) {
+        this.pass = GCrypto.crypt(this.pass, key);
+        this.url = GCrypto.crypt(this.url, key);
+    }
+
+    decrypt(key: string) {
+        this.pass = GCrypto.decrypt(this.pass, key);
+        this.url = GCrypto.decrypt(this.url, key);
     }
 }

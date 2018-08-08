@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from '../../../node_modules/rxjs';
 import { WebPass } from '../modules/webpass';
+import { GCrypto } from '../modules/gcrypto';
 
 @Injectable()
 export class WebPassService {
     constructor(private http: HttpClient) {
     }
 
-    urlAddr = 'http://www.koalakoker.com/angular/php/api.php/gpass';
+    urlAddr = 'https://www.koalakoker.com/angular/php/api.php/gpass';
 
     get(chipher_password: string) {
         return this.http.get<Array<WebPass>>(this.urlAddr, {
@@ -27,6 +28,9 @@ export class WebPassService {
     }
 
     create(webPass: WebPass, chipher_password: string): Observable<number> {
+      
+      webPass.pass = GCrypto.crypt(webPass.pass, chipher_password);
+      
       return this.http.post<number>(this.urlAddr, webPass, {
         params: {["chipher_password"]:chipher_password},
         headers: new HttpHeaders({

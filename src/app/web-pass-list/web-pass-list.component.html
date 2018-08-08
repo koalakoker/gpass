@@ -28,12 +28,12 @@
 </ng-template>
 
 <input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password" placeholder="Insert master password">
-<button *ngIf="logged" (click)="logOut()" class="btn">Logout</button>
+<button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
+<button *ngIf="logged" (click)="logOut()"    class="btn-dark">Logout</button>
 <app-list
     [list]='list'
     [elementTemplate]="elementTemplate"
     [editTemplate]="editTemplate"
-    (onNew)="onNewFunc($event[0])"
     (onRemove)="onRemoveFunc($event[0])"
 ></app-list>
 {{errorMessage}}

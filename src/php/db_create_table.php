@@ -1,6 +1,18 @@
 <?php
-	header("Access-Control-Allow-Origin: *");
-	header("Content-Type: application/json; charset=UTF-8");
+	include_once "passDB_cript.php";
+    include_once "criptoFunc.php";
+
+    $userPassword = $_POST["chipher_password"];
+
+    if (hashPass($userPassword)!=$Password)
+    {
+    die("Access denied");
+    }
+
+    $Server   = deChipher($Server, $userPassword);
+    $Username = deChipher($Username, $userPassword);
+    $PW       = deChipher($PW, $userPassword);
+    $DB       = deChipher($DB, $userPassword);
 	
     $conn = new mysqli($Server, $Username, $PW, $DB);
     
@@ -9,19 +21,28 @@
         die("Connection failed: " . $conn->connect_error);
     } 
 	
-    $result = $conn->query("CREATE TABLE gpass (
-        id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-        url VARCHAR(30) NOT NULL,
-        pass VARCHAR(30) NOT NULL,
-        registrationDate VARCHAR(30) NOT NULL,
-        expirationDate VARCHAR(30) NOT NULL
-    )
-    ");
+    $result = $conn->query("DROP TABLE gpass");
 
     if ($result === TRUE) {
-        echo "Table created successfully";
+        echo "Table removed successfully<br>";
+    } else {
+        echo "Error removing table: " . $conn->error;
+        die("");
+    }
+    
+    $result = $conn->query("CREATE TABLE gpass (
+        id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+        url VARCHAR(128) NOT NULL,
+        pass VARCHAR(128) NOT NULL,
+        registrationDate VARCHAR(10) NOT NULL,
+        expirationDate VARCHAR(10) NOT NULL
+    )");
+
+    if ($result === TRUE) {
+        echo "Table created successfully<br>";
     } else {
         echo "Error creating table: " . $conn->error;
+        die("");
     }
 	
 	$conn->close();

@@ -39,4 +39,10 @@ function deChipher($encrypted, $password) {
 
     return openssl_decrypt(hexToStr($encrypted), $method, $password, OPENSSL_RAW_DATA, $iv);
 }
+
+function hashPass($password)
+{
+    $method = 'sha256';
+    return strToHex(substr(hash($method, $password, true), 0, 32));
+}
 ?>

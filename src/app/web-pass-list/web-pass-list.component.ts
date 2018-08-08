@@ -40,7 +40,6 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   logOut() {
     this.logged = false;
     this.chipher_password = "";
-    this.getWebPassList();
     this.list = [];
   }
 
@@ -48,6 +47,11 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     this.configService.get(this.chipher_password).subscribe(
       (data: Array<WebPass>) => {
         this.list = data;
+        this.list = this.list.map( function (x : WebPass) {
+          WebPass.prototype.decrypt.call(x, this.chipher_password);
+          return x;
+        }, this);
+
         this.logged = true;
       },
       err => {
@@ -58,16 +62,23 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   }
 
   save(index: number) {
-    const webPass = this.list[index];
+    const webPass = new WebPass(this.list[index]);
+    WebPass.prototype.crypt.call(webPass, this.chipher_password);
     this.configService.update(webPass, this.chipher_password)
-     .subscribe(() => console.log("Put Done"));
+     .subscribe(() => {
+
+     });
   }
 
-  onNewFunc(i: number)
+  onNewFunc()
   {
     const webPass = new WebPass();
+    webPass.url  = "New url";
+    webPass.pass = "New pass";
+    webPass.crypt(this.chipher_password);
     this.configService.create(webPass, this.chipher_password).subscribe((id:number) => {
       webPass.id = id;
+      webPass.decrypt(this.chipher_password);
       this.list.push(webPass);
     });
   }
