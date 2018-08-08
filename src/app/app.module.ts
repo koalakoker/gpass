@@ -8,18 +8,23 @@ import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
 import { ListComponent } from './list/list.component';
 import { WebPassService } from './services/web-pass.service';
 import { AppRoutingModule } from '../app-routing.module';
+import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
+
+import { ClipboardModule } from 'ngx-clipboard'
 
 @NgModule({
   declarations: [
     AppComponent,
     WebPassListComponent,
-    ListComponent
+    ListComponent,
+    PassGeneratorComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ClipboardModule
   ],
   providers: [WebPassService],
   bootstrap: [AppComponent]

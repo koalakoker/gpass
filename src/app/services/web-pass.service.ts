@@ -8,7 +8,7 @@ export class WebPassService {
     constructor(private http: HttpClient) {
     }
 
-    urlAddr = 'http://www.koalakoker.com/angular/php/api.php/gpass';
+    urlAddr = 'https://www.koalakoker.com/angular/php/api.php/gpass';
 
     get(chipher_password: string) {
         return this.http.get<Array<WebPass>>(this.urlAddr, {

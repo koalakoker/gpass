@@ -12,28 +12,27 @@
 <ng-template #editTemplate let-index="index">
     <div>
         <label class="form-group">Url
-          <input class="form-control" [(ngModel)]="list[index].url" placeholder="url">
+          <input class="form-control" [(ngModel)]="list[index].url" placeholder="url" (change)="save(index)">
         </label><br>
         <label >Password
-          <input class="form-control" [(ngModel)]="list[index].pass" placeholder="pass">
+          <input class="form-control" [(ngModel)]="list[index].pass" placeholder="pass" (change)="save(index)">
         </label><br>
         <label >registration date:
-          <input class="form-control" [(ngModel)]="list[index].registeredDate" placeholder="date">
+          <input class="form-control" [(ngModel)]="list[index].registrationDate" placeholder="date" (change)="save(index)">
         </label><br>
         <label >expiration date:
-          <input class="form-control" [(ngModel)]="list[index].expiriatonDate" placeholder="date">
+          <input class="form-control" [(ngModel)]="list[index].expirationDate" placeholder="date" (change)="save(index)">
         </label>
-        <button (click)="save(index)">Save</button>
       </div>
 </ng-template>
 
 <input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password" placeholder="Insert master password">
-<button *ngIf="logged" (click)="logOut()" class="btn">Logout</button>
+<button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
+<button *ngIf="logged" (click)="logOut()"    class="btn-dark">Logout</button>
 <app-list
     [list]='list'
     [elementTemplate]="elementTemplate"
     [editTemplate]="editTemplate"
-    (onNew)="onNewFunc($event[0])"
     (onRemove)="onRemoveFunc($event[0])"
 ></app-list>
 {{errorMessage}}

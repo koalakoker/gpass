@@ -31,36 +31,6 @@
         (click)="onButtonRemove(i)">
         Remove
       </button>
-
-      <!-- Insert -->
-      <button type="button"
-        class="btn"
-        *ngIf="isSelected(element)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        (click)="onButtonInsert(i)">
-        Insert
-      </button>
-
-      <!-- Up -->
-      <!-- <button type="button"
-        class="btn"
-        *ngIf="isSelected(element) && isNotFirst(i)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        (click)="onButtonUp(i)">
-        Up
-      </button> -->
-
-      <!-- Down -->
-      <!-- <button type="button"
-        class="btn"
-        *ngIf="isSelected(element) && isNotLast(i)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        (click)="onButtonDown(i)">
-        Down
-      </button> -->
       
       <div 
         class="list-group-item-primary"
