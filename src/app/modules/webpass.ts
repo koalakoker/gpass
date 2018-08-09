@@ -38,11 +38,7 @@ export class WebPass {
             this.url      = '';
             this.username = '';
             this.pass     = '';
-            const today: Date = new Date();
-            const expire: Date = new Date();
-            expire.setDate(today.getDate() + 30);
-            this.registrationDate = this.format(today);
-            this.expirationDate = this.format(expire);
+            this.setToday();
         }
         else
         {
@@ -53,6 +49,14 @@ export class WebPass {
             this.registrationDate = webPass.registrationDate;
             this.expirationDate = webPass.expirationDate;
         }
+    }
+
+    setToday() {
+        const today: Date = new Date();
+        const expire: Date = new Date();
+        expire.setDate(today.getDate() + 30);
+        this.registrationDate = this.format(today);
+        this.expirationDate = this.format(expire);
     }
 
     mystr(): string {

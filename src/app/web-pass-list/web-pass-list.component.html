@@ -72,7 +72,7 @@
           </label><br>
           <label >Registration Date:
             <input type="text"     class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date"     (change)="save(i)">
-          </label><br>
+          </label><button class="btn btn-info" (click)="onTodayButton(i)">Today</button><br>
           <label >Expiration Date:
             <input type="text"     class="form-control" [(ngModel)]="list[i].expirationDate"   placeholder="date"     (change)="save(i)">
           </label>
@@ -86,3 +86,4 @@
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
   {{errorMessage}}
 </div>
+{{test}}

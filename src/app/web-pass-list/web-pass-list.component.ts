@@ -18,6 +18,7 @@ export class WebPassListComponent implements OnInit {
   errorMessage = '';
   copyMessage = '';
   interval;
+  test = '';
  
   constructor(
     private configService: WebPassService,
@@ -120,6 +121,10 @@ export class WebPassListComponent implements OnInit {
       this.copyMessage = '';
       clearInterval(this.interval);
     }, 2000);
+  }
+
+  onTodayButton(i: number) {
+    this.list[i].setToday();
   }
 
   getUrl(name: string, index: number) {
