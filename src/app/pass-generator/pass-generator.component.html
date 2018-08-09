@@ -1,0 +1,8 @@
+<div *ngIf="newPassAvailable" [ngxClipboard]="inputTarget" (cbOnSuccess)="newPassAvailable = false">
+    Generated new password: <input type="text" [(ngModel)]="newPass" #inputTarget> (Click to copy this password into the clipboard)
+</div>
+<div *ngIf="!newPassAvailable">
+    Move the mouse inside the box below until the progress bar will be full.<br>
+    <canvas width="800" height="600" (mousemove)="onMouseMove($event)" style="border:1px solid #000000; background: #868686" ></canvas><br>
+    <progress max="100" value="{{progress}}"></progress>
+</div>

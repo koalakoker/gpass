@@ -55,7 +55,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         this.logged = true;
       },
       err => {
-        this.errorMessage = "The passowrd is not correct";
+        this.errorMessage = "The password is not correct";
         this.chipher_password = "";
       }
     )
