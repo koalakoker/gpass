@@ -22,7 +22,7 @@ export class GCrypto {
     static crypt(text: string, key: string): string {
         const iv_str = "8DCB7300E8BCA8E5";
         const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
-        var crypted = CryptoJS.AES.encrypt(text, CryptoJS.SHA256(key),{
+        var crypted = CryptoJS.AES.encrypt(text, CryptoJS.RIPEMD160(key),{
             iv: iv
         });
           
@@ -35,9 +35,13 @@ export class GCrypto {
         var cipherParams = CryptoJS.lib.CipherParams.create({
             ciphertext: CryptoJS.enc.Hex.parse(text)
             });
-        var decrypted = CryptoJS.AES.decrypt(cipherParams, CryptoJS.SHA256(key),{
+        var decrypted = CryptoJS.AES.decrypt(cipherParams, CryptoJS.RIPEMD160(key),{
             iv: iv
         });;
         return decrypted.toString(CryptoJS.enc.Latin1);
+    }
+
+    static hash(key: string) {
+        return CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex).toUpperCase();
     }
 }

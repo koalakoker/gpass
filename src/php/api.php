@@ -9,7 +9,7 @@ include_once "criptoFunc.php";
 
 $userPassword = $_GET["chipher_password"];
 
-if (hashPass($userPassword)!=$Password)
+if ($userPassword!=$Password)
 {
   die("Access denied");
 }

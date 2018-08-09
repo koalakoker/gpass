@@ -4,7 +4,7 @@
 
     $userPassword = $_POST["chipher_password"];
 
-    if (hashPass($userPassword)!=$Password)
+    if ($userPassword!=$Password)
     {
     die("Access denied");
     }
