@@ -19,11 +19,11 @@ enum elementName {
 export class WebPassListComponent extends ListComponent implements OnInit {
 
   chipher_password: string;
-  logged: boolean = false;
+  logged = false;
   list: WebPass[];
   selectedListElement: WebPass;
-  edit: boolean = false;
-  errorMessage: string = "";
+  edit = false;
+  errorMessage = '';
 
   constructor(private configService: WebPassService) {
     super();
@@ -33,13 +33,13 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   }
 
   enter() {
-    this.errorMessage = "";
+    this.errorMessage = '';
     this.getWebPassList();
   }
 
   logOut() {
     this.logged = false;
-    this.chipher_password = "";
+    this.chipher_password = '';
     this.list = [];
   }
 
@@ -47,7 +47,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     this.configService.get(this.chipher_password).subscribe(
       (data: Array<WebPass>) => {
         this.list = data;
-        this.list = this.list.map( function (x : WebPass) {
+        this.list = this.list.map( function (x: WebPass) {
           WebPass.prototype.decrypt.call(x, this.chipher_password);
           return x;
         }, this);
@@ -55,10 +55,10 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         this.logged = true;
       },
       err => {
-        this.errorMessage = "The password is not correct";
-        this.chipher_password = "";
+        this.errorMessage = 'The password is not correct';
+        this.chipher_password = '';
       }
-    )
+    );
   }
 
   save(index: number) {
@@ -70,72 +70,63 @@ export class WebPassListComponent extends ListComponent implements OnInit {
      });
   }
 
-  onNewFunc()
-  {
+  onNewFunc() {
     const webPass = new WebPass();
-    webPass.url  = "New url";
-    webPass.pass = "New pass";
+    webPass.url  = 'New url';
+    webPass.pass = 'New pass';
     webPass.crypt(this.chipher_password);
-    this.configService.create(webPass, this.chipher_password).subscribe((id:number) => {
+    this.configService.create(webPass, this.chipher_password).subscribe((id: number) => {
       webPass.id = id;
       webPass.decrypt(this.chipher_password);
       this.list.push(webPass);
     });
   }
 
-  onRemoveFunc(i: number)
-  {
+  onRemoveFunc(i: number) {
     const webPass = this.list[i];
     this.configService.delete(webPass.id, this.chipher_password).subscribe(() => {
-      this.list.splice(i,1);
+      this.list.splice(i, 1);
     });
   }
 
-  getUrl(name: elementName, index: number)
-  {
-    var str: string;
-    var styleStrPrefix;
-    var en: boolean;
+  getUrl(name: elementName, index: number) {
+    let str: string;
+    const styleStrPrefix = 'spanColFixed';
+    let en: boolean;
     switch (name) {
       case elementName.EN_URL:
         str = this.list[index].url;
-        en = str?true:false;
-        str = str?str:"Url";
-        styleStrPrefix = "spanColFixed"
+        en = str ? true : false;
+        str = str ? str : 'Url';
         break;
       case elementName.EN_PASS:
         str = this.list[index].pass;
         en = str ? true : false;
-        str = str ? str : "Password";
-        styleStrPrefix = "spanColFixed"
+        str = str ? str : '"Password';
         break;
       case elementName.EN_START:
         str = this.list[index].registrationDate;
         en = str ? true : false;
-        str = str ? str : "Registration Date";
-        styleStrPrefix = "spanColFixedSmall"
+        str = str ? str : 'Registration Date';
         break;
       case elementName.EN_STOP:
         str = this.list[index].expirationDate;
         en = str ? true : false;
-        str = str ? str : "Expiration date";
-        styleStrPrefix = "spanColFixedSmall"
+        str = str ? str : 'Expiration date';
         break;
       case elementName.EN_ID:
         const id = this.list[index].id;
-        if (id)
-        {
+        if (id) {
           str = id.toString();
         }
         en = str ? true : false;
-        str = str ? str : "ID";
-        styleStrPrefix = "spanColFixedId"
+        str = str ? str : 'ID';
         break;
-    
+
       default:
         break;
     }
-    return { value: str, enabled: styleStrPrefix + (en==true?"":"Disabled")};
+    return { value: str, enabled: styleStrPrefix + (en === true ? '' : 'Disabled')};
   }
 
 
