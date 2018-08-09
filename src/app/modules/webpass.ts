@@ -5,6 +5,7 @@ export class WebPass extends Element {
 
     id: number;
     url: string;
+    username: string;
     pass: string;
     registrationDate: string;
     expirationDate: string;
@@ -36,6 +37,9 @@ export class WebPass extends Element {
         super();
         if (webPass == null)
         {
+            this.url      = '';
+            this.username = '';
+            this.pass     = '';
             const today: Date = new Date();
             const expire: Date = new Date();
             expire.setDate(today.getDate() + 30);
@@ -46,6 +50,7 @@ export class WebPass extends Element {
         {
             this.id = webPass.id;
             this.url = webPass.url;
+            this.username = webPass.username;
             this.pass = webPass.pass;
             this.registrationDate = webPass.registrationDate;
             this.expirationDate = webPass.expirationDate;
@@ -58,12 +63,18 @@ export class WebPass extends Element {
     }
 
     crypt(key: string) {
-        this.pass = GCrypto.crypt(this.pass, key);
-        this.url = GCrypto.crypt(this.url, key);
+        this.url              = GCrypto.crypt(this.url,              key);
+        this.username         = GCrypto.crypt(this.username,         key);
+        this.pass             = GCrypto.crypt(this.pass,             key);
+        this.registrationDate = GCrypto.crypt(this.registrationDate, key);
+        this.expirationDate   = GCrypto.crypt(this.expirationDate,   key);
     }
 
     decrypt(key: string) {
-        this.pass = GCrypto.decrypt(this.pass, key);
-        this.url = GCrypto.decrypt(this.url, key);
+        this.url              = GCrypto.decrypt(this.url,              key);
+        this.username         = GCrypto.decrypt(this.username,         key);
+        this.pass             = GCrypto.decrypt(this.pass,             key);
+        this.registrationDate = GCrypto.decrypt(this.registrationDate, key);
+        this.expirationDate   = GCrypto.decrypt(this.expirationDate,   key);
     }
 }

@@ -32,10 +32,11 @@
     
     $result = $conn->query("CREATE TABLE gpass (
         id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-        url VARCHAR(128) NOT NULL,
-        pass VARCHAR(128) NOT NULL,
-        registrationDate VARCHAR(10) NOT NULL,
-        expirationDate VARCHAR(10) NOT NULL
+        url              VARCHAR(128) NOT NULL,
+        username         VARCHAR(128) NOT NULL,
+        pass             VARCHAR(128) NOT NULL,
+        registrationDate VARCHAR(128) NOT NULL,
+        expirationDate   VARCHAR(128) NOT NULL
     )");
 
     if ($result === TRUE) {

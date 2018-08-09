@@ -86,8 +86,6 @@ export class WebPassListComponent extends ListComponent implements OnInit {
 
   onNewFunc() {
     const webPass = new WebPass();
-    webPass.url  = 'New url';
-    webPass.pass = 'New pass';
     webPass.crypt(this.chipher_password);
     this.configService.create(webPass, this.chipher_password).subscribe((id: number) => {
       webPass.id = id;
@@ -102,6 +100,8 @@ export class WebPassListComponent extends ListComponent implements OnInit {
       this.list.splice(i, 1);
     });
   }
+
+  
 
   getUrl(name: elementName, index: number) {
     let str: string;

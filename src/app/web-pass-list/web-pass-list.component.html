@@ -9,6 +9,9 @@
         <label class="form-group">Url
           <input class="form-control" [(ngModel)]="list[index].url" placeholder="url" (change)="save(index)">
         </label><br>
+        <label >Username
+          <input class="form-control" [(ngModel)]="list[index].username" placeholder="username" (change)="save(index)">
+        </label><br>
         <label >Password
           <input class="form-control" [(ngModel)]="list[index].pass" placeholder="pass" (change)="save(index)">
         </label><br>
