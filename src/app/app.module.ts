@@ -11,6 +11,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
 
 import { ClipboardModule } from 'ngx-clipboard'
+import { StorageServiceModule } from 'ngx-webstorage-service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ClipboardModule } from 'ngx-clipboard'
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    ClipboardModule
+    ClipboardModule,
+    StorageServiceModule
   ],
   providers: [WebPassService],
   bootstrap: [AppComponent]

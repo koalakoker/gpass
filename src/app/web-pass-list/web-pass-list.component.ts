@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ListComponent } from '../list/list.component';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
+import { SessionServiceService } from '../session-service.service';
 
 enum elementName {
   EN_URL = 0,
@@ -24,12 +25,22 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   selectedListElement: WebPass;
   edit = false;
   errorMessage = '';
-
-  constructor(private configService: WebPassService) {
+ 
+  constructor(
+    private configService: WebPassService,
+    private sessionService: SessionServiceService
+    ) {
     super();
   }
 
+  private KEY_CHIPER_PASS = 'ChipherPassword';
+
   ngOnInit() {
+    const storedPass = this.sessionService.getKey(this.KEY_CHIPER_PASS);
+    if ((storedPass != undefined) && (storedPass!= '')) {
+      this.chipher_password = storedPass;
+      this.enter();
+    }
   }
 
   enter() {
@@ -40,6 +51,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
   logOut() {
     this.logged = false;
     this.chipher_password = '';
+    this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
     this.list = [];
   }
 
@@ -53,10 +65,12 @@ export class WebPassListComponent extends ListComponent implements OnInit {
         }, this);
 
         this.logged = true;
+        this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
       },
       err => {
         this.errorMessage = 'The password is not correct';
         this.chipher_password = '';
+        this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
       }
     );
   }
