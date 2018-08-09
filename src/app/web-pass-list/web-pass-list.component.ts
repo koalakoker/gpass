@@ -127,6 +127,11 @@ export class WebPassListComponent implements OnInit {
     this.list[i].setToday();
   }
 
+  isExpired(i: number): string {
+    let str = (WebPass.prototype.isExpired.call(this.list[i])===true) ? '<expired>' : '';
+    return str;
+  }
+
   getUrl(name: string, index: number) {
     let str: string;
     const styleStrPrefix = 'spanColFixed';

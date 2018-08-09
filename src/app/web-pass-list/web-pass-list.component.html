@@ -8,7 +8,7 @@
       (click)="onSelect(element)">
 
       <!-- Data -->
-      <a class="{{getUrl('url', i).enabled}}" href="http://{{getUrl('url', i).value}}">{{getUrl('url', i).value}}</a>
+      <a class="{{getUrl('url', i).enabled}}" href="http://{{getUrl('url', i).value}}">{{getUrl('url', i).value}}</a><span class="badge badge-danger">{{isExpired(i)}}</span>
       <br><br>
       
       <!-- Edit button -->
