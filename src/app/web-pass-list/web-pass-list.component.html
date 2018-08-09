@@ -1,36 +1,82 @@
-<!-- Template for each element in the list -->
-<ng-template #elementTemplate let-index="index">
-    <a class="{{getUrl(0, index).enabled}}" href="http://{{getUrl(0, index).value}}">{{getUrl(0, index).value}}</a>
-</ng-template>
-
-<!-- Template for edit element -->
-<ng-template #editTemplate let-index="index">
-    <div>
-        <label class="form-group">Url
-          <input class="form-control" [(ngModel)]="list[index].url" placeholder="url" (change)="save(index)">
-        </label><br>
-        <label >Username
-          <input class="form-control" [(ngModel)]="list[index].username" placeholder="username" (change)="save(index)">
-        </label><br>
-        <label >Password
-          <input class="form-control" [(ngModel)]="list[index].pass" placeholder="pass" (change)="save(index)">
-        </label><br>
-        <label >registration date:
-          <input class="form-control" [(ngModel)]="list[index].registrationDate" placeholder="date" (change)="save(index)">
-        </label><br>
-        <label >expiration date:
-          <input class="form-control" [(ngModel)]="list[index].expirationDate" placeholder="date" (change)="save(index)">
-        </label>
-      </div>
-</ng-template>
-
 <input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password" placeholder="Insert master password">
 <button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
 <button *ngIf="logged" (click)="logOut()"    class="btn-dark">Logout</button>
-<app-list
-    [list]='list'
-    [elementTemplate]="elementTemplate"
-    [editTemplate]="editTemplate"
-    (onRemove)="onRemoveFunc($event[0])"
-></app-list>
+<div>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let element of list; let i = index" 
+      [class.active]="isSelected(element)"
+      (click)="onSelect(element)">
+
+      <!-- Data -->
+      <a class="{{getUrl('url', i).enabled}}" href="http://{{getUrl('url', i).value}}">{{getUrl('url', i).value}}</a>
+      <br><br>
+      
+      <!-- Edit button -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonEdit()">
+        Edit
+      </button>
+
+      <!-- Remove button -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonRemove(i)">
+        Remove
+      </button>
+
+      <!-- Copy username -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonCopyUsername(i)">
+        Username
+      </button>
+
+      <!-- Copy password -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonCopyPassword(i)">
+        Password
+      </button>
+      
+      <div 
+        class="list-group-item-primary"
+        *ngIf="edit && isSelected(element)">
+        
+        <!-- Edit element -->
+        <div>
+          <label class="form-group">Url
+            <input class="form-control" [(ngModel)]="list[i].url" placeholder="url" (change)="save(i)">
+          </label><br>
+          <label >Username
+            <input class="form-control" [(ngModel)]="list[i].username" placeholder="username" (change)="save(i)">
+          </label><br>
+          <label >Password
+            <input class="form-control" [(ngModel)]="list[i].pass" placeholder="pass" (change)="save(i)">
+          </label><br>
+          <label >Registration Date:
+            <input class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date" (change)="save(i)">
+          </label><br>
+          <label >Expiration Date:
+            <input class="form-control" [(ngModel)]="list[i].expirationDate" placeholder="date" (change)="save(i)">
+          </label>
+        </div>
+
+      </div>
+    </li>
+  </ul>
+</div>
+<br>
 {{errorMessage}}

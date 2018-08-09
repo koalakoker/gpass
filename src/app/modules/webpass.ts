@@ -1,7 +1,6 @@
-import { Element } from "./element";
 import { GCrypto } from "./gcrypto";
 
-export class WebPass extends Element {
+export class WebPass {
 
     id: number;
     url: string;
@@ -34,7 +33,6 @@ export class WebPass extends Element {
     }
 
     constructor(webPass?: WebPass) {
-        super();
         if (webPass == null)
         {
             this.url      = '';

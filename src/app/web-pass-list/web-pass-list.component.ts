@@ -1,37 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { ListComponent } from '../list/list.component';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
-
-enum elementName {
-  EN_URL = 0,
-  EN_PASS = 1,
-  EN_START = 2,
-  EN_STOP = 3,
-  EN_ID = 4
-}
 
 @Component({
   selector: 'app-web-pass-list',
   templateUrl: './web-pass-list.component.html',
   styleUrls: ['./web-pass-list.component.css']
 })
-export class WebPassListComponent extends ListComponent implements OnInit {
+export class WebPassListComponent implements OnInit {
 
+  list: WebPass[];
+  selecteWebPass: WebPass;
+  edit: boolean = false;
   chipher_password: string;
   logged = false;
-  list: WebPass[];
-  selectedListElement: WebPass;
-  edit = false;
   errorMessage = '';
  
   constructor(
     private configService: WebPassService,
     private sessionService: SessionService
-    ) {
-    super();
-  }
+    ) {}
 
   private KEY_CHIPER_PASS = 'ChipherPassword';
 
@@ -94,49 +83,66 @@ export class WebPassListComponent extends ListComponent implements OnInit {
     });
   }
 
-  onRemoveFunc(i: number) {
+  onSelect(webPass: WebPass) {
+    if (this.selecteWebPass != webPass) {
+      this.edit = false;
+    }
+    this.selecteWebPass = webPass;
+  }
+
+  onButtonEdit() {
+    this.edit = !this.edit;
+  }
+
+  onButtonRemove(i: number) {
     const webPass = this.list[i];
     this.configService.delete(webPass.id, this.chipher_password).subscribe(() => {
       this.list.splice(i, 1);
     });
   }
 
-  
+  isSelected(webPass: WebPass): boolean {
+    return (webPass === this.selecteWebPass);
+  }
 
-  getUrl(name: elementName, index: number) {
+  getUrl(name: string, index: number) {
     let str: string;
     const styleStrPrefix = 'spanColFixed';
     let en: boolean;
     switch (name) {
-      case elementName.EN_URL:
-        str = this.list[index].url;
-        en = str ? true : false;
-        str = str ? str : 'Url';
-        break;
-      case elementName.EN_PASS:
-        str = this.list[index].pass;
-        en = str ? true : false;
-        str = str ? str : '"Password';
-        break;
-      case elementName.EN_START:
-        str = this.list[index].registrationDate;
-        en = str ? true : false;
-        str = str ? str : 'Registration Date';
-        break;
-      case elementName.EN_STOP:
-        str = this.list[index].expirationDate;
-        en = str ? true : false;
-        str = str ? str : 'Expiration date';
-        break;
-      case elementName.EN_ID:
+      case 'id':
         const id = this.list[index].id;
         if (id) {
           str = id.toString();
         }
         en = str ? true : false;
-        str = str ? str : 'ID';
+        str = str ? str : name;
         break;
-
+      case 'url':
+        str = this.list[index].url;
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
+      case 'username':
+        str = this.list[index].username;
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
+      case 'pass':
+        str = this.list[index].pass;
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
+      case 'registrationDate':
+        str = this.list[index].registrationDate;
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
+      case 'expirationDate':
+        str = this.list[index].expirationDate;
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
       default:
         break;
     }
