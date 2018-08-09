@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Observable } from '../../../node_modules/rxjs';
+import { Observable } from 'rxjs';
 import { WebPass } from '../modules/webpass';
 
 @Injectable()
