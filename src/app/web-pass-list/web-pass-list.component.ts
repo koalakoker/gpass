@@ -16,6 +16,8 @@ export class WebPassListComponent implements OnInit {
   chipher_password: string;
   logged = false;
   errorMessage = '';
+  copyMessage = '';
+  interval;
  
   constructor(
     private configService: WebPassService,
@@ -103,6 +105,15 @@ export class WebPassListComponent implements OnInit {
 
   isSelected(webPass: WebPass): boolean {
     return (webPass === this.selecteWebPass);
+  }
+
+  onCopyToClipboard(text: string) {
+    clearInterval(this.interval);
+    this.copyMessage = text;
+    this.interval = setInterval(() => {
+      this.copyMessage = '';
+      clearInterval(this.interval);
+    }, 2000)
   }
 
   getUrl(name: string, index: number) {

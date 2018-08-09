@@ -37,7 +37,7 @@
         *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonCopyUsername(i)">
+        ngxClipboard [cbContent]="getUrl('username', i).value" (cbOnSuccess)="onCopyToClipboard('Username copied to clipboard')">
         Username
       </button>
 
@@ -47,9 +47,13 @@
         *ngIf="isSelected(element)"
         [class.btn-secondary]="!edit"
         [class.btn-dark]="edit"
-        (click)="onButtonCopyPassword(i)">
+        ngxClipboard [cbContent]="getUrl('pass', i).value" (cbOnSuccess)="onCopyToClipboard('Password copied to clipboard')">
         Password
       </button>
+
+      <div class="alert alert-primary" role="alert" *ngIf="(copyMessage!=='')&&(isSelected(element))">
+        {{copyMessage}}
+      </div>
       
       <div 
         class="list-group-item-primary"
