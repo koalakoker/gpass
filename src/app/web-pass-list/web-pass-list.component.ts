@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ListComponent } from '../list/list.component';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
-import { SessionServiceService } from '../session-service.service';
+import { SessionService } from '../services/session.service';
 
 enum elementName {
   EN_URL = 0,
@@ -28,7 +28,7 @@ export class WebPassListComponent extends ListComponent implements OnInit {
  
   constructor(
     private configService: WebPassService,
-    private sessionService: SessionServiceService
+    private sessionService: SessionService
     ) {
     super();
   }

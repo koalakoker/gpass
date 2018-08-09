@@ -4,7 +4,7 @@ import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 @Injectable({
   providedIn: 'root'
 })
-export class SessionServiceService {
+export class SessionService {
 
   constructor(@Inject(SESSION_STORAGE) private storage: StorageService) { }
 
