@@ -2,17 +2,15 @@
 .list-group .list-group-item .spanColFixed {
   color: rgb(0, 10, 145);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
+  font-size: 150%;
   float: left;
-  width: 15em;
 }
 
 .list-group .list-group-item .spanColFixedDisabled {
   color: rgb(184, 184, 184);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
+  font-size: 150%;
   float: left;
-  width: 15em;
 }
 
 @media screen and (max-width: 991px) {

@@ -11,6 +11,8 @@
           [ngTemplateOutlet]="elementTemplate"
           [ngTemplateOutletContext]="{listRet: list, index: list.indexOf(element)}"
       ></ng-container>
+
+      <br><br>
       
       <!-- Edit button -->
       <button type="button"
@@ -30,6 +32,26 @@
         [class.btn-dark]="edit"
         (click)="onButtonRemove(i)">
         Remove
+      </button>
+
+      <!-- Copy username -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonCopyUsername(i)">
+        Username
+      </button>
+
+      <!-- Copy password -->
+      <button type="button"
+        class="btn"
+        *ngIf="isSelected(element)"
+        [class.btn-secondary]="!edit"
+        [class.btn-dark]="edit"
+        (click)="onButtonCopyPassword(i)">
+        Password
       </button>
       
       <div 
