@@ -83,4 +83,6 @@
   </ul>
 </div>
 <br>
-{{errorMessage}}
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
+  {{errorMessage}}
+</div>

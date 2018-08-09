@@ -62,6 +62,12 @@ export class WebPassListComponent implements OnInit {
         this.errorMessage = 'The password is not correct';
         this.chipher_password = '';
         this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
+
+        clearInterval(this.interval);
+        this.interval = setInterval(() => {
+          this.errorMessage = '';
+          clearInterval(this.interval);
+        }, 2000);
       }
     );
   }
@@ -113,7 +119,7 @@ export class WebPassListComponent implements OnInit {
     this.interval = setInterval(() => {
       this.copyMessage = '';
       clearInterval(this.interval);
-    }, 2000)
+    }, 2000);
   }
 
   getUrl(name: string, index: number) {

@@ -2,11 +2,11 @@
 	include_once "passDB_cript.php";
     include_once "criptoFunc.php";
 
-    $userPassword = $_POST["chipher_password"];
+    $userPassword = hashPass($_POST["chipher_password"]);
 
     if ($userPassword!=$Password)
     {
-    die("Access denied");
+        die("Access denied");
     }
 
     $Server   = deChipher($Server, $userPassword);
