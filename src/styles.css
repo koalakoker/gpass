@@ -15,34 +15,31 @@
   width: 15em;
 }
 
-.list-group .list-group-item .spanColFixedSmall {
-  color: rgb(0, 10, 145);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
-  float: left;
-  width: 10em;
+@media screen and (max-width: 991px) {
+  /* start of large tablet styles */
+
 }
 
-.list-group .list-group-item .spanColFixedSmallDisabled {
-  color: rgb(184, 184, 184);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
-  float: left;
-  width: 10em;
+@media screen and (max-width: 767px) {
+  /* start of medium tablet styles */
+
 }
 
-.list-group .list-group-item .spanColFixedId {
-  color: rgb(0, 10, 145);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
-  float: left;
-  width: 4em;
-}
-
-.list-group .list-group-item .spanColFixedIdDisabled {
-  color: rgb(184, 184, 184);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 100%;
-  float: left;
-  width: 4em;
+@media screen and (max-width: 479px) {
+  /* start of phone styles */
+  .list-group .list-group-item .spanColFixed {
+    color: rgb(0, 10, 145);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 100%;
+    float: left;
+    width: 15em;
+  }
+  
+  .list-group .list-group-item .spanColFixedDisabled {
+    color: rgb(184, 184, 184);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 100%;
+    float: left;
+    width: 15em;
+  }
 }
