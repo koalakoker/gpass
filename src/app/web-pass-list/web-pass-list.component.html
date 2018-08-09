@@ -62,19 +62,19 @@
         <!-- Edit element -->
         <div>
           <label class="form-group">Url
-            <input class="form-control" [(ngModel)]="list[i].url" placeholder="url" (change)="save(i)">
+            <input type="text"     class="form-control" [(ngModel)]="list[i].url"              placeholder="url"      (change)="save(i)">
           </label><br>
           <label >Username
-            <input class="form-control" [(ngModel)]="list[i].username" placeholder="username" (change)="save(i)">
+            <input type="text"     class="form-control" [(ngModel)]="list[i].username"         placeholder="username" (change)="save(i)">
           </label><br>
           <label >Password
-            <input class="form-control" [(ngModel)]="list[i].pass" placeholder="pass" (change)="save(i)">
+            <input type="password" class="form-control" [(ngModel)]="list[i].pass"             placeholder="pass"     (change)="save(i)">
           </label><br>
           <label >Registration Date:
-            <input class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date" (change)="save(i)">
+            <input type="text"     class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date"     (change)="save(i)">
           </label><br>
           <label >Expiration Date:
-            <input class="form-control" [(ngModel)]="list[i].expirationDate" placeholder="date" (change)="save(i)">
+            <input type="text"     class="form-control" [(ngModel)]="list[i].expirationDate"   placeholder="date"     (change)="save(i)">
           </label>
         </div>
 
