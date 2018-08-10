@@ -35,6 +35,7 @@ export class WebPass {
     constructor(webPass?: WebPass) {
         if (webPass == null)
         {
+            this.id = 0;
             this.url      = '';
             this.username = '';
             this.pass     = '';
@@ -66,7 +67,8 @@ export class WebPass {
     }
 
     mystr(): string {
-        const out: string = "WebPass = id:" + this.id + " url:" + this.url + " pass:" + this.pass + " registration:" + this.registrationDate + " expiration:" + this.expirationDate;
+        const out: string = 'WebPass {' + ((this.id!==undefined)?'id:' + this.id + ', ':'') + 'url:"' + this.url + '", username:"' + this.username + '", pass:"' + this.pass + '", registrationDate:"' + this.registrationDate + '", expirationDate:"' + this.expirationDate + '"}';
+
         return out;
     }
 

@@ -16,7 +16,7 @@ export class WebPassListComponent implements OnInit {
   chipher_password: string;
   logged = false;
   errorMessage = '';
-  copyMessage = '';
+  message = '';
   interval;
   test = '';
  
@@ -50,12 +50,14 @@ export class WebPassListComponent implements OnInit {
   getWebPassList() {
     this.configService.get(this.chipher_password).subscribe(
       (data: Array<WebPass>) => {
-        this.list = data;
-        this.list = this.list.map( function (x: WebPass) {
-          WebPass.prototype.decrypt.call(x, this.chipher_password);
-          return x;
+        // Decode and create a new WebPass list
+        this.list = data.map((x) => {
+          const w = new WebPass(x);
+          w.decrypt(this.chipher_password);
+          
+          return w;
         }, this);
-
+        
         this.logged = true;
         this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
       },
@@ -75,11 +77,11 @@ export class WebPassListComponent implements OnInit {
 
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
-    WebPass.prototype.crypt.call(webPass, this.chipher_password);
+    webPass.crypt(this.chipher_password);
     this.configService.update(webPass, this.chipher_password)
-     .subscribe(() => {
-
-     });
+      .subscribe(() => {
+        this.sendMessage("Database updated");
+      });
   }
 
   onNewFunc() {
@@ -114,21 +116,27 @@ export class WebPassListComponent implements OnInit {
     return (webPass === this.selecteWebPass);
   }
 
-  onCopyToClipboard(text: string) {
+  sendMessage(text: string) {
     clearInterval(this.interval);
-    this.copyMessage = text;
+    this.message = text;
     this.interval = setInterval(() => {
-      this.copyMessage = '';
+      this.message = '';
       clearInterval(this.interval);
     }, 2000);
   }
 
   onTodayButton(i: number) {
-    this.list[i].setToday();
+    const w: WebPass = this.list[i];
+    const rd: string = w.registrationDate;
+    const ed: string = w.expirationDate;
+    w.setToday();
+    if ((rd!==w.registrationDate)||(ed!==w.expirationDate)) {
+      this.save(i);
+    }
   }
 
   isExpired(i: number): string {
-    let str = (WebPass.prototype.isExpired.call(this.list[i])===true) ? '<expired>' : '';
+    let str = (this.list[i].isExpired()===true) ? '<expired>' : '';
     return str;
   }
 

@@ -12,7 +12,7 @@ export class WebPassService {
     urlAddr = 'https://www.koalakoker.com/angular/php/api.php/gpass';
 
     get(chipher_password: string) {
-      return this.http.get<Array<WebPass>>(this.urlAddr, {
+      return this.http.get(this.urlAddr, {
         params: {["chipher_password"]: GCrypto.hash(chipher_password)},
         responseType: 'json'
       });
