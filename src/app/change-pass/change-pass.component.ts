@@ -16,7 +16,7 @@ export class ChangePassComponent implements OnInit {
   repeat_new_chipher_password = '';
   valid = false;
   message = '';
-  interval: NodeJS.Timer;
+  interval;
   itemToBeSentNbr = 0;
   serverAccess = '';
 
