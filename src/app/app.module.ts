@@ -11,12 +11,14 @@ import { PassGeneratorComponent } from './pass-generator/pass-generator.componen
 
 import { ClipboardModule } from 'ngx-clipboard'
 import { StorageServiceModule } from 'ngx-webstorage-service';
+import { ChangePassComponent } from './change-pass/change-pass.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebPassListComponent,
-    PassGeneratorComponent
+    PassGeneratorComponent,
+    ChangePassComponent
   ],
   imports: [
     BrowserModule,

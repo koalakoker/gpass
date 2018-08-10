@@ -1,0 +1,5 @@
+.alert.alert-danger.mymessage
+  {
+    white-space: pre-line;
+    text-align: left;
+  }
