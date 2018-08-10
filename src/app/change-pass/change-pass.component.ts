@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { WebPassService } from '../services/web-pass.service';
+import { WebPass } from '../modules/webpass';
+import { Observable } from '../../../node_modules/rxjs';
+import { GCrypto } from '../modules/gcrypto';
 
 @Component({
   selector: 'app-change-pass',
@@ -13,14 +17,66 @@ export class ChangePassComponent implements OnInit {
   valid = false;
   message = '';
   interval: NodeJS.Timer;
+  itemToBeSentNbr = 0;
+  serverAccess = '';
 
-  constructor() { }
+  @ViewChild('buttonChange') buttonChange: ElementRef;
+
+  constructor(private configService: WebPassService) { }
 
   ngOnInit() {
   }
 
   onChangePass() {
-    this.sendMessage('New <mark><i>master password</i></mark> has been updated', 3000);
+
+    // Get the DB values and decrypt with old pass
+    this.configService.get(this.old_chipher_password).subscribe(
+      (data: Array<WebPass>) => {
+        // Decode and create a new WebPass list
+        const list: WebPass[] = data.map((x) => {
+          const w = new WebPass(x);
+          w.decrypt(this.old_chipher_password);  
+          return w;
+        }, this);
+        
+        // Cript the values of the DB with the new pass
+        this.itemToBeSentNbr = list.length;
+        list.forEach(webPass => {
+          const newWebPass = new WebPass(webPass);
+          webPass.crypt(this.new_chipher_password);
+          
+          const ob: Observable<any> = this.configService.update(webPass, this.old_chipher_password);
+          ob.subscribe( 
+            () => {
+              this.itemToBeSentNbr--;
+              if (this.itemToBeSentNbr === 0)
+              {
+                // Calculate the new access file for the db
+                this.configService.callChipher(this.old_chipher_password).subscribe(
+                  (data) => {
+                    const key: string = GCrypto.hash(this.new_chipher_password);
+                    this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';
+                    this.serverAccess += '$Password = "' + key + '";\n';
+                    this.serverAccess += '$Server = "'   + GCrypto.cryptDBAccess(data['server']  , key) + '";\n';
+                    this.serverAccess += '$Username = "' + GCrypto.cryptDBAccess(data['username'], key) + '";\n';
+                    this.serverAccess += '$PW = "'       + GCrypto.cryptDBAccess(data['password'], key) + '";\n';
+                    this.serverAccess += '$DB = "'       + GCrypto.cryptDBAccess(data['database'], key) + '";\n';
+                })
+              }   
+                
+            }
+          );
+
+        }, this);
+
+      },
+      err => {
+        this.sendMessage('The <mark><i>old master password is not correct</i></mark>', 3000);
+      }
+    );
+
+
+
   }
 
   validate() {
@@ -31,7 +87,10 @@ export class ChangePassComponent implements OnInit {
         (this.new_chipher_password === this.repeat_new_chipher_password) &&
         (this.new_chipher_password !== this.old_chipher_password)
        ) {
-         this.valid = true;
+      this.valid = true;
+      setTimeout(() => {
+        this.buttonChange.nativeElement.focus();
+      }, 100, this);
     }
 
     let message = '';

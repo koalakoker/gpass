@@ -44,4 +44,14 @@ export class GCrypto {
     static hash(key: string) {
         return CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex).toUpperCase();
     }
+
+    static cryptDBAccess(text: string, key: string): string {
+        const iv_str = "8DCB7300E8BCA8E5";
+        const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
+        var crypted = CryptoJS.AES.encrypt(text, CryptoJS.SHA256(key),{
+            iv: iv
+        });
+          
+        return crypted.ciphertext.toString().toUpperCase();
+    }
 }

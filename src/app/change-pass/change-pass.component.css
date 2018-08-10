@@ -3,3 +3,9 @@
     white-space: pre-line;
     text-align: left;
   }
+
+.alert.alert-success.mymessage
+  {
+    white-space: pre-line;
+    text-align: left;
+  }
