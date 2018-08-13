@@ -20,6 +20,8 @@ function hexa_to_ascii(hexx) {
 
 export class GCrypto {
     static crypt(text: string, key: string): string {
+        if (text === undefined)
+            return '';
         const iv_str = "8DCB7300E8BCA8E5";
         const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
         var crypted = CryptoJS.AES.encrypt(text, CryptoJS.RIPEMD160(key),{
@@ -29,7 +31,9 @@ export class GCrypto {
         return crypted.ciphertext.toString().toUpperCase();
     }
 
-    static decrypt(text: string, key: string) {
+    static decrypt(text: string, key: string): string {
+        if (text === undefined)
+        return '';
         const iv_str = "8DCB7300E8BCA8E5";
         const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
         var cipherParams = CryptoJS.lib.CipherParams.create({

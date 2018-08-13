@@ -3,6 +3,7 @@ import { GCrypto } from "./gcrypto";
 export class WebPass {
 
     id: number;
+    name: string;
     url: string;
     username: string;
     pass: string;
@@ -36,6 +37,7 @@ export class WebPass {
         if (webPass == null)
         {
             this.id = 0;
+            this.name     = '';
             this.url      = '';
             this.username = '';
             this.pass     = '';
@@ -44,6 +46,7 @@ export class WebPass {
         else
         {
             this.id = webPass.id;
+            this.name = webPass.name;
             this.url = webPass.url;
             this.username = webPass.username;
             this.pass = webPass.pass;
@@ -67,12 +70,21 @@ export class WebPass {
     }
 
     mystr(): string {
-        const out: string = 'WebPass {' + ((this.id!==undefined)?'id:' + this.id + ', ':'') + 'url:"' + this.url + '", username:"' + this.username + '", pass:"' + this.pass + '", registrationDate:"' + this.registrationDate + '", expirationDate:"' + this.expirationDate + '"}';
+        const out: string = 
+              'WebPass {' + ((this.id!==undefined)?'id:' + this.id + ', ':'') 
+            + 'name:' + this.name 
+            + 'url:"' + this.url 
+            + '", username:"' + this.username 
+            + '", pass:"' + this.pass 
+            + '", registrationDate:"' + this.registrationDate 
+            + '", expirationDate:"' + this.expirationDate 
+            + '"}';
 
         return out;
     }
 
     crypt(key: string) {
+        this.name             = GCrypto.crypt(this.name,             key);
         this.url              = GCrypto.crypt(this.url,              key);
         this.username         = GCrypto.crypt(this.username,         key);
         this.pass             = GCrypto.crypt(this.pass,             key);
@@ -81,6 +93,7 @@ export class WebPass {
     }
 
     decrypt(key: string) {
+        this.name             = GCrypto.decrypt(this.name,             key);
         this.url              = GCrypto.decrypt(this.url,              key);
         this.username         = GCrypto.decrypt(this.username,         key);
         this.pass             = GCrypto.decrypt(this.pass,             key);

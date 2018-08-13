@@ -153,6 +153,14 @@ export class WebPassListComponent implements OnInit {
         en = str ? true : false;
         str = str ? str : name;
         break;
+      case 'name':
+        const n = this.list[index].name;
+        if (n) {
+          str = n.toString();
+        }
+        en = str ? true : false;
+        str = str ? str : name;
+        break;
       case 'url':
         str = this.list[index].url;
         en = str ? true : false;
