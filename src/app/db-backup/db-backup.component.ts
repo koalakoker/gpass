@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { WebPassService } from '../services/web-pass.service';
+import { PopupMessageComponent } from '../popup-message/popup-message.component';
 
 export class dbBackupForm {
   chiper_key  : string = '';
@@ -17,7 +18,7 @@ export class DbBackupComponent implements OnInit {
 
   url: string = "db_backup.php";
   val: dbBackupForm = new dbBackupForm();
-  message: string;
+  @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
 
   ngOnInit() {
   }
@@ -28,7 +29,7 @@ export class DbBackupComponent implements OnInit {
     body.set('newtable', this.val.newtablename);
     this.httpService.post(body, 'https://www.koalakoker.com/angular/php/' + this.url)
       .subscribe(res => {
-        this.message = res;
+        this.popupMessage.sendMessage(res, 3000);
       })
   }
 
