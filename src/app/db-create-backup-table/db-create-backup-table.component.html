@@ -1,0 +1,10 @@
+
+<input [(ngModel)]="val.chiper_key" 
+  class="form-control" 
+  type="password" 
+  name="chipher_password" 
+  placeholder="insert master password"
+  required
+>
+<input (click)="onSubmit()" type="submit" value="Create backup table">
+<app-popup-message #popupMessage></app-popup-message>

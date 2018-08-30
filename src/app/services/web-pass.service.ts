@@ -37,6 +37,17 @@ export class WebPassService {
     })
   }
 
+  post(body, uri) {
+    return this.http.post(uri, body.toString(), {
+      responseType: 'text',
+      observe: 'body',
+      headers: new HttpHeaders({
+        'Accept': 'text/html, application/xhtml+xml, */*',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    })
+  } 
+
   delete(id: number, chipher_password: string): Observable<{}> {
     return this.http.delete(this.urlAddr+"/"+id,{
       params: {["chipher_password"]: GCrypto.hash(chipher_password)},

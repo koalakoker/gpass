@@ -1,8 +1,15 @@
 <?php
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST");
+    header("Access-Control-Allow-Headers: Content-Type");
+    header("Content-Type: application/json; charset=UTF-8");
+
 	include_once "passDB_cript.php";
     include_once "criptoFunc.php";
 
     $userPassword = hashPass($_POST["chipher_password"]);
+
+    //echo file_get_contents('php://input');
 
     if ($userPassword!=$Password)
     {
@@ -21,7 +28,7 @@
         die("Connection failed: " . $conn->connect_error);
     } 
 	
-    $result = $conn->query("DROP TABLE gpass");
+    $result = $conn->query("DROP TABLE backup");
 
     if ($result === TRUE) {
         echo "Table removed successfully<br>";
@@ -30,14 +37,10 @@
         echo "<br>";
     }
     
-    $result = $conn->query("CREATE TABLE gpass (
+    $result = $conn->query("CREATE TABLE backup (
         id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
         name             VARCHAR(128) NOT NULL,
-        url              VARCHAR(128) NOT NULL,
-        username         VARCHAR(128) NOT NULL,
-        pass             VARCHAR(128) NOT NULL,
-        registrationDate VARCHAR(128) NOT NULL,
-        expirationDate   VARCHAR(128) NOT NULL
+        date             VARCHAR(128) NOT NULL
     )");
 
     if ($result === TRUE) {

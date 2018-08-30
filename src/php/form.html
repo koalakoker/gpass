@@ -16,5 +16,14 @@
             <input class="form-control" type="password" name="chipher_password" placeholder="cipher password">
             <input type="submit" value="Delete and Create new Table">
         </form>
+        <form method="POST" action="db_create_table_backup.php">
+            <input class="form-control" type="password" name="chipher_password" placeholder="cipher password">
+            <input type="submit" value="Create backup table">
+        </form>
+        <form method="POST" action="db_backup.php">
+            <input class="form-control" type="password" name="chipher_password" placeholder="cipher password">
+            <input class="form-control" type="text"     name="newtable"         placeholder="new Table">
+            <input type="submit" value="Backup">
+        </form>
     </body>
 </html>

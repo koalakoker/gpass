@@ -12,13 +12,19 @@ import { PassGeneratorComponent } from './pass-generator/pass-generator.componen
 import { ClipboardModule } from 'ngx-clipboard'
 import { StorageServiceModule } from 'ngx-webstorage-service';
 import { ChangePassComponent } from './change-pass/change-pass.component';
+import { DbCreateBackupTableComponent } from './db-create-backup-table/db-create-backup-table.component';
+import { DbBackupComponent } from './db-backup/db-backup.component';
+import { PopupMessageComponent } from './popup-message/popup-message.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebPassListComponent,
     PassGeneratorComponent,
-    ChangePassComponent
+    ChangePassComponent,
+    DbCreateBackupTableComponent,
+    DbBackupComponent,
+    PopupMessageComponent
   ],
   imports: [
     BrowserModule,
