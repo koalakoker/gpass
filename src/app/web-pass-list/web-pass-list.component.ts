@@ -54,10 +54,22 @@ export class WebPassListComponent implements OnInit {
         this.list = data.map((x) => {
           const w = new WebPass(x);
           w.decrypt(this.chipher_password);
-          
+
           return w;
         }, this);
-        
+
+        this.list.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          } else {
+            if (a.name > b.name) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        });
+
         this.logged = true;
         this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
       },
