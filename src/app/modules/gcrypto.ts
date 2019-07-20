@@ -1,4 +1,5 @@
 import  * as CryptoJS from '../../../node_modules/crypto-js'
+import { WebPassService } from '../services/web-pass.service';
 
 function ascii_to_hexa(str) {
     var arr1 = [];
@@ -19,6 +20,11 @@ function hexa_to_ascii(hexx) {
 }
 
 export class GCrypto {
+    
+    constructor(
+        private configService: WebPassService
+    ) { }
+
     static crypt(text: string, key: string): string {
         if (text === undefined)
             return '';
@@ -57,5 +63,21 @@ export class GCrypto {
         });
           
         return crypted.ciphertext.toString().toUpperCase();
+    }
+
+    cryptPass(pass: string, callback : (crypted: string) => void) {
+        const url: string = 'http://worldtimeapi.org/api/timezone/Europe/Rome';
+        this.configService.apiGet(url).subscribe( (data: JSON)=> {
+            const dateStr: string = data['datetime'].slice(0, 16);
+            const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
+            var hash = CryptoJS.HmacSHA256(dateStr, secret);
+            const iv_str = "8DCB7300E8BCA8E5";
+            const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
+            var crypted = CryptoJS.AES.encrypt(pass, (hash), {
+                 iv: iv
+             });
+            const encrypted = crypted.ciphertext.toString();
+            callback(crypted.ciphertext.toString());
+        });
     }
 }

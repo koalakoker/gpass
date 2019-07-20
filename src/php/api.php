@@ -9,15 +9,27 @@ include_once "criptoFunc.php";
 
 $userPassword = $_GET["chipher_password"];
 
-if ($userPassword!=$Password)
+if (isset($userPassword))
 {
-  die("Access denied");
+
+}
+else
+{
+    die("Missing decrypt key!");
 }
 
-$Server   = deChipher($Server, $userPassword);
-$Username = deChipher($Username, $userPassword);
-$PW       = deChipher($PW, $userPassword);
-$DB       = deChipher($DB, $userPassword);
+$decryptPass = passDecrypt($userPassword);
+$decryptPass = hashPass($decryptPass);
+
+$Server   = deChipher($Server,  $decryptPass);
+$Username = deChipher($Username,$decryptPass);
+$PW       = deChipher($PW,      $decryptPass);
+$DB       = deChipher($DB,      $decryptPass);
+
+if ($Server == "")
+{
+    die("Wrong decrypt key.\nAccess denied!");
+}
 
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
@@ -32,6 +44,8 @@ mysqli_set_charset($link,'utf8');
 $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 $key = array_shift($request)+0;
 
+// build the SET part of the SQL command
+$set = '';
 if ($input)
 {
     // escape the columns and values from the input object
@@ -40,13 +54,11 @@ if ($input)
     if ($value===null) return null;
     return mysqli_real_escape_string($link,(string)$value);
     },array_values($input));
-}
- 
-// build the SET part of the SQL command
-$set = '';
-for ($i=0;$i<count($columns);$i++) {
-  $set.=($i>0?',':'').'`'.$columns[$i].'`=';
-  $set.=($values[$i]===null?'NULL':'"'.$values[$i].'"');
+
+  for ($i=0;$i<count($columns);$i++) {
+    $set.=($i>0?',':'').'`'.$columns[$i].'`=';
+    $set.=($values[$i]===null?'NULL':'"'.$values[$i].'"');
+  }
 }
  
 // create SQL based on HTTP method

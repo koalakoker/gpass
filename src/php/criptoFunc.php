@@ -19,9 +19,6 @@ function hexToStr($hex){
 function chipher($plaintext, $password){
     $method = 'aes-256-cbc';
     
-    // Must be exact 32 chars (256 bit)
-    $password = substr(hash('sha256', $password, true), 0, 32);
-
     // IV must be exact 16 chars (128 bit)
     $iv = "8DCB7300E8BCA8E5";
     
@@ -31,9 +28,6 @@ function chipher($plaintext, $password){
 function deChipher($encrypted, $password) {
     $method = 'aes-256-cbc';
     
-    // Must be exact 32 chars (256 bit)
-    $password = substr(hash('sha256', $password, true), 0, 32);
-
     // IV must be exact 16 chars (128 bit)
     $iv = "8DCB7300E8BCA8E5";
 
@@ -44,5 +38,32 @@ function hashPass($password)
 {
     $method = 'sha256';
     return strToHex(substr(hash($method, $password, true), 0, 32));
+}
+
+function passDecrypt($encrypted)
+{
+    $verbose = false;
+    $json = json_decode(file_get_contents('http://worldtimeapi.org/api/timezone/Europe/Rome'));
+    $dateStr = substr($json->{'datetime'},0,16);
+    if ($verbose)
+    {
+        print("Date:" . $dateStr);
+        echo ("\n");
+    }
+    $secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
+    $hmac = hash_hmac('sha256',$dateStr,$secret);
+    if ($verbose)
+    {
+        print("HMAC:" . $hmac);
+        echo ("\n");
+    }
+    $encrypted = $encrypted;
+    $decript = deChipher($encrypted,hexToStr($hmac));
+    if ($verbose)
+    {
+        print("Encrypted:" . $encrypted . "\n");
+        print("Decrypted:" . $decript . "\n");
+    }
+    return $decript;
 }
 ?>

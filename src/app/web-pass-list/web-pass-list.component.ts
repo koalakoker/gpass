@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
+import { GCrypto } from '../modules/gcrypto';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -10,6 +11,7 @@ import { SessionService } from '../services/session.service';
 })
 export class WebPassListComponent implements OnInit {
 
+  g: GCrypto;
   list: WebPass[];
   selecteWebPass: WebPass;
   edit: boolean = false;
@@ -23,7 +25,9 @@ export class WebPassListComponent implements OnInit {
   constructor(
     private configService: WebPassService,
     private sessionService: SessionService
-    ) {}
+    ) {
+      this.g = new GCrypto(this.configService);
+    }
 
   private KEY_CHIPER_PASS = 'ChipherPassword';
 
@@ -48,61 +52,67 @@ export class WebPassListComponent implements OnInit {
   }
 
   getWebPassList() {
-    this.configService.get(this.chipher_password).subscribe(
-      (data: Array<WebPass>) => {
-        // Decode and create a new WebPass list
-        this.list = data.map((x) => {
-          const w = new WebPass(x);
-          w.decrypt(this.chipher_password);
+    this.g.cryptPass(this.chipher_password, (encrypted) => {
+      this.configService.get(encrypted).subscribe(
+        (data: Array<WebPass>) => {
+          // Decode and create a new WebPass list
+          this.list = data.map((x) => {
+            const w = new WebPass(x);
+            w.decrypt(this.chipher_password);
 
-          return w;
-        }, this);
+            return w;
+          }, this);
 
-        this.list.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          } else {
-            if (a.name > b.name) {
-              return 1;
+          this.list.sort((a, b) => {
+            if (a.name < b.name) {
+              return -1;
             } else {
-              return 0;
+              if (a.name > b.name) {
+                return 1;
+              } else {
+                return 0;
+              }
             }
-          }
-        });
+          });
 
-        this.logged = true;
-        this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
-      },
-      err => {
-        this.errorMessage = 'The password is not correct';
-        this.chipher_password = '';
-        this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
+          this.logged = true;
+          this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
+        },
+        err => {
+          this.errorMessage = 'The password is not correct';
+          this.chipher_password = '';
+          this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
 
-        clearInterval(this.interval);
-        this.interval = setInterval(() => {
-          this.errorMessage = '';
           clearInterval(this.interval);
-        }, 2000);
-      }
-    );
+          this.interval = setInterval(() => {
+            this.errorMessage = '';
+            clearInterval(this.interval);
+          }, 2000);
+        }
+      );
+    });
   }
 
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.chipher_password);
-    this.configService.update(webPass, this.chipher_password)
-      .subscribe(() => {
-        this.sendMessage("Database updated");
+    this.g.cryptPass(this.chipher_password, (encrypted) => {
+      this.configService.update(webPass, encrypted)
+        .subscribe(() => {
+          this.sendMessage("Database updated");
+        });
       });
   }
 
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.chipher_password);
-    this.configService.create(webPass, this.chipher_password).subscribe((id: number) => {
-      webPass.id = id;
-      webPass.decrypt(this.chipher_password);
-      this.list.push(webPass);
+    this.g.cryptPass(this.chipher_password, (encrypted) => {
+      this.configService.create(webPass, encrypted).subscribe((id: number) => {
+        webPass.id = id;
+        webPass.decrypt(this.chipher_password);
+        this.list.push(webPass);
+      });
     });
   }
 
@@ -119,8 +129,10 @@ export class WebPassListComponent implements OnInit {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.configService.delete(webPass.id, this.chipher_password).subscribe(() => {
-      this.list.splice(i, 1);
+    this.g.cryptPass(this.chipher_password, (encrypted) => {
+      this.configService.delete(webPass.id, encrypted).subscribe(() => {
+        this.list.splice(i, 1);
+      });
     });
   }
 
