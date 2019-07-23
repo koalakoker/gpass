@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import  * as CryptoJS from '../../../node_modules/crypto-js'
+import { Refreshable } from '../modules/refreshable';
 
 @Component({
   selector: 'app-pass-generator',
   templateUrl: './pass-generator.component.html',
   styleUrls: ['./pass-generator.component.css']
 })
-export class PassGeneratorComponent implements OnInit {
+export class PassGeneratorComponent implements OnInit, Refreshable {
 
   newPass = "";
   entropy_pool: string = '';
@@ -25,6 +26,9 @@ export class PassGeneratorComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  refresh() {
   }
 
   copyToClipboard() {

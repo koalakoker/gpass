@@ -1,20 +1,15 @@
 <input type="checkbox" id="nav-toggle" hidden>
 <nav class="nav">
-<label for="nav-toggle" class="nav-toggle" onclick></label>
+<label *ngIf="logged" for="nav-toggle" class="nav-toggle" onclick></label>
 <ul>
-  <li><a href="#1">Uno </a>
-  <li><a href="#2">Due</a>
-  <li><a href="#3">Tre</a>
-  <li><a href="#4">Quattro</a>
-  <li><a href="#5">Cinque</a>
-  <li><a href="#6">Sei</a>
-  <li><a href="#7">Sete</a>
+  <li><a href="/list/0">Tutte</a></li>
+  <li *ngFor="let cat of category">
+    <a href="/list/{{cat.id}}">{{cat.name}}</a>
+  </li>
 </ul>
 </nav>
-
-<input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password" placeholder="Insert master password">
+{{cat}}
 <button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
-<button *ngIf="logged" (click)="logOut()"    class="btn-dark">Logout</button>
 <div>
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let element of list; let i = index" 
@@ -84,6 +79,15 @@
           <label>Password
             <input type="password" class="form-control" [(ngModel)]="list[i].pass"             placeholder="pass"     (change)="save(i)">
           </label><br>
+          <label>Category
+            <select (change)="save(i)">
+              <option *ngFor="let cat of category"
+                [ngValue]="cat.id"
+                [selected]="cat.id === list[i].category_id">
+                {{cat.name}}
+              </option>
+            </select>
+          </label><br>
           <label>Registration Date:
             <input type="text"     class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date"     (change)="save(i)">
           </label><button class="btn btn-info" (click)="onTodayButton(i)">Today</button><br>
@@ -105,4 +109,3 @@
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
   {{errorMessage}}
 </div>
-{{test}}

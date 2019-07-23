@@ -7,6 +7,7 @@ export class WebPass {
     url: string;
     username: string;
     pass: string;
+    category_id: number;
     registrationDate: string;
     expirationDate: string;
 
@@ -36,22 +37,24 @@ export class WebPass {
     constructor(webPass?: WebPass) {
         if (webPass == null)
         {
-            this.id = 0;
-            this.name     = '';
-            this.url      = '';
-            this.username = '';
-            this.pass     = '';
+            this.id          = 0;
+            this.name        = '';
+            this.url         = '';
+            this.username    = '';
+            this.pass        = '';
+            this.category_id = 0;
             this.setToday();
         }
         else
         {
-            this.id = webPass.id;
-            this.name = webPass.name;
-            this.url = webPass.url;
-            this.username = webPass.username;
-            this.pass = webPass.pass;
+            this.id =               webPass.id;
+            this.name =             webPass.name;
+            this.url =              webPass.url;
+            this.username =         webPass.username;
+            this.pass =             webPass.pass;
+            this.category_id =      webPass.category_id;
             this.registrationDate = webPass.registrationDate;
-            this.expirationDate = webPass.expirationDate;
+            this.expirationDate =   webPass.expirationDate;
         }
     }
 
@@ -72,12 +75,13 @@ export class WebPass {
     mystr(): string {
         const out: string = 
               'WebPass {' + ((this.id!==undefined)?'id:' + this.id + ', ':'') 
-            + 'name:' + this.name 
-            + 'url:"' + this.url 
-            + '", username:"' + this.username 
-            + '", pass:"' + this.pass 
+            + 'name:'                 + this.name 
+            + 'url:"'                 + this.url 
+            + '", username:"'         + this.username 
+            + '", pass:"'             + this.pass
+            + '", category:"'         + this.category_id 
             + '", registrationDate:"' + this.registrationDate 
-            + '", expirationDate:"' + this.expirationDate 
+            + '", expirationDate:"'   + this.expirationDate 
             + '"}';
 
         return out;

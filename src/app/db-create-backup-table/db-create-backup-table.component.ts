@@ -1,3 +1,4 @@
+import { Refreshable } from './../modules/refreshable';
 import { PopupMessageComponent } from './../popup-message/popup-message.component';
 import { WebPassService } from './../services/web-pass.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -11,13 +12,16 @@ export class dbCreateTableForm {
   templateUrl: './db-create-backup-table.component.html',
   styleUrls: ['./db-create-backup-table.component.css']
 })
-export class DbCreateBackupTableComponent implements OnInit {
+export class DbCreateBackupTableComponent implements OnInit, Refreshable {
 
   url: string = "db_create_table_backup.php";
   val: dbCreateTableForm = new dbCreateTableForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
 
   constructor(private httpService: WebPassService) { }
+
+  refresh() {
+  }
 
   ngOnInit() {
   }

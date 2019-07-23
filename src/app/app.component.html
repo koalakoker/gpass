@@ -1,11 +1,20 @@
 <h1>{{title}}</h1>
-<router-outlet></router-outlet>
 <nav>
-    <a routerLink="/list"         >Webpass list          </a> -
-    <a routerLink="/newPass"      >New password          </a> -
-    <a routerLink="/changePass"   >Change master password</a> -
-    <a routerLink="/dbCreateTable">CreateBackupTable     </a> - 
-    <a routerLink="/dbBackup"     >Backup                </a>
+    <a routerLink="/list/0">Webpass list </a> -
+    <a routerLink='/category'>Category </a> -
+    <a routerLink="/newPass">New password </a> -
+    <a routerLink="/changePass">Change master password</a> -
+    <a routerLink="/dbCreateTable">CreateBackupTable </a> -
+    <a routerLink="/dbBackup">Backup </a>
 </nav>
+<input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password"
+    placeholder="Insert master password">
+<button *ngIf="logged" (click)="logOut()" class="btn-dark">Logout</button>
+<router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
+<br>
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
+    {{errorMessage}}
+</div>
+
 
     

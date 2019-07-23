@@ -78,6 +78,11 @@ export class GCrypto {
              });
             const encrypted = crypted.ciphertext.toString();
             callback(crypted.ciphertext.toString());
+        }, err => {
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            this.cryptPass(pass, (encrypted: string) => {
+                callback(encrypted);
+            })
         });
     }
 }

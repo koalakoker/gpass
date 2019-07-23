@@ -1,3 +1,4 @@
+import { Refreshable } from './../modules/refreshable';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { WebPassService } from '../services/web-pass.service';
 import { WebPass } from '../modules/webpass';
@@ -9,7 +10,7 @@ import { GCrypto } from '../modules/gcrypto';
   templateUrl: './change-pass.component.html',
   styleUrls: ['./change-pass.component.css']
 })
-export class ChangePassComponent implements OnInit {
+export class ChangePassComponent implements OnInit, Refreshable {
 
   old_chipher_password        = '';
   new_chipher_password        = '';
@@ -25,6 +26,9 @@ export class ChangePassComponent implements OnInit {
   constructor(private configService: WebPassService) { }
 
   ngOnInit() {
+  }
+
+  refresh() {
   }
 
   onChangePass() {

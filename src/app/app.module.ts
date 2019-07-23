@@ -15,6 +15,7 @@ import { ChangePassComponent } from './change-pass/change-pass.component';
 import { DbCreateBackupTableComponent } from './db-create-backup-table/db-create-backup-table.component';
 import { DbBackupComponent } from './db-backup/db-backup.component';
 import { PopupMessageComponent } from './popup-message/popup-message.component';
+import { CategoryComponent } from './category/category.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { PopupMessageComponent } from './popup-message/popup-message.component';
     ChangePassComponent,
     DbCreateBackupTableComponent,
     DbBackupComponent,
-    PopupMessageComponent
+    PopupMessageComponent,
+    CategoryComponent
   ],
   imports: [
     BrowserModule,

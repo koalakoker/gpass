@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { WebPassService } from '../services/web-pass.service';
 import { PopupMessageComponent } from '../popup-message/popup-message.component';
+import { Refreshable } from '../modules/refreshable';
 
 export class dbBackupForm {
   chiper_key  : string = '';
@@ -12,7 +13,7 @@ export class dbBackupForm {
   templateUrl: './db-backup.component.html',
   styleUrls: ['./db-backup.component.css']
 })
-export class DbBackupComponent implements OnInit {
+export class DbBackupComponent implements OnInit, Refreshable {
 
   constructor(private httpService: WebPassService) { }
 
@@ -21,6 +22,9 @@ export class DbBackupComponent implements OnInit {
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
 
   ngOnInit() {
+  }
+
+  refresh() {
   }
 
   onSubmit() {

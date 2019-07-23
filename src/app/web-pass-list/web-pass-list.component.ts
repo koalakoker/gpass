@@ -3,66 +3,81 @@ import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
 import { GCrypto } from '../modules/gcrypto';
+import { Refreshable } from '../modules/refreshable';
+import { Category } from '../modules/category';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-web-pass-list',
   templateUrl: './web-pass-list.component.html',
   styleUrls: ['./web-pass-list.component.css']
 })
-export class WebPassListComponent implements OnInit {
+export class WebPassListComponent implements OnInit, Refreshable {
 
+  cat: number;
   g: GCrypto;
   list: WebPass[];
+  category: Category[];
   selecteWebPass: WebPass;
   edit: boolean = false;
   chipher_password: string;
   logged = false;
-  errorMessage = '';
-  message = '';
+  errorMessage: string = '';
+  message: string = '';
   interval;
-  test = '';
- 
+  
   constructor(
+    private route: ActivatedRoute,
     private configService: WebPassService,
     private sessionService: SessionService
     ) {
       this.g = new GCrypto(this.configService);
     }
 
-  private KEY_CHIPER_PASS = 'ChipherPassword';
-
   ngOnInit() {
-    const storedPass = this.sessionService.getKey(this.KEY_CHIPER_PASS);
-    if ((storedPass != undefined) && (storedPass!= '')) {
+    this.checklogged();
+  }
+
+  refresh() {
+    this.checklogged();
+  }
+
+  checklogged() {
+    const storedPass = this.sessionService.getKey('ChipherPassword');
+    if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
+      this.logged = true;
       this.enter();
+    }
+    else {
+      this.chipher_password = '';
+      this.logged = false;
+      this.list = [];
     }
   }
 
   enter() {
-    this.errorMessage = '';
-    this.getWebPassList();
+    this.cat = +this.route.snapshot.paramMap.get('cat');
+    this.getWebPassList(this.cat);
   }
 
-  logOut() {
-    this.logged = false;
-    this.chipher_password = '';
-    this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
-    this.list = [];
-  }
-
-  getWebPassList() {
+  getWebPassList(cat: number) {
     this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.get(encrypted).subscribe(
+      this.configService.get(encrypted,'gpass').subscribe(
         (data: Array<WebPass>) => {
           // Decode and create a new WebPass list
           this.list = data.map((x) => {
             const w = new WebPass(x);
             w.decrypt(this.chipher_password);
-
             return w;
           }, this);
-
+          // Select only by cat (0 = all)
+          if (cat != 0)
+          {
+            this.list = this.list.filter((x) => {
+              return (x.category_id == cat);
+            })
+          }
           this.list.sort((a, b) => {
             if (a.name < b.name) {
               return -1;
@@ -74,15 +89,9 @@ export class WebPassListComponent implements OnInit {
               }
             }
           });
-
-          this.logged = true;
-          this.sessionService.setKey(this.KEY_CHIPER_PASS, this.chipher_password);
         },
         err => {
-          this.errorMessage = 'The password is not correct';
-          this.chipher_password = '';
-          this.sessionService.setKey(this.KEY_CHIPER_PASS, '');
-
+          this.errorMessage = 'Server error';
           clearInterval(this.interval);
           this.interval = setInterval(() => {
             this.errorMessage = '';
@@ -90,6 +99,9 @@ export class WebPassListComponent implements OnInit {
           }, 2000);
         }
       );
+      this.configService.get(encrypted, 'category').subscribe( (data: Array<Category>) => {
+        this.category = data;
+      });
     });
   }
 
@@ -97,11 +109,10 @@ export class WebPassListComponent implements OnInit {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.chipher_password);
     this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.update(webPass, encrypted)
-        .subscribe(() => {
-          this.sendMessage("Database updated");
-        });
+      this.configService.update(webPass, encrypted).subscribe(() => {
+        this.sendMessage("Database updated");
       });
+    });
   }
 
   onNewFunc() {
@@ -112,6 +123,9 @@ export class WebPassListComponent implements OnInit {
         webPass.id = id;
         webPass.decrypt(this.chipher_password);
         this.list.push(webPass);
+      },
+      err => {
+        console.log(err);
       });
     });
   }

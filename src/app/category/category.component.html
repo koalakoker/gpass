@@ -1,0 +1,11 @@
+<button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
+<div *ngIf="logged" class="list-group-item-primary">
+  <div *ngFor="let element of category; let i = index">
+    <label>Id:{{category[i].id}}
+      <input type="text" class="form-control" [(ngModel)]="category[i].name" placeholder="categoria" (change)="save(i)">
+    </label><br>
+  </div>
+</div>
+<div class="alert alert-secondary" role="alert" *ngIf="message!==''">
+  {{message}}
+</div>
