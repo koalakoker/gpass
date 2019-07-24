@@ -4,6 +4,7 @@ import { WebPassService } from './services/web-pass.service';
 import { SessionService } from './services/session.service';
 import { WebPass } from './modules/webpass';
 import { Refreshable } from './modules/refreshable';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,6 @@ import { Refreshable } from './modules/refreshable';
 })
 export class AppComponent implements OnInit {
   
-  title: string = "GPass"
   g: GCrypto;
   chipher_password: string;
   logged: boolean = false;
@@ -20,11 +20,39 @@ export class AppComponent implements OnInit {
   message: string = '';
   interval;
 
+  routerData = [{link: '/list/0'       , label: "Webpass"               , activated: ""},
+                {link: '/category'     , label: "Category"              , activated: ""},
+                {link: '/newPass'      , label: "New password"          , activated: ""},
+                {link: '/changePass'   , label: "Change master password", activated: ""},
+                {link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
+                {link: '/dbBackup'     , label: "Backup"                , activated: ""}];
+
   constructor(
     private configService: WebPassService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private router: Router
   ) {
     this.g = new GCrypto(this.configService);
+    router.events.subscribe(val => {
+      if (val instanceof NavigationEnd)
+      {
+        if (val.url.slice(1,5) == "list") {
+          this.routerData.forEach((link) => {
+            link.activated = "";
+          });
+          this.routerData[0].activated = "active";
+        } else {
+          this.routerData.forEach((link) => {
+            if (link.link === val.url) {
+              link.activated = "active";
+            }
+            else {
+              link.activated = "";
+            }
+          });
+        }
+      }
+    })
   }
 
   ngOnInit() {
