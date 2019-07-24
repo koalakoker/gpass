@@ -79,7 +79,7 @@
             <input type="password" class="form-control" [(ngModel)]="list[i].pass"             placeholder="pass"     (change)="save(i)">
           </label><br>
           <label>Category
-            <select (change)="save(i)">
+            <select (change)="changeCategory(i,$event)">
               <option *ngFor="let cat of category"
                 [ngValue]="cat.id"
                 [selected]="cat.id === list[i].category_id">

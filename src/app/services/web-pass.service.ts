@@ -26,6 +26,7 @@ export class WebPassService {
   }
 
   update(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Observable<any> {
+    console.log(webPass);
     return this.http.put(this.urlAddr + '/' + table +"/"+webPass.id, webPass, {
       params: {["chipher_password"]: chipher_password},
       headers: new HttpHeaders({

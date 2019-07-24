@@ -60,7 +60,6 @@ export class AppComponent implements OnInit {
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
       this.logged = true;
-      this.enter();
     }
   }
 
@@ -71,6 +70,7 @@ export class AppComponent implements OnInit {
         (data: Array<WebPass>) => {
           this.logged = true;
           this.sessionService.setKey('ChipherPassword', this.chipher_password);
+          this.sessionService.setKey('EncryptedPassword', encrypted);
           this.routedComponent.refresh();
         },
         err => {

@@ -21,6 +21,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   selecteWebPass: WebPass;
   edit: boolean = false;
   chipher_password: string;
+  encrypted_password: string;
   logged = false;
   errorMessage: string = '';
   message: string = '';
@@ -46,6 +47,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
+      this.encrypted_password = this.sessionService.getKey('EncryptedPassword');
       this.logged = true;
       this.enter();
     }
@@ -62,45 +64,48 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   getWebPassList(cat: number) {
-    this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.get(encrypted,'gpass').subscribe(
-        (data: Array<WebPass>) => {
-          // Decode and create a new WebPass list
-          this.list = data.map((x) => {
-            const w = new WebPass(x);
-            w.decrypt(this.chipher_password);
-            return w;
-          }, this);
-          // Select only by cat (0 = all)
-          if (cat != 0)
-          {
-            this.list = this.list.filter((x) => {
-              return (x.category_id == cat);
-            })
+    this.configService.get(this.encrypted_password,'gpass').subscribe((data: Array<WebPass>) => {
+      // Decode and create a new WebPass list
+      this.list = data.map((x) => {
+        const w = new WebPass(x);
+        w.decrypt(this.chipher_password);
+        return w;
+      }, this);
+      // Select only by cat (0 = all)
+      if (cat != 0)
+      {
+        this.list = this.list.filter((x) => {
+          return (x.category_id == cat);
+        })
+      }
+      this.list.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } else {
+          if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
           }
-          this.list.sort((a, b) => {
-            if (a.name < b.name) {
-              return -1;
-            } else {
-              if (a.name > b.name) {
-                return 1;
-              } else {
-                return 0;
-              }
-            }
-          });
-        },
-        err => {
-          this.errorMessage = 'Server error';
-          clearInterval(this.interval);
-          this.interval = setInterval(() => {
-            this.errorMessage = '';
-            clearInterval(this.interval);
-          }, 2000);
         }
-      );
-      this.configService.get(encrypted, 'category').subscribe( (data: Array<Category>) => {
-        this.category = data;
+      });
+    },
+    err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.getWebPassList(this.cat);
+      });
+    });
+    this.configService.get(this.encrypted_password, 'category').subscribe( (data: Array<Category>) => {
+      this.category = data;
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.getWebPassList(this.cat);
       });
     });
   }
@@ -108,26 +113,45 @@ export class WebPassListComponent implements OnInit, Refreshable {
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.chipher_password);
-    this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.update(webPass, encrypted).subscribe(() => {
-        this.sendMessage("Database updated");
+    this.configService.update(webPass, this.encrypted_password).subscribe(() => {
+      this.sendMessage("Database updated");
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.save(index);
       });
     });
+  }
+
+  changeCategory(i: number, event) {
+    this.category.forEach((cat: Category) => {
+      if (cat.name ==event.target.value)
+      {
+        console.log("find at id:" + cat.id);
+        this.list[i].category_id = cat.id;
+        this.save(i);
+      }
+    })
   }
 
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.chipher_password);
-    this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.create(webPass, encrypted).subscribe((id: number) => {
-        webPass.id = id;
-        webPass.decrypt(this.chipher_password);
-        this.list.push(webPass);
-      },
-      err => {
-        console.log(err);
+    this.configService.create(webPass, this.encrypted_password).subscribe((id: number) => {
+      webPass.id = id;
+      webPass.decrypt(this.chipher_password);
+      this.list.push(webPass);
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.onNewFunc();
       });
     });
+    
   }
 
   onSelect(webPass: WebPass) {
@@ -143,11 +167,17 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.delete(webPass.id, encrypted).subscribe(() => {
-        this.list.splice(i, 1);
+    this.configService.delete(webPass.id, this.encrypted_password).subscribe(() => {
+      this.list.splice(i, 1);
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.onButtonRemove(i);
       });
     });
+    
   }
 
   isSelected(webPass: WebPass): boolean {
