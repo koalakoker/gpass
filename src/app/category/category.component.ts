@@ -92,6 +92,21 @@ export class CategoryComponent implements OnInit, Refreshable {
     });
   }
 
+  onButtonRemove(i: number) {
+    const cat = this.category[i];
+    this.configService.delete(cat.id, this.encrypted_password, 'category').subscribe(() => {
+      this.category.splice(i, 1);
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.onButtonRemove(i);
+      });
+    });
+
+  }
+
   sendMessage(text: string) {
     clearInterval(this.interval);
     this.message = text;

@@ -129,7 +129,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
     this.category.forEach((cat: Category) => {
       if (cat.name ==event.target.value)
       {
-        console.log("find at id:" + cat.id);
         this.list[i].category_id = cat.id;
         this.save(i);
       }
