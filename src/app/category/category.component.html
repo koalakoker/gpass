@@ -1,17 +1,38 @@
 <button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
 <div *ngIf="logged" class="list-group-item-primary">
-  <div *ngFor="let element of category; let i = index">
-    <input type="text" class="form-control" [(ngModel)]="category[i].name" placeholder="categoria" (change)="save(i)">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let element of category; let i = index" [class.active]="isSelected(element)"
+      (click)="onSelect(element)">
     
+    <!-- Data -->
+    <a target="blank" class="spanColFixed">{{element.name}}</a>
+    <br><br>
+      
+    <!-- Edit button -->
+    <button type="button" class="btn" *ngIf="isSelected(element)" [class.btn-secondary]="!edit" [class.btn-dark]="edit"
+      (click)="onButtonEdit()">
+      Edit
+    </button>
+
     <!-- Remove button -->
-    <button type="button" class="btn" 
+    <button type="button" class="btn" *ngIf="isSelected(element)" [class.btn-secondary]="!edit" [class.btn-dark]="edit"
       (click)="onButtonRemove(i)">
       Del
     </button>
     
+    <div class="list-group-item-primary" *ngIf="edit && isSelected(element)">
     
-  </div>
-</div>
-<div class="alert alert-secondary" role="alert" *ngIf="message!==''">
-  {{message}}
+      <!-- Edit element -->
+      <div>
+        <label>Name
+          <input type="text" class="form-control" [(ngModel)]="category[i].name" placeholder="category" (change)="save(i)">
+        </label>
+        <br>
+      </div>
+    
+    </div>
+    <div class="alert alert-secondary" role="alert" *ngIf="(message!=='')&&(isSelected(element))">
+      {{message}}
+    </div>
+  </ul>
 </div>

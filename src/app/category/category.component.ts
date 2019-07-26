@@ -12,6 +12,8 @@ import { WebPassService } from '../services/web-pass.service';
 })
 export class CategoryComponent implements OnInit, Refreshable {
 
+  edit: boolean;
+  selecteCategory: Category;
   logged = false;
   chipher_password: string;
   encrypted_password: string;
@@ -92,6 +94,10 @@ export class CategoryComponent implements OnInit, Refreshable {
     });
   }
 
+  onButtonEdit() {
+    this.edit = !this.edit;
+  }
+
   onButtonRemove(i: number) {
     const cat = this.category[i];
     this.configService.delete(cat.id, this.encrypted_password, 'category').subscribe(() => {
@@ -105,6 +111,17 @@ export class CategoryComponent implements OnInit, Refreshable {
       });
     });
 
+  }
+
+  isSelected(cat: Category): boolean {
+    return (cat === this.selecteCategory);
+  }
+
+  onSelect(cat: Category) {
+    if (this.selecteCategory != cat) {
+      this.edit = false;
+    }
+    this.selecteCategory = cat;
   }
 
   sendMessage(text: string) {
