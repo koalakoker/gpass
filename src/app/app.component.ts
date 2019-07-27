@@ -19,6 +19,8 @@ export class AppComponent implements OnInit {
   errorMessage: string = '';
   message: string = '';
   interval;
+  private routedComponent: Refreshable;
+  childInjected: string = "";
 
   routerData = [{link: '/list/0'       , label: "Webpass"               , activated: ""},
                 {link: '/category'     , label: "Category"              , activated: ""},
@@ -71,7 +73,7 @@ export class AppComponent implements OnInit {
           this.logged = true;
           this.sessionService.setKey('ChipherPassword', this.chipher_password);
           this.sessionService.setKey('EncryptedPassword', encrypted);
-          this.routedComponent.refresh();
+          this.childInjected = this.routedComponent.refresh("");
         },
         err => {
           this.errorMessage = 'The password is not correct';
@@ -92,12 +94,17 @@ export class AppComponent implements OnInit {
     this.logged = false;
     this.chipher_password = '';
     this.sessionService.setKey('ChipherPassword', '');
-    this.routedComponent.refresh();
+    this.routedComponent.refresh("");
+    this.childInjected = "";
   }
 
-  private routedComponent: Refreshable;
   public setRoutedComponent(componentRef: Refreshable) {
     this.routedComponent = componentRef;
-    this.routedComponent.refresh();
+    this.childInjected = this.routedComponent.refresh("");
+  }
+
+  onNewFunc() {
+    // Propagate to child
+    this.routedComponent.refresh("btnPress");
   }
 }

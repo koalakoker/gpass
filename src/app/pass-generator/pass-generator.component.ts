@@ -29,6 +29,7 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
   }
 
   refresh() {
+    return "";
   }
 
   copyToClipboard() {

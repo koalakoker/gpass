@@ -29,6 +29,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
   }
 
   refresh() {
+    return "";
   }
 
   onChangePass() {

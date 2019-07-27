@@ -1,4 +1,3 @@
-<button *ngIf="logged" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
 <div *ngIf="logged" class="list-group-item-primary">
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let element of category; let i = index" [class.active]="isSelected(element)"

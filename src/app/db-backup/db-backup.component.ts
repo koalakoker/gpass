@@ -25,6 +25,7 @@ export class DbBackupComponent implements OnInit, Refreshable {
   }
 
   refresh() {
+    return "";
   }
 
   onSubmit() {

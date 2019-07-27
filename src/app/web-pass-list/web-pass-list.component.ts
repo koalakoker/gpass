@@ -39,8 +39,15 @@ export class WebPassListComponent implements OnInit, Refreshable {
     this.checklogged();
   }
 
-  refresh() {
-    this.checklogged();
+  refresh(cmd: string = "") {
+    if (cmd == "")
+    {
+      this.checklogged();
+      return "btnInsert";
+    }
+    if (cmd == "btnPress") {
+      this.onNewFunc();
+    }
   }
 
   checklogged() {

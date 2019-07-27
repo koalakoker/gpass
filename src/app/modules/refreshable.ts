@@ -1,3 +1,3 @@
 export interface Refreshable {
-    refresh: () => void;
+    refresh: (string) => string;
 }
