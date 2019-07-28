@@ -180,7 +180,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
   onButtonCategory(webPassIndexSelected: number)
   {
     this.showCategory = !this.showCategory;
-    
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
       this.category.forEach((cat) => {
@@ -217,24 +216,39 @@ export class WebPassListComponent implements OnInit, Refreshable {
     
   }
 
+  relExist(webPassIndex: number, catIndex: number, foundCbk: (index: number) => void, notFoundCbk: () => void) {
+    var found: Boolean = false;
+    this.relWebCat.forEach((rel, index) => {
+      if ((rel.id_web == this.list[webPassIndex].id) &&
+          (rel.id_cat == this.category[catIndex].id)) {
+        found = true;
+        foundCbk(index);
+      }
+    });
+    if (!found) {
+      notFoundCbk();
+    }
+  }
+
   onCatCheckChange(webPassIndex: number, catIndex: number)
   {
     if (this.selectedWebPassCatChecked[catIndex])
     {
-      // Create a relation between list[webPasIndex] and category[catIndex]
-      var newRel : RelWebCat = new RelWebCat();
-      newRel.id_web = this.list[webPassIndex].id;
-      newRel.id_cat = this.category[catIndex].id;
-      newRel.enabled = true;
-      this.relWebCat.push(newRel);
+      this.relExist(webPassIndex, catIndex, (index: number) => {
+        this.relWebCat[index].enabled = true;
+      }, () => {
+          // Create a relation between list[webPasIndex] and category[catIndex]
+          var newRel: RelWebCat = new RelWebCat();
+          newRel.id_web = this.list[webPassIndex].id;
+          newRel.id_cat = this.category[catIndex].id;
+          newRel.enabled = true;
+          this.relWebCat.push(newRel);
+      });
     }
     else {
-      // Remove relation between list[webPasIndex] and category[catIndex]
-      this.relWebCat.forEach((rel, index) => {
-        if ((rel.id_web == this.list[webPassIndex].id) &&
-            (rel.id_cat == this.category[catIndex].id)) {
-              this.relWebCat.splice(index,1);
-            }
+      this.relExist(webPassIndex, catIndex, (index: number) => {
+        this.relWebCat[index].enabled = false;
+      }, () => {
       });
     }
     console.log(this.relWebCat);
