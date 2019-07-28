@@ -1,3 +1,4 @@
+import { RelWebCat } from './../modules/relwebcat';
 import { Component, OnInit } from '@angular/core';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
@@ -18,7 +19,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
   g: GCrypto;
   list: WebPass[];
   category: Category[];
-  selecteWebPass: WebPass;
+  relWebCat: RelWebCat[];
+  selectedWebPassCatChecked: boolean[];
+  selectedWebPass: WebPass;
   edit: boolean = false;
   chipher_password: string;
   encrypted_password: string;
@@ -26,6 +29,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   errorMessage: string = '';
   message: string = '';
   interval;
+  showCategory: boolean = false;
   
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +75,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   getWebPassList(cat: number) {
+    // Get Webpass list
     this.configService.get(this.encrypted_password,'gpass').subscribe((data: Array<WebPass>) => {
       // Decode and create a new WebPass list
       this.list = data.map((x) => {
@@ -105,8 +110,28 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.getWebPassList(this.cat);
       });
     });
+
+    // Get Category list
     this.configService.get(this.encrypted_password, 'category').subscribe( (data: Array<Category>) => {
       this.category = data;
+      this.selectedWebPassCatChecked = new Array();
+      data.forEach(element => {
+        this.selectedWebPassCatChecked.push(false);
+      });
+      
+      console.log(this.selectedWebPassCatChecked);
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.getWebPassList(this.cat);
+      });
+    });
+
+    // Get RelWebCat
+    this.configService.get(this.encrypted_password, 'webcatrel').subscribe((data: Array<RelWebCat>) => {
+      this.relWebCat = data;
     }, err => {
       // Encrypted pass scaduta o Chipher Password errata
       this.g.cryptPass(this.chipher_password, (encrypted) => {
@@ -161,10 +186,15 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   onSelect(webPass: WebPass) {
-    if (this.selecteWebPass != webPass) {
+    if (this.selectedWebPass != webPass) {
       this.edit = false;
     }
-    this.selecteWebPass = webPass;
+    this.selectedWebPass = webPass;
+  }
+
+  onSelectCategory()
+  {
+    this.showCategory = !this.showCategory;
   }
 
   onButtonEdit() {
@@ -186,8 +216,13 @@ export class WebPassListComponent implements OnInit, Refreshable {
     
   }
 
+  onCatCheckChange()
+  {
+    this.sendMessage("Database updated");
+  }
+
   isSelected(webPass: WebPass): boolean {
-    return (webPass === this.selecteWebPass);
+    return (webPass === this.selectedWebPass);
   }
 
   sendMessage(text: string) {

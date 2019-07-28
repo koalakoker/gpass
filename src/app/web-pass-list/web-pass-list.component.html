@@ -1,3 +1,4 @@
+
 <input type="checkbox" id="nav-toggle" hidden>
 <nav class="nav">
 <label *ngIf="logged" for="nav-toggle" class="nav-toggle" onclick></label>
@@ -8,6 +9,13 @@
   </li>
 </ul>
 </nav>
+
+<!-- <div class="form-group form-check">
+  <input type="checkbox" class="form-check-input" id="test_id" [(ngModel)]="tchecked" (change)='onTCatCheckChange()'>
+  <label class="form-check-label" for="test_id">Test</label>
+  {{tchecked}}
+</div> -->
+
 <div>
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let element of list; let i = index" 
@@ -66,8 +74,15 @@
         <div>
           <label>Name
             <input type="text"     class="form-control" [(ngModel)]="list[i].name"             placeholder="name"     (change)="save(i)">
-          </label>
+          </label><button class="btn btn-info" (click)="onSelectCategory()">Category</button>
           <br>
+          <div class="list-group-item list-group-item-success" *ngIf="showCategory">
+            <div class="form-group form-check" *ngFor="let cat of category; let j = index">
+              <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
+                (change)="onCatCheckChange()">
+              <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
+            </div>
+          </div>
           <label>Url
             <input type="text"     class="form-control" [(ngModel)]="list[i].url"              placeholder="url"      (change)="save(i)">
           </label><br>
@@ -76,15 +91,6 @@
           </label><br>
           <label>Password
             <input type="password" class="form-control" [(ngModel)]="list[i].pass"             placeholder="pass"     (change)="save(i)">
-          </label><br>
-          <label>Category
-            <select (change)="changeCategory(i,$event)">
-              <option *ngFor="let cat of category"
-                [ngValue]="cat.id"
-                [selected]="cat.id === list[i].category_id">
-                {{cat.name}}
-              </option>
-            </select>
           </label><br>
           <label>Registration Date:
             <input type="text"     class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date"     (change)="save(i)">
