@@ -15,7 +15,7 @@
 <input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password"
     placeholder="Insert master password">
 <button *ngIf="logged" (click)="logOut()" class="btn-dark">Logout</button>
-<button *ngIf="childInjected=='btnInsert'" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
+<button *ngIf="logged && (childInjected=='btnInsert')" (click)="onNewFunc()" class="btn-dark" type="button">Insert</button>
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
