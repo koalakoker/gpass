@@ -10,12 +10,6 @@
 </ul>
 </nav>
 
-<!-- <div class="form-group form-check">
-  <input type="checkbox" class="form-check-input" id="test_id" [(ngModel)]="tchecked" (change)='onTCatCheckChange()'>
-  <label class="form-check-label" for="test_id">Test</label>
-  {{tchecked}}
-</div> -->
-
 <div>
   <ul class="list-group">
     <li class="list-group-item" *ngFor="let element of list; let i = index" 
@@ -74,12 +68,12 @@
         <div>
           <label>Name
             <input type="text"     class="form-control" [(ngModel)]="list[i].name"             placeholder="name"     (change)="save(i)">
-          </label><button class="btn btn-info" (click)="onSelectCategory()">Category</button>
+          </label><button class="btn btn-info" (click)="onButtonCategory(i)">Category</button>
           <br>
           <div class="list-group-item list-group-item-success" *ngIf="showCategory">
             <div class="form-group form-check" *ngFor="let cat of category; let j = index">
               <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
-                (change)="onCatCheckChange()">
+                (change)="onCatCheckChange(i,j)">
               <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
             </div>
           </div>
