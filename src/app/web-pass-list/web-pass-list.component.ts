@@ -187,13 +187,12 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.relWebCat.forEach((rel) => {
           if ((rel.id_web == this.list[webPassIndexSelected].id) &&
               (rel.id_cat == cat.id) &&
-              (rel.enabled)) {
+              (rel.enabled == 1)) {
                 found = true;
               }
         });
         this.selectedWebPassCatChecked.push(found);
       });
-      console.log(this.selectedWebPassCatChecked);
     }
   }
 
@@ -230,29 +229,57 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
   }
 
+  saveRel(rel: RelWebCat) {
+    this.configService.updateRelWebCat(rel, this.encrypted_password).subscribe(() => {
+      this.sendMessage("Database updated");
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.saveRel(rel);
+      });
+    });
+  }
+
+  newRel(rel: RelWebCat) {
+    this.configService.createRelWebCat(rel, this.encrypted_password).subscribe((id: number) => {
+      rel.id = id;
+      this.sendMessage("Database updated");
+    }, err => {
+      // Encrypted pass scaduta o Chipher Password errata
+      this.g.cryptPass(this.chipher_password, (encrypted) => {
+        this.sessionService.setKey('EncryptedPassword', encrypted);
+        this.encrypted_password = encrypted;
+        this.newRel(rel);
+      });
+    });
+  }
+
   onCatCheckChange(webPassIndex: number, catIndex: number)
   {
     if (this.selectedWebPassCatChecked[catIndex])
     {
       this.relExist(webPassIndex, catIndex, (index: number) => {
-        this.relWebCat[index].enabled = true;
+        this.relWebCat[index].enabled = 1;
+        this.saveRel(this.relWebCat[index]);
       }, () => {
           // Create a relation between list[webPasIndex] and category[catIndex]
           var newRel: RelWebCat = new RelWebCat();
           newRel.id_web = this.list[webPassIndex].id;
           newRel.id_cat = this.category[catIndex].id;
-          newRel.enabled = true;
+          newRel.enabled = 1;
           this.relWebCat.push(newRel);
+          this.newRel(newRel);
       });
     }
     else {
       this.relExist(webPassIndex, catIndex, (index: number) => {
-        this.relWebCat[index].enabled = false;
+        this.relWebCat[index].enabled = 0;
+        this.saveRel(this.relWebCat[index]);
       }, () => {
       });
     }
-    console.log(this.relWebCat);
-    this.sendMessage("Database updated");
   }
 
   isSelected(webPass: WebPass): boolean {

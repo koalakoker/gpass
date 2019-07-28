@@ -60,7 +60,7 @@ export class WebPassService {
   }
 
   updateRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Observable<any> {
-    return this.http.put(this.urlAddr + '/' + table + "/" + rel.id_webcatrel, rel, {
+    return this.http.put(this.urlAddr + '/' + table + "/" + rel.id, rel, {
       params: { ["chipher_password"]: chipher_password },
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
