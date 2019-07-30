@@ -7,7 +7,6 @@ export class WebPass {
     url: string;
     username: string;
     pass: string;
-    category_id: number;
     registrationDate: string;
     expirationDate: string;
 
@@ -42,7 +41,6 @@ export class WebPass {
             this.url         = '';
             this.username    = '';
             this.pass        = '';
-            this.category_id = 0;
             this.setToday();
         }
         else
@@ -52,7 +50,6 @@ export class WebPass {
             this.url =              webPass.url;
             this.username =         webPass.username;
             this.pass =             webPass.pass;
-            this.category_id =      webPass.category_id;
             this.registrationDate = webPass.registrationDate;
             this.expirationDate =   webPass.expirationDate;
         }
@@ -70,21 +67,6 @@ export class WebPass {
         const today: Date = new Date();
         const expirationDate: Date = new Date(this.expirationDate);
         return (today > expirationDate);
-    }
-
-    mystr(): string {
-        const out: string = 
-              'WebPass {' + ((this.id!==undefined)?'id:' + this.id + ', ':'') 
-            + 'name:'                 + this.name 
-            + 'url:"'                 + this.url 
-            + '", username:"'         + this.username 
-            + '", pass:"'             + this.pass
-            + '", category:"'         + this.category_id 
-            + '", registrationDate:"' + this.registrationDate 
-            + '", expirationDate:"'   + this.expirationDate 
-            + '"}';
-
-        return out;
     }
 
     crypt(key: string) {
