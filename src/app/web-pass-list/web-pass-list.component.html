@@ -3,9 +3,9 @@
 <nav class="nav">
 <label *ngIf="logged" for="nav-toggle" class="nav-toggle" onclick></label>
 <ul>
-  <li><a href="/list/0">Tutte</a></li>
-  <li *ngFor="let cat of category">
-    <a href="/list/{{cat.id}}">{{cat.name}}</a>
+  <li><a href="/list/0" id={{menuStyle(-1)}}>Tutte</a></li>
+  <li *ngFor="let cat of category; let i = index">
+    <a href="/list/{{cat.id}}" id={{menuStyle(i)}}>{{cat.name}}</a>
   </li>
 </ul>
 </nav>

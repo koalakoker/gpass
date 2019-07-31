@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: DELETE, PUT, POST");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -18,8 +20,12 @@ else
     die("Missing decrypt key!");
 }
 
-$decryptPass = passDecrypt($userPassword);
-$decryptPass = hashPass($decryptPass);
+if (!isset($_SESSION['decryptPass']))
+{
+  $decryptPass = passDecrypt($userPassword);
+  $decryptPass = hashPass($decryptPass);
+  $_SESSION['decryptPass'] = $decryptPass;
+}
 
 $Server   = deChipher($Server,  $decryptPass);
 $Username = deChipher($Username,$decryptPass);
@@ -28,7 +34,9 @@ $DB       = deChipher($DB,      $decryptPass);
 
 if ($Server == "")
 {
-    die("Wrong decrypt key.\nAccess denied!");
+  session_unset();
+  session_destroy();
+  die("Wrong decrypt key.\nAccess denied!");
 }
 
 // get the HTTP method, path and body of the request

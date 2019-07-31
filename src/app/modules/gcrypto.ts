@@ -69,7 +69,6 @@ export class GCrypto {
         const url: string = 'http://worldtimeapi.org/api/timezone/Europe/Rome';
         this.configService.apiGet(url).subscribe( (data: JSON)=> {
             const dateStr: string = data['datetime'].slice(0, 16);
-            console.log("Access:" + dateStr);
             const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
             var hash = CryptoJS.HmacSHA256(dateStr, secret);
             const iv_str = "8DCB7300E8BCA8E5";

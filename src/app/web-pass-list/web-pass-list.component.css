@@ -355,6 +355,10 @@ body {
     transition: color .5s ease, padding .5s ease;
 }
 
+#catSelected {
+ color: lightyellow;
+ font-weight: bold; 
+}
 
 /**
  * stato dei link al passaggio del mouse

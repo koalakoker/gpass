@@ -92,6 +92,15 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
   }
 
+  menuStyle(catList: number): String {
+    var retVal : String = "";
+    if (this.catIndex == (catList+1))
+    {
+      retVal = "catSelected";
+    }
+    return retVal;
+  }
+
   enter() {
     // catIndex = 0 no filter
     // catIndex-1 => category[]
@@ -106,7 +115,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       () => this.afterLoad());
   }
 
-  retry() {
+  retry(err) {
     // Encrypted pass scaduta o Chipher Password errata
     if (!this.passRetry) {
       this.g.cryptPass(this.chipher_password, (encrypted) => {
@@ -121,8 +130,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   getWebPassList(
     webPassCbk: () => void,
     categoryCbk: () => void,
-    relCbk: () => void,
-    ) {
+    relCbk: () => void) {
     // Get Webpass list
     this.configService.get(this.encrypted_password,'gpass').subscribe((data: Array<WebPass>) => {
       // Decode and create a new WebPass list
@@ -144,21 +152,21 @@ export class WebPassListComponent implements OnInit, Refreshable {
       });
       this.listLoad = true;
       webPassCbk();
-    }, err => this.retry());
+    }, err => this.retry(err));
 
     // Get Category list
     this.configService.get(this.encrypted_password, 'category').subscribe( (data: Array<Category>) => {
       this.category = data;
       this.categoryLoad = true;
       categoryCbk();
-    }, err => this.retry());
+    }, err => this.retry(err));
 
     // Get RelWebCat
     this.configService.get(this.encrypted_password, 'webcatrel').subscribe((data: Array<RelWebCat>) => {
       this.relWebCat = data;
       this.relLoad = true;
       relCbk();
-    }, err => this.retry());
+    }, err => this.retry(err));
   }
 
   save(index: number) {
