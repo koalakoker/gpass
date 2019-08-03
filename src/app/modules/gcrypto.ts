@@ -66,7 +66,7 @@ export class GCrypto {
     }
 
     cryptPass(pass: string, callback : (crypted: string) => void) {
-        const url: string = 'http://worldtimeapi.org/api/timezone/Europe/Rome';
+        const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
         this.configService.apiGet(url).subscribe( (data: JSON)=> {
             const dateStr: string = data['datetime'].slice(0, 16);
             const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';

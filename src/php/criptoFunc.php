@@ -43,7 +43,7 @@ function hashPass($password)
 function passDecrypt($encrypted)
 {
     $verbose = false;
-    $json = json_decode(file_get_contents('http://worldtimeapi.org/api/timezone/Europe/Rome'));
+    $json = json_decode(file_get_contents('https://worldtimeapi.org/api/timezone/Europe/Rome'));
     $dateStr = substr($json->{'datetime'},0,16);
     if ($verbose)
     {

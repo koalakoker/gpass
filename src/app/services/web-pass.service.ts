@@ -10,7 +10,8 @@ export class WebPassService {
   constructor(private http: HttpClient) {
   }
 
-  urlAddr =     'http://localhost/api.php';    // Just for testing to be fied when publishing
+  //urlAddr = 'http://localhost/api.php';    // Just for testing to be fied when publishing
+  urlAddr =     'https://www.koalakoker.com/angular/php/api.php';
   chiperAddr =  'https://www.koalakoker.com/angular/php/getCriptDBAccess.php';
 
   apiGet(url: string) {
