@@ -9,22 +9,11 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-$userPassword = $_GET["chipher_password"];
-
-if (isset($userPassword))
-{
-
+if (isset($_SESSION['decryptPass'])) {
+  $decryptPass = $_SESSION['decryptPass'];
 }
-else
-{
-    die("Missing decrypt key!");
-}
-
-if (!isset($_SESSION['decryptPass']))
-{
-  $decryptPass = passDecrypt($userPassword);
-  $decryptPass = hashPass($decryptPass);
-  $_SESSION['decryptPass'] = $decryptPass;
+else {
+  die("Missing decrypt key!");
 }
 
 $Server   = deChipher($Server,  $decryptPass);
@@ -36,7 +25,7 @@ if ($Server == "")
 {
   session_unset();
   session_destroy();
-  die("Wrong decrypt key.\nAccess denied!");
+  die("Wrong decrypt key. Access denied!");
 }
 
 // get the HTTP method, path and body of the request
@@ -90,7 +79,9 @@ $result = mysqli_query($link,$sql);
  
 // die if SQL statement failed
 if (!$result) {
-    die("MySQL error");
+  session_unset();
+  session_destroy();
+  die("MySQL error");
 }
  
 // print results, insert id or affected row count

@@ -10,8 +10,10 @@ export class WebPassService {
   constructor(private http: HttpClient) {
   }
 
-  //urlAddr = 'http://localhost/api.php';    // Just for testing to be fied when publishing
-  urlAddr =     'https://www.koalakoker.com/angular/php/api.php';
+  loginAddr = 'http://localhost/login.php' // Just for testing to be fied when publishing
+  //loginAddr =   'https://www.koalakoker.com/angular/php/login.php'
+  urlAddr =   'http://localhost/api.php';    // Just for testing to be fied when publishing
+  //urlAddr =     'https://www.koalakoker.com/angular/php/api.php';
   chiperAddr =  'https://www.koalakoker.com/angular/php/getCriptDBAccess.php';
 
   apiGet(url: string) {
@@ -23,6 +25,20 @@ export class WebPassService {
   // **************************************************
   // **********           Common             **********
   // **************************************************
+  login(chipher_password: string) {
+    return this.http.get(this.loginAddr, {
+      params: { ["chipher_password"]: chipher_password },
+      responseType: 'json'
+    });
+  }
+
+  logout() {
+    return this.http.get(this.loginAddr, {
+      params: { ["chipher_password"]: "logout" },
+      responseType: 'json'
+    });
+  }
+  
   get(chipher_password: string, table: string = 'gpass') {
     return this.http.get(this.urlAddr + '/' + table, {
       params: {["chipher_password"]: chipher_password},

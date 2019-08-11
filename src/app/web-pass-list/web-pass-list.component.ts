@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class WebPassListComponent implements OnInit, Refreshable {
 
-  catIndex: number;
+  catID: number;
   g: GCrypto;
   list: WebPass[];
   category: Category[];
@@ -28,7 +28,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
   selectedWebPass: WebPass;
   edit: boolean = false;
   chipher_password: string;
-  encrypted_password: string;
   logged = false;
   errorMessage: string = '';
   message: string = '';
@@ -44,11 +43,13 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
 
   ngOnInit() {
+    this.catID = +this.route.snapshot.paramMap.get('cat');
   }
 
   refresh(cmd: string = "") {
     if (cmd == "")
     {
+      this.catID = +this.route.snapshot.paramMap.get('cat');
       this.checklogged();
       return "btnInsert";
     }
@@ -61,7 +62,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
-      this.encrypted_password = this.sessionService.getKey('EncryptedPassword');
       this.logged = true;
       this.enter();
     }
@@ -77,9 +77,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
     if (completed)
     {
       // Select only by cat (0 = all)
-      if (this.catIndex != 0) {
+      if (this.catID != 0) {
         this.relWebCat = this.relWebCat.filter((x) => {
-          return (x.id_cat == this.category[this.catIndex - 1].id);
+          return (x.id_cat == this.catID);
         });
         var filtWebId: number[] = [];
         this.relWebCat.forEach((rel) => {
@@ -92,19 +92,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
   }
 
-  menuStyle(catList: number): String {
-    var retVal : String = "";
-    if (this.catIndex == (catList+1))
-    {
-      retVal = "catSelected";
-    }
-    return retVal;
-  }
-
   enter() {
     // catIndex = 0 no filter
     // catIndex-1 => category[]
-    this.catIndex = +this.route.snapshot.paramMap.get('cat');
     this.listLoad     = false;
     this.categoryLoad = false;
     this.relLoad      = false;
@@ -116,15 +106,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   retry(err) {
-    // Encrypted pass scaduta o Chipher Password errata
-    if (!this.passRetry) {
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.enter();
-      });
-      this.passRetry = true;
-    }
+    console.log(err);
   }
 
   getWebPassList(
@@ -132,7 +114,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     categoryCbk: () => void,
     relCbk: () => void) {
     // Get Webpass list
-    this.configService.get(this.encrypted_password,'gpass').subscribe((data: Array<WebPass>) => {
+    this.configService.get("",'gpass').subscribe((data: Array<WebPass>) => {
       // Decode and create a new WebPass list
       this.list = data.map((x) => {
         const w = new WebPass(x);
@@ -155,14 +137,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }, err => this.retry(err));
 
     // Get Category list
-    this.configService.get(this.encrypted_password, 'category').subscribe( (data: Array<Category>) => {
+    this.configService.get("", 'category').subscribe( (data: Array<Category>) => {
       this.category = data;
       this.categoryLoad = true;
       categoryCbk();
     }, err => this.retry(err));
 
     // Get RelWebCat
-    this.configService.get(this.encrypted_password, 'webcatrel').subscribe((data: Array<RelWebCat>) => {
+    this.configService.get("", 'webcatrel').subscribe((data: Array<RelWebCat>) => {
       this.relWebCat = data;
       this.relLoad = true;
       relCbk();
@@ -172,33 +154,19 @@ export class WebPassListComponent implements OnInit, Refreshable {
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.chipher_password);
-    this.configService.update(webPass, this.encrypted_password).subscribe(() => {
+    this.configService.update(webPass, "").subscribe(() => {
       this.sendMessage("Database updated");
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.save(index);
-      });
-    });
+    }, err => this.retry(err));
   }
 
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.chipher_password);
-    this.configService.create(webPass, this.encrypted_password).subscribe((id: number) => {
+    this.configService.create(webPass, "").subscribe((id: number) => {
       webPass.id = id;
       webPass.decrypt(this.chipher_password);
       this.list.push(webPass);
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.onNewFunc();
-      });
-    });
+    }, err => this.retry(err));
     
   }
 
@@ -235,16 +203,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.configService.delete(webPass.id, this.encrypted_password).subscribe(() => {
+    this.configService.delete(webPass.id, "").subscribe(() => {
       this.list.splice(i, 1);
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.onButtonRemove(i);
-      });
-    });
+    }, err => this.retry(err));
     
   }
 
@@ -263,30 +224,16 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   saveRel(rel: RelWebCat) {
-    this.configService.updateRelWebCat(rel, this.encrypted_password).subscribe(() => {
+    this.configService.updateRelWebCat(rel, "").subscribe(() => {
       this.sendMessage("Database updated");
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.saveRel(rel);
-      });
-    });
+    }, err => this.retry(err));
   }
 
   newRel(rel: RelWebCat) {
-    this.configService.createRelWebCat(rel, this.encrypted_password).subscribe((id: number) => {
+    this.configService.createRelWebCat(rel, "").subscribe((id: number) => {
       rel.id = id;
       this.sendMessage("Database updated");
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.newRel(rel);
-      });
-    });
+    }, err => this.retry(err));
   }
 
   onCatCheckChange(webPassIndex: number, catIndex: number)

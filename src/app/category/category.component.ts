@@ -16,7 +16,6 @@ export class CategoryComponent implements OnInit, Refreshable {
   selecteCategory: Category;
   logged = false;
   chipher_password: string;
-  encrypted_password: string;
   g: GCrypto;
   category: Category[];
   errorMessage: string = '';
@@ -31,16 +30,9 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   enter() {
     // User is logged show content
-    this.configService.get(this.encrypted_password, 'category').subscribe((data: Array<Category>) => {
+    this.configService.get("", 'category').subscribe((data: Array<Category>) => {
       this.category = data;
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.enter();
-      });
-    });
+    }, err => console.log(err));
   }
 
   ngOnInit() {
@@ -62,7 +54,6 @@ export class CategoryComponent implements OnInit, Refreshable {
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
-      this.encrypted_password = this.sessionService.getKey('EncryptedPassword');
       this.logged = true;
       this.enter();
     }
@@ -74,31 +65,17 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   save(index: number) {
     const category = new Category(this.category[index]);
-    this.configService.updateCategory(category, this.encrypted_password).subscribe(() => {
+    this.configService.updateCategory(category, "").subscribe(() => {
       this.sendMessage("Database updated");
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.save(index);
-      });
-    });
+    }, err => console.log(err));
   }
 
   onNewFunc() {
     const category = new Category();
-    this.configService.createCategory(category, this.encrypted_password).subscribe((id: number) => {
+    this.configService.createCategory(category, "").subscribe((id: number) => {
       category.id = id;
       this.category.push(category);
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.onNewFunc();
-      });
-    });
+    }, err => console.log(err));
   }
 
   onButtonEdit() {
@@ -107,17 +84,9 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const cat = this.category[i];
-    this.configService.delete(cat.id, this.encrypted_password, 'category').subscribe(() => {
+    this.configService.delete(cat.id, "", 'category').subscribe(() => {
       this.category.splice(i, 1);
-    }, err => {
-      // Encrypted pass scaduta o Chipher Password errata
-      this.g.cryptPass(this.chipher_password, (encrypted) => {
-        this.sessionService.setKey('EncryptedPassword', encrypted);
-        this.encrypted_password = encrypted;
-        this.onButtonRemove(i);
-      });
-    });
-
+    }, err => console.log(err));
   }
 
   isSelected(cat: Category): boolean {

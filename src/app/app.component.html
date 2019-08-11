@@ -6,6 +6,15 @@
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle {{webpassActive}}" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Webpass
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a *ngFor="let cat of catData" class="dropdown-item {{cat.activated}}" [routerLink]="cat.link">{{cat.label}}</a>
+                </div>
+            </li>
             <li *ngFor="let link of routerData" class="nav-item {{link.activated}}">
                 <a class="nav-link" [routerLink]="link.link">{{link.label}}</a>
             </li>
@@ -23,4 +32,3 @@
 </div>
 
 
-    
