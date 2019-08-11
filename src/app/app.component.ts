@@ -26,8 +26,8 @@ export class AppComponent implements OnInit {
   category: Category[];
   webpassActive = "active";
 
-  catDataAll = [{ link: '/list/0', label: "All", activated: "active" }]; 
-  catData = this.catDataAll;
+  catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
+  catData = [];
 
   routerData = [{link: '/category'     , label: "Category"              , activated: ""},
                 {link: '/newPass'      , label: "New password"          , activated: ""},
@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
             link.activated = "";
           });
           this.catData.forEach((cat) => {
-            if (cat.link === val.url) {
+            if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
               cat.activated = "active";
             }
             else {
@@ -70,7 +70,8 @@ export class AppComponent implements OnInit {
           });
         }
       }
-    })
+    });
+    this.catData.push(this.catDataAll);
   }
 
   public setRoutedComponent(componentRef: Refreshable) {
@@ -134,7 +135,8 @@ export class AppComponent implements OnInit {
         this.clearSession();
         this.routedComponent.refresh("");
         this.childInjected = "";
-        this.catData = this.catDataAll;
+        this.catData = [];
+        this.catData.push(this.catDataAll);
       });
   }
 
@@ -147,7 +149,8 @@ export class AppComponent implements OnInit {
     // Get Category list
     this.configService.get("", 'category').subscribe((data: Array<Category>) => {
       this.category = data;
-      this.catData = this.catDataAll;
+      this.catData = [];
+      this.catData.push(this.catDataAll);
       data.forEach(cat => {
         var newCatList = { link: '/list/' + cat.id, label: cat.name, activated: "" };
         this.catData.push(newCatList);
