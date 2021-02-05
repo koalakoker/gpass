@@ -33,6 +33,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   message: string = '';
   interval;
   showCategory: boolean = false;
+  DebugTxt = "";
   
   constructor(
     private route: ActivatedRoute,
@@ -162,11 +163,16 @@ export class WebPassListComponent implements OnInit, Refreshable {
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.chipher_password);
-    this.configService.create(webPass, "").subscribe((id: number) => {
-      webPass.id = id;
-      webPass.decrypt(this.chipher_password);
-      this.list.push(webPass);
-    }, err => this.retry(err));
+    this.configService.create(webPass, "").subscribe(
+      (id: number) => {
+        webPass.id = id;
+        webPass.decrypt(this.chipher_password);
+        this.list.push(webPass);
+      }, (err) => {
+        this.DebugTxt = JSON.stringify(err);
+        this.retry(err);
+      }
+    );
     
   }
 
