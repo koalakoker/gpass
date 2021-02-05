@@ -7,7 +7,8 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-$logFile = fopen("../log/log.txt", "w") or die("Unable to open file!");
+$logFile = fopen("../log/login.txt", "w") or die("Unable to open file!");
+fwrite($logFile, date("Y-m-d H:i:s") . "\n");
 
 if (!isset($_GET["chipher_password"]))
 {
@@ -65,7 +66,8 @@ if ($Server == "")
 echo('{' .
   $prevSession . '  
   "txt"         : "Login done. ' . $_SESSION["decryptPass"].'",
-  "logged"      : true 
+  "logged"      : true,
+  "encrypted"   : "' . $_SESSION["decryptPass"] . '"
 }');
 
 fclose($logFile);

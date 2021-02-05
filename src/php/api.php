@@ -1,5 +1,11 @@
 <?php
+
 session_start();
+
+$logFile = fopen("../log/api.txt", "w") or die("Unable to open file!");
+fwrite($logFile, date("Y-m-d H:i:s") . "\n");
+fwrite($logFile, "session decryptPass:". $_SESSION['decryptPass'] . "\n");
+fwrite($logFile, "get chipher_password:"    . $_GET['chipher_password'] . "\n");
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: DELETE, PUT, POST");
@@ -13,7 +19,12 @@ if (isset($_SESSION['decryptPass'])) {
   $decryptPass = $_SESSION['decryptPass'];
 }
 else {
-  die("Missing decrypt key!");
+  if (isset($_GET["chipher_password"])) {
+    $decryptPass = $_GET["chipher_password"];
+  } else {
+    fwrite($logFile, "Missing decrypt key!");
+    die("Missing decrypt key!");
+  }
 }
 
 $Server   = deChipher($Server,  $decryptPass);
@@ -99,4 +110,6 @@ if ($method == 'GET') {
  
 // close mysql connection
 mysqli_close($link);
+
+fclose($logFile);
 ?>

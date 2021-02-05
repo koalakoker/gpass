@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   logged: boolean = false;
   errorMessage: string = '';
   message: string = '';
+  DebugTxt: string = "";
   interval;
   private routedComponent: Refreshable;
   childInjected: string = "";
@@ -84,6 +85,7 @@ export class AppComponent implements OnInit {
       this.chipher_password = storedPass;
       this.logged = true;
     }
+
   }
 
   clearSession() {
@@ -99,7 +101,8 @@ export class AppComponent implements OnInit {
     this.interval = setInterval(() => {
       this.errorMessage = '';
       clearInterval(this.interval);
-    }, 2000);
+    //}, 2000);
+    }, 200000);
   }
 
   enter() {
@@ -108,6 +111,8 @@ export class AppComponent implements OnInit {
       this.configService.login(encrypted).subscribe(
         (answer: JSON) => {
           this.logged = answer["logged"];
+          // answer["encrypted"] can be used if session variable is not available in the server
+          this.configService.setTesting_chiper(answer["encrypted"]);
           if (this.logged) {
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
             this.sessionService.setKey('EncryptedPassword', encrypted);
@@ -120,9 +125,13 @@ export class AppComponent implements OnInit {
             this.printErrorMessage('Password not correct');
           }
         },
-        err => {
+        (answer) => {
+          this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Error";
           this.clearSession();
-          this.printErrorMessage('Password not correct');
+          this.printErrorMessage('Login error');
+        },
+        () => {
+          this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Complete";
         }
       );
     });
@@ -145,9 +154,9 @@ export class AppComponent implements OnInit {
     this.routedComponent.refresh("btnPress");
   }
 
-  getCategory() {
+  getCategory(encrypted = "") {
     // Get Category list
-    this.configService.get("", 'category').subscribe((data: Array<Category>) => {
+    this.configService.get(encrypted, 'category').subscribe((data: Array<Category>) => {
       this.category = data;
       this.catData = [];
       this.catData.push(this.catDataAll);
@@ -155,6 +164,9 @@ export class AppComponent implements OnInit {
         var newCatList = { link: '/list/' + cat.id, label: cat.name, activated: "" };
         this.catData.push(newCatList);
       });
-    });
+    }, err => {
+      this.printErrorMessage(JSON.stringify(err));
+    }
+    );
   }
 }

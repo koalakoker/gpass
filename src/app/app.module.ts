@@ -6,7 +6,8 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
 import { WebPassService } from './services/web-pass.service';
-import { AppRoutingModule } from '../app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
+import { RouterModule } from '@angular/router';
 import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
 
 import { ClipboardModule } from 'ngx-clipboard'
@@ -34,7 +35,8 @@ import { CategoryComponent } from './category/category.component';
     HttpClientModule,
     AppRoutingModule,
     ClipboardModule,
-    StorageServiceModule
+    StorageServiceModule,
+    RouterModule
   ],
   providers: [WebPassService],
   bootstrap: [AppComponent]
