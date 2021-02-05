@@ -2,7 +2,7 @@
 
 session_start();
 
-$logFile = fopen("../log/api.txt", "w");
+$logFile = fopen("../log/api.txt", "a");
 if ($logFile) {
   fwrite($logFile, date("Y-m-d H:i:s") . "\n");
   fwrite($logFile, "session decryptPass:". $_SESSION['decryptPass'] . "\n");
@@ -10,8 +10,8 @@ if ($logFile) {
 }
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: DELETE, PUT, POST");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: DELETE, PUT, POST, OPTIONS");
+header("Access-Control-Allow-Headers: x-requested-with, Content-Type, origin, authorization, accept, client-security-token");
 header("Content-Type: application/json; charset=UTF-8");
     
 include_once "passDB_cript.php";
@@ -60,12 +60,12 @@ $key = array_shift($request)+0;
 $set = '';
 if ($input)
 {
-    // escape the columns and values from the input object
-    $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
-    $values = array_map(function ($value) use ($link) {
-    if ($value===null) return null;
-    return mysqli_real_escape_string($link,(string)$value);
-    },array_values($input));
+  // escape the columns and values from the input object
+  $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
+  $values = array_map(function ($value) use ($link) {
+  if ($value===null) return null;
+  return mysqli_real_escape_string($link,(string)$value);
+  },array_values($input));
 
   for ($i=0;$i<count($columns);$i++) {
     $set.=($i>0?',':'').'`'.$columns[$i].'`=';
@@ -87,33 +87,37 @@ switch ($method) {
   case 'DELETE':
     $sql = "delete from `$table` where id=$key"; 
     break;
+  default:
+    break;
 }
  
-// excecute SQL statement
-$result = mysqli_query($link,$sql);
- 
-// die if SQL statement failed
-if (!$result) {
-  session_unset();
-  session_destroy();
-  die("MySQL error");
-}
- 
-// print results, insert id or affected row count
-if ($method == 'GET') {
-  if (!$key) echo '[';
-  for ($i=0;$i<mysqli_num_rows($result);$i++) {
-    echo ($i>0?',':'').json_encode(mysqli_fetch_object($result));
+if ($sql) {
+  // excecute SQL statement
+  $result = mysqli_query($link,$sql);
+
+  // die if SQL statement failed
+  if (!$result) {
+    session_unset();
+    session_destroy();
+    die("MySQL error");
   }
-  if (!$key) echo ']';
-} elseif ($method == 'POST') {
-  echo mysqli_insert_id($link);
-} else {
-  echo mysqli_affected_rows($link);
+  
+  // print results, insert id or affected row count
+  if ($method == 'GET') {
+    if (!$key) echo '[';
+    for ($i=0;$i<mysqli_num_rows($result);$i++) {
+      echo ($i>0?',':'').json_encode(mysqli_fetch_object($result));
+    }
+    if (!$key) echo ']';
+  } elseif ($method == 'POST') {
+    echo mysqli_insert_id($link);
+  } else {
+    echo mysqli_affected_rows($link);
+  }
+  
+  // close mysql connection
+  mysqli_close($link);
 }
- 
-// close mysql connection
-mysqli_close($link);
 
 if ($logFile) {
   fclose($logFile);

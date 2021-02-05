@@ -7,7 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-$logFile = fopen("../log/login.txt", "w");
+$logFile = fopen("../log/login.txt", "a");
 if ($logFile) {
   fwrite($logFile, date("Y-m-d H:i:s") . "\n");
 }
@@ -43,24 +43,12 @@ else {
 $decryptPass = passDecrypt($upw);
 $decryptPass = hashPass($decryptPass);
 
-if ($logFile) {
-  fwrite($logFile,'upw:' . $upw . "\n");
-  fwrite($logFile,'decryptPass:' . $decryptPass . "\n");
-}
-
 $_SESSION['decryptPass'] = $decryptPass;
 
 $Server   = deChipher($Server,  $decryptPass);
 $Username = deChipher($Username,$decryptPass);
 $PW       = deChipher($PW,      $decryptPass);
 $DB       = deChipher($DB,      $decryptPass);
-
-if ($logFile) {
-  fwrite($logFile, 'server:'   . $Server . "\n");
-  fwrite($logFile, 'username:' . $Username . "\n");
-  fwrite($logFile, 'password:' . $PW . "\n");
-  fwrite($logFile, 'database:' . $DB . "\n");
-}
 
 if ($Server == "")
 {
@@ -74,7 +62,7 @@ if ($Server == "")
 
 echo('{' .
   $prevSession . '  
-  "txt"         : "Login done. ' . $_SESSION["decryptPass"].'",
+  "txt"         : "Login done.",
   "logged"      : true,
   "encrypted"   : "' . $_SESSION["decryptPass"] . '"
 }');
