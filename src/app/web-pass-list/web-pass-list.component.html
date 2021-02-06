@@ -1,95 +1,117 @@
-<div>
-  <ul class="list-group">
-    <li class="list-group-item" *ngFor="let element of list; let i = index" 
+<main>
+<!-- New -->
+<div class="container-fluid">
+  <div class="list-group">
+    <div *ngFor="let element of list; let i = index" 
       [class.active]="isSelected(element)"
       (click)="onSelect(element)">
+      <div class="row">
+        <div class="col-sm-1" *ngIf="isExpired(i)">
+          <span class="badge bg-danger">Expired</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <button type="button" 
+          class="list-group-item list-group-item-action"
+          data-toggle="modal" 
+          [attr.data-target]="'#Modal' + i"
+          >
+            {{getUrl('name', i).value}}
+          </button>
+        </div>
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-outline-success">Usr</button>
+          <button type="button" class="btn btn-outline-success">Psw</button>
+          <button type="button" class="btn btn-outline-success">Del</button>
+          <a target="blank" href="http://{{getUrl('url', i).value}}">
+          <input type=button class="btn btn-outline-success" value="Gi">
+          </a>
+        </div>
+      </div>
 
-      <!-- Data -->
-      <a target="blank" class="{{getUrl('url', i).enabled}}" href="http://{{getUrl('url', i).value}}">{{getUrl('name', i).value}}</a><span class="badge badge-danger">{{isExpired(i)}}</span>
-      <br><br>
-      
-      <!-- Edit button -->
-      <button type="button"
-        class="btn"
-        *ngIf="isSelected(element)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        (click)="onButtonEdit()">
-        Edit
-      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="Modal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#ModalLabel' + i" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalLabel{{i}}">{{getUrl('name', i).value}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label">Name</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" type="text" placeholder="Name" aria-label="default input example">
+                  </div>
+                </div>
 
-      <!-- Remove button -->
-      <button type="button"
-        class="btn"
-        *ngIf="isSelected(element)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        (click)="onButtonRemove(i)">
-        Del
-      </button>
+                <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label">Url</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" type="text" placeholder="Url" aria-label="default input example">
+                  </div>
+                </div>
 
-      <!-- Copy username -->
-      <button type="button"
-        class="btn"
-        *ngIf="isSelected(element)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        ngxClipboard [cbContent]="getUrl('username', i).value" (cbOnSuccess)="sendMessage('Username copied to clipboard')">
-        Uname
-      </button>
+                <div class="row mb-3">
+                  <label class="col-sm-3 col-form-label">Category</label>
+                  <div class="col-sm-6">
+                    <select class="form-select" aria-label="Default select example">
+                      <option value="0" selected>None</option>
+                      <option value="1">Game</option>
+                      <option value="2">Shopping</option>
+                      <option value="3">Email</option>
+                    </select>
+                  </div>
+                </div>
 
-      <!-- Copy password -->
-      <button type="button"
-        class="btn"
-        *ngIf="isSelected(element)"
-        [class.btn-secondary]="!edit"
-        [class.btn-dark]="edit"
-        ngxClipboard [cbContent]="getUrl('pass', i).value" (cbOnSuccess)="sendMessage('Password copied to clipboard')">
-        Pass
-      </button>
-
-      <div 
-        class="list-group-item-primary"
-        *ngIf="edit && isSelected(element)">
-        
-        <!-- Edit element -->
-        <div>
-          <label>Name
-            <input type="text"     class="form-control" [(ngModel)]="list[i].name"             placeholder="name"     (change)="save(i)">
-          </label><button class="btn btn-info" (click)="onButtonCategory(i)">Category</button>
-          <br>
-          <div class="list-group-item list-group-item-success" *ngIf="showCategory">
-            <div class="form-group form-check" *ngFor="let cat of category; let j = index">
-              <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
-                (change)="onCatCheckChange(i,j)">
-              <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
+                <div class="row mb-3">
+                  <label class="col-sm-3 col-form-label">User Name</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="text" placeholder="User Name" aria-label="default input example">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label class="col-sm-3 col-form-label">Password</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="password" placeholder="Password" aria-label="default input example">
+                  </div>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-success">Show</button>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label class="col-sm-3 col-form-label">Registration</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="text" placeholder="Registration Date"
+                      aria-label="default input example">
+                  </div>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-success">Today</button>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label class="col-sm-3 col-form-label">Expiration</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="text" placeholder="Expiration Date" aria-label="default input example">
+                  </div>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-success">+1 Yr.</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
-          <label>Url
-            <input type="text"     class="form-control" [(ngModel)]="list[i].url"              placeholder="url"      (change)="save(i)">
-          </label><br>
-          <label>Username
-            <input type="text"     class="form-control" [(ngModel)]="list[i].username"         placeholder="username" (change)="save(i)">
-          </label><br>
-          <label>Password
-            <input type="password" class="form-control" [(ngModel)]="list[i].pass"             placeholder="pass"     (change)="save(i)">
-          </label><br>
-          <label>Registration Date:
-            <input type="text"     class="form-control" [(ngModel)]="list[i].registrationDate" placeholder="date"     (change)="save(i)">
-          </label><button class="btn btn-info" (click)="onTodayButton(i)">Today</button><br>
-          <label>Expiration Date:
-            <input type="text"     class="form-control" [(ngModel)]="list[i].expirationDate"   placeholder="date"     (change)="save(i)">
-          </label>
         </div>
-
       </div>
 
-      <div class="alert alert-secondary" role="alert" *ngIf="(message!=='')&&(isSelected(element))">
-        {{message}}
-      </div>
-
-    </li>
-  </ul>
+    </div>
+  </div>
 </div>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
@@ -97,3 +119,4 @@
 </div>
 <!-- Comment for producton -->
 <!-- <div>web-pass-list.component [Remove for producton]: {{DebugTxt}}</div> -->
+</main>
