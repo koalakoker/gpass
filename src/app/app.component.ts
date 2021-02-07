@@ -101,8 +101,7 @@ export class AppComponent implements OnInit {
     this.interval = setInterval(() => {
       this.errorMessage = '';
       clearInterval(this.interval);
-    //}, 2000);
-    }, 200000);
+    }, 2000);
   }
 
   enter() {

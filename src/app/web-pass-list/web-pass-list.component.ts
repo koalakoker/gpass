@@ -16,6 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 export class WebPassListComponent implements OnInit, Refreshable {
 
   catID: number;
+  webPassIndexSelected: number;
   g: GCrypto;
   list: WebPass[];
   category: Category[];
@@ -80,7 +81,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       // Select only by cat (0 = all)
       if (this.catID != 0) {
         this.relWebCat = this.relWebCat.filter((x) => {
-          return (x.id_cat == this.catID);
+          return ((x.id_cat == this.catID) && (x.enabled == 1));
         });
         var filtWebId: number[] = [];
         this.relWebCat.forEach((rel) => {
@@ -169,7 +170,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
         webPass.decrypt(this.chipher_password);
         this.list.push(webPass);
       }, (err) => {
-        this.DebugTxt = JSON.stringify(err);
         this.retry(err);
       }
     );
@@ -189,22 +189,31 @@ export class WebPassListComponent implements OnInit, Refreshable {
     this.showCategory = !this.showCategory;
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
-      this.category.forEach((cat) => {
-        var found: boolean = false;
-        this.relWebCat.forEach((rel) => {
-          if ((rel.id_web == this.list[webPassIndexSelected].id) &&
+      this.webPassIndexSelected = webPassIndexSelected;
+      this.configService.get("", 'webcatrel').subscribe((allRelWebCat: Array<RelWebCat>) => {
+        this.category.forEach((cat) => {
+          var found: boolean = false;
+          allRelWebCat.forEach((rel) => {
+            if ((rel.id_web == this.list[this.webPassIndexSelected].id) &&
               (rel.id_cat == cat.id) &&
               (rel.enabled == 1)) {
-                found = true;
-              }
+              found = true;
+            }
+          });
+          this.selectedWebPassCatChecked.push(found);
         });
-        this.selectedWebPassCatChecked.push(found);
-      });
+
+        this.relLoad = true;
+      }, err => this.retry(err));
     }
   }
 
   onButtonEdit() {
     this.edit = !this.edit;
+  }
+
+  onCloseEdit() {
+    this.enter();
   }
 
   onButtonRemove(i: number) {
