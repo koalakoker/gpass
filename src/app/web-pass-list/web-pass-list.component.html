@@ -1,19 +1,21 @@
-<main>
-<!-- New -->
 <div class="container-fluid">
   <div class="list-group">
     <div *ngFor="let element of list; let i = index" 
       [class.active]="isSelected(element)"
       (click)="onSelect(element)">
+      
+      <!-- Expired -->
       <div class="row">
         <div class="col-sm-1" *ngIf="isExpired(i)">
           <span class="badge bg-danger">Expired</span>
         </div>
       </div>
+
+      <!-- Button -->
       <div class="row">
         <div class="col-sm-6">
           <button type="button" 
-          class="list-group-item list-group-item-action"
+          class="list-group-item list-group-item-action active"
           data-toggle="modal" 
           [attr.data-target]="'#Modal' + i"
           >
@@ -21,11 +23,32 @@
           </button>
         </div>
         <div class="col-sm-6">
-          <button type="button" class="btn btn-outline-success">Usr</button>
-          <button type="button" class="btn btn-outline-success">Psw</button>
-          <button type="button" class="btn btn-outline-success">Del</button>
+          <button 
+            type="button"
+            style="height: 54px; width: 54px;"
+            class="btn btn-success"
+            ngxClipboard [cbContent]="getUrl('username', i).value" 
+            (cbOnSuccess)="sendMessage('Username copied to clipboard')">Usr
+          </button>
+          <button 
+            type="button"
+            style="height: 54px; width: 54px;"
+            class="btn btn-success"
+            ngxClipboard [cbContent]="getUrl('pass', i).value"
+            (cbOnSuccess)="sendMessage('Password copied to clipboard')">Psw
+          </button>
           <a target="blank" href="http://{{getUrl('url', i).value}}">
-          <input type=button class="btn btn-outline-success" value="Gi">
+            <input 
+            type=button
+            style="height: 54px; width: 54px;"
+            class="btn btn-success"
+            value="Go">
+          <button 
+            type="button"
+            style="height: 54px; width: 54px;"
+            class="btn btn-danger"
+            (click)="onButtonRemove(i)">Del
+          </button>
           </a>
         </div>
       </div>
@@ -39,29 +62,28 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <form>
+              
                 <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">Name</label>
                   <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="Name" aria-label="default input example">
+                    <input class="form-control" type="text" placeholder="Name" [(ngModel)]="list[i].name" (change)="save(i)" aria-label="default input example">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">Url</label>
                   <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="Url" aria-label="default input example">
+                    <input class="form-control" type="text" placeholder="Url" [(ngModel)]="list[i].url" (change)="save(i)" aria-label="default input example">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">Category</label>
                   <div class="col-sm-6">
-                    <select class="form-select" aria-label="Default select example">
-                      <option value="0" selected>None</option>
-                      <option value="1">Game</option>
-                      <option value="2">Shopping</option>
-                      <option value="3">Email</option>
+                    <select class="form-select" aria-label="Default select example" [(ngModel)]="list[i].??">
+                      <option *ngFor="let cat of category; let j = index" [value]="cat.id">
+                        {{cat.name}}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -69,13 +91,13 @@
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">User Name</label>
                   <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="User Name" aria-label="default input example">
+                    <input class="form-control" type="text" placeholder="User Name" [(ngModel)]="list[i].username" (change)="save(i)" aria-label="default input example">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">Password</label>
                   <div class="col-sm-6">
-                    <input class="form-control" type="password" placeholder="Password" aria-label="default input example">
+                    <input class="form-control" type="password" placeholder="Password" [(ngModel)]="list[i].pass" (change)="save(i)" aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
                     <button type="button" class="btn btn-success">Show</button>
@@ -84,7 +106,7 @@
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">Registration</label>
                   <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="Registration Date"
+                    <input class="form-control" type="text" placeholder="Registration Date" [(ngModel)]="list[i].registrationDate" (change)="save(i)"
                       aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
@@ -94,13 +116,13 @@
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">Expiration</label>
                   <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="Expiration Date" aria-label="default input example">
+                    <input class="form-control" type="text" placeholder="Expiration Date" [(ngModel)]="list[i].expirationDate" (change)="save(i)" aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
                     <button type="button" class="btn btn-success">+1 Yr.</button>
                   </div>
                 </div>
-              </form>
+              
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -119,4 +141,3 @@
 </div>
 <!-- Comment for producton -->
 <!-- <div>web-pass-list.component [Remove for producton]: {{DebugTxt}}</div> -->
-</main>
