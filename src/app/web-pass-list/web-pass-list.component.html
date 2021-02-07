@@ -76,23 +76,22 @@
                     <input class="form-control" type="text" placeholder="Url" [(ngModel)]="list[i].url" (change)="save(i)" aria-label="default input example">
                   </div>
                 </div>
-
-                <!-- <div class="row mb-3">
-                  <label class="col-sm-3 col-form-label">Category</label>
-                  <div class="col-sm-6">
-                    <select class="form-select" aria-label="Default select example" [(ngModel)]="list[i].??">
-                      <option *ngFor="let cat of category; let j = index" [value]="cat.id">
-                        {{cat.name}}
-                      </option>
-                    </select>
+                <!-- Category -->
+                <div class="list-group-item list-group-item-success" *ngIf="showCategory">
+                  <div class="form-group form-check" *ngFor="let cat of category; let j = index">
+                    <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
+                      (change)="onCatCheckChange(i,j)">
+                    <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
                   </div>
-                </div> -->
-
+                </div>
                 <!-- UserName -->
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">User Name</label>
                   <div class="col-sm-6">
                     <input class="form-control" type="text" placeholder="User Name" [(ngModel)]="list[i].username" (change)="save(i)" aria-label="default input example">
+                  </div>
+                  <div class="col-sm-3">
+                    <button type="button" class="btn btn-success" (click)="onButtonCategory(i)">Category</button>
                   </div>
                 </div>
                 <!-- Password -->
