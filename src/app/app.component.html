@@ -8,27 +8,45 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{webpassActive}}" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            WebPass
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li *ngIf="logged && (childInjected=='btnInsert')">
-                                <a class="dropdown-item" (click)="onNewFunc()">New</a>
-                            </li>
-                            <li *ngIf="logged">
-                                <a class="dropdown-item" (click)="logOut()">Logout</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li *ngFor="let link of routerData" class="nav-item {{link.activated}}">
-                        <a class="nav-link" [routerLink]="link.link">{{link.label}}</a>
-                    </li>
+                    <ng-container *ngIf="logged">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{webpassActive}}" 
+                                href="#" 
+                                id="navbarDropdown" 
+                                role="button"
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                                WebPass
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li *ngIf="childInjected=='btnInsert'">
+                                    <a class="dropdown-item" (click)="onNewFunc()">New</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" (click)="logOut()">Logout</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li *ngFor="let cat of catData">
+                                    <a class="dropdown-item {{cat.activated}}" [routerLink]="cat.link">{{cat.label}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li *ngFor="let link of routerData" class="nav-item {{link.activated}}">
+                            <a class="nav-link" [routerLink]="link.link">{{link.label}}</a>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="!logged">
+                        <input 
+                            (change)="enter()" 
+                            [(ngModel)]="chipher_password" 
+                            class="form-control" 
+                            type="password"
+                            placeholder="Insert master password">
+                    </ng-container>
                 </ul>
-                <form class="d-flex">
+                <form class="d-flex" *ngIf="logged">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
@@ -36,8 +54,6 @@
         </div>
     </nav>
 </header>
-<input *ngIf="!logged" (change)="enter()" [(ngModel)]="chipher_password" class="form-control" type="password"
-    placeholder="Insert master password">
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
