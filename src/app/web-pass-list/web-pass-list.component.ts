@@ -27,13 +27,13 @@ export class WebPassListComponent implements OnInit, Refreshable {
   passRetry = false;
   selectedWebPassCatChecked: boolean[];
   selectedWebPass: WebPass;
-  edit: boolean = false;
   chipher_password: string;
   logged = false;
   errorMessage: string = '';
   message: string = '';
   interval;
   showCategory: boolean = false;
+  needReenter: boolean = false;
   DebugTxt = "";
   
   constructor(
@@ -178,7 +178,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onSelect(webPass: WebPass) {
     if (this.selectedWebPass != webPass) {
-      this.edit = false;
       this.showCategory = false;
     }
     this.selectedWebPass = webPass;
@@ -202,18 +201,18 @@ export class WebPassListComponent implements OnInit, Refreshable {
           });
           this.selectedWebPassCatChecked.push(found);
         });
-
-        this.relLoad = true;
       }, err => this.retry(err));
     }
   }
 
-  onButtonEdit() {
-    this.edit = !this.edit;
-  }
-
   onCloseEdit() {
-    this.enter();
+    if (this.needReenter) {
+      if (this.catID != 0) {
+        this.enter();
+      }
+      this.needReenter = false;
+    }
+    this.showCategory = false;
   }
 
   onButtonRemove(i: number) {
@@ -255,10 +254,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
   {
     if (this.selectedWebPassCatChecked[catIndex])
     {
-      this.relExist(webPassIndex, catIndex, (index: number) => {
-        this.relWebCat[index].enabled = 1;
-        this.saveRel(this.relWebCat[index]);
-      }, () => {
+      this.relExist(webPassIndex, catIndex,
+        // Found Callback
+        (index: number) => {
+          this.relWebCat[index].enabled = 1;
+          this.saveRel(this.relWebCat[index]);
+        },
+        // Not Found Callback
+        () => {
           // Create a relation between list[webPasIndex] and category[catIndex]
           var newRel: RelWebCat = new RelWebCat();
           newRel.id_web = this.list[webPassIndex].id;
@@ -275,10 +278,15 @@ export class WebPassListComponent implements OnInit, Refreshable {
       }, () => {
       });
     }
+    this.needReenter = true;
   }
 
   isSelected(webPass: WebPass): boolean {
     return (webPass === this.selectedWebPass);
+  }
+
+  isActive(webPass: WebPass): string {
+    return (this.isSelected(webPass)?"active":"");
   }
 
   sendMessage(text: string) {
