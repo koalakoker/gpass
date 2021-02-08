@@ -37,14 +37,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
   passwordType: string = "password";
   DebugTxt = "";
 
-  showPass() {
-    if (this.passwordType == "password") {
-      this.passwordType = "text";
-    } else {
-      this.passwordType = "password";
-    }
-  }
-  
   constructor(
     private route: ActivatedRoute,
     private configService: WebPassService,
@@ -317,6 +309,15 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
   }
 
+  onPlusOneYear(i: number) {
+    const w: WebPass = this.list[i];
+    const ed: string = w.expirationDate;
+    w.plusOneYear();
+    if (ed !== w.expirationDate) {
+      this.save(i);
+    }
+  }
+
   isExpired(i: number): string {
     let str = (this.list[i].isExpired()===true) ? '<expired>' : '';
     return str;
@@ -382,6 +383,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
       }
     });
     return found;
+  }
+
+  showPass() {
+    if (this.passwordType == "password") {
+      this.passwordType = "text";
+    } else {
+      this.passwordType = "password";
+    }
   }
 
 }

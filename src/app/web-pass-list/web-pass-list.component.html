@@ -112,7 +112,7 @@
                       aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
-                    <button type="button" class="btn btn-success">Today</button>
+                    <button type="button" class="btn btn-success" (click)="onTodayButton(i)">Today</button>
                   </div>
                 </div>
                 <!-- Expiration -->
@@ -122,7 +122,7 @@
                     <input class="form-control" type="text" placeholder="Expiration Date" [(ngModel)]="list[i].expirationDate" (change)="save(i)" aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
-                    <button type="button" class="btn btn-success">+1 Yr.</button>
+                    <button type="button" class="btn btn-success" (click)="onPlusOneYear(i)">+1 Yr.</button>
                   </div>
                 </div>
             </div>

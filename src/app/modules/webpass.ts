@@ -58,8 +58,14 @@ export class WebPass {
     setToday() {
         const today: Date = new Date();
         const expire: Date = new Date();
-        expire.setDate(today.getDate() + 30);
+        expire.setDate(today.getDate() + 365);
         this.registrationDate = this.format(today);
+        this.expirationDate = this.format(expire);
+    }
+
+    plusOneYear() {
+        const expire: Date = new Date(this.expirationDate);
+        expire.setFullYear(expire.getFullYear() + 1);
         this.expirationDate = this.format(expire);
     }
 
