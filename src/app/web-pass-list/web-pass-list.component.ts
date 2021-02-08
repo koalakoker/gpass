@@ -34,7 +34,16 @@ export class WebPassListComponent implements OnInit, Refreshable {
   interval;
   showCategory: boolean = false;
   needReenter: boolean = false;
+  passwordType: string = "password";
   DebugTxt = "";
+
+  showPass() {
+    if (this.passwordType == "password") {
+      this.passwordType = "text";
+    } else {
+      this.passwordType = "password";
+    }
+  }
   
   constructor(
     private route: ActivatedRoute,

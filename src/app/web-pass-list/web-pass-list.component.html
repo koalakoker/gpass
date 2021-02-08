@@ -98,10 +98,10 @@
                 <div class="row mb-3">
                   <label class="col-sm-3 col-form-label">Password</label>
                   <div class="col-sm-6">
-                    <input class="form-control" type="password" placeholder="Password" [(ngModel)]="list[i].pass" (change)="save(i)" aria-label="default input example">
+                    <input class="form-control" type="{{passwordType}}" placeholder="Password" [(ngModel)]="list[i].pass" (change)="save(i)" aria-label="default input example">
                   </div>
                   <div class="col-sm-3">
-                    <button type="button" class="btn btn-success">Show</button>
+                    <button type="button" class="btn btn-success" (click)="showPass()">Show</button>
                   </div>
                 </div>
                 <!-- Registration -->
