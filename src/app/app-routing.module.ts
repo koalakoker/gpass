@@ -14,7 +14,8 @@ const routes: Routes = [
   { path: 'newPass', component: PassGeneratorComponent },
   { path: 'changePass', component: ChangePassComponent },
   { path: 'dbCreateTable', component: DbCreateBackupTableComponent },
-  { path: 'dbBackup', component: DbBackupComponent }
+  { path: 'dbBackup', component: DbBackupComponent },
+  { path: 'search/:str', component: WebPassListComponent}
 ];
 
 @NgModule({

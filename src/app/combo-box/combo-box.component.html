@@ -1,0 +1,28 @@
+<div class="d-flex">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <input 
+          type="text" 
+          class="form-control me-2" 
+          [ngModel]="textToSort" 
+          (ngModelChange)="textChange($event)"
+          (keyup)="onKeyDownAction($event)" 
+          (focus)="onFocusEventAction()" 
+          (blur)="onBlurEventAction()" />
+      </div>
+      
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <ul class="list-group myList" *ngIf="showDropDown">
+          <li *ngFor="let data of dummyDataList; let i = index"
+            (click)="updateTextBox(data[columnName])" 
+            class="list-group-item"
+            [ngClass]="{active:checkHighlight(i)}">{{dummyDataList[i].name}}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

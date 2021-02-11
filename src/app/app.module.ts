@@ -17,6 +17,7 @@ import { DbCreateBackupTableComponent } from './db-create-backup-table/db-create
 import { DbBackupComponent } from './db-backup/db-backup.component';
 import { PopupMessageComponent } from './popup-message/popup-message.component';
 import { CategoryComponent } from './category/category.component';
+import { ComboBoxComponent } from './combo-box/combo-box.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { CategoryComponent } from './category/category.component';
     DbCreateBackupTableComponent,
     DbBackupComponent,
     PopupMessageComponent,
-    CategoryComponent
+    CategoryComponent,
+    ComboBoxComponent
   ],
   imports: [
     BrowserModule,

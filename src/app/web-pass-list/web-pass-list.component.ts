@@ -16,6 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 export class WebPassListComponent implements OnInit, Refreshable {
 
   catID: number;
+  searchStr: string = "";
   webPassIndexSelected: number;
   g: GCrypto;
   list: WebPass[];
@@ -47,17 +48,25 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   ngOnInit() {
     this.catID = +this.route.snapshot.paramMap.get('cat');
+    this.searchStr = this.route.snapshot.paramMap.get('searchStr');
   }
 
   refresh(cmd: string = "") {
     if (cmd == "")
     {
       this.catID = +this.route.snapshot.paramMap.get('cat');
+      this.searchStr = this.route.snapshot.paramMap.get('str');
+      this.DebugTxt = "cat:" + this.catID + " src:" + this.searchStr;
       this.checklogged();
       return "btnInsert";
     }
     if (cmd == "btnPress") {
       this.onNewFunc();
+    }
+    if (cmd == "srcPress") {
+      this.catID = 0;
+      this.searchStr = this.route.snapshot.paramMap.get('str');
+      this.checklogged();
     }
   }
 
@@ -91,6 +100,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.list = this.list.filter((web) => {
           return this.include(filtWebId, web.id);
         });
+      } else {
+        if (this.searchStr != null) {
+          if (this.searchStr != "") {
+            this.list = this.list.filter((web) => {
+              return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
+            });
+          }
+        }
       }
     }
   }

@@ -2,7 +2,6 @@ import { Component, OnInit} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebPassService } from './services/web-pass.service';
 import { SessionService } from './services/session.service';
-import { WebPass } from './modules/webpass';
 import { Refreshable } from './modules/refreshable';
 import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
@@ -26,9 +25,23 @@ export class AppComponent implements OnInit {
   param = "";
   category: Category[];
   webpassActive = "active";
+  searchString: string = "";
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
+
+  dataList = [
+    { "name": "Afghanistan", "code": "AF" },
+    { "name": "Åland Islands", "code": "AX" },
+    { "name": "Albania", "code": "AL" },
+    { "name": "Algeria", "code": "DZ" },
+    { "name": "American Samoa", "code": "AS" },
+    { "name": "AndorrA", "code": "AD" },
+    { "name": "Angola", "code": "AO" },
+    { "name": "Anguilla", "code": "AI" },
+    { "name": "Antarctica", "code": "AQ" },
+    { "name": "Antigua and Barbuda", "code": "AG" }
+  ];
 
   routerData = [{link: '/category'     , label: "Category"              , activated: ""},
                 {link: '/newPass'      , label: "New password"          , activated: ""},
@@ -45,6 +58,7 @@ export class AppComponent implements OnInit {
     router.events.subscribe(val => {
       if (val instanceof NavigationEnd)
       {
+        this.DebugTxt = val.url;
         this.childInjected = this.routedComponent.refresh("");
         if ((val.url.slice(1,5) == "list") || (val.url === '/')) {
           this.routerData.forEach((link) => {
@@ -125,12 +139,12 @@ export class AppComponent implements OnInit {
           }
         },
         (answer) => {
-          this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Error";
+          //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Error";
           this.clearSession();
           this.printErrorMessage('Login error');
         },
         () => {
-          this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Complete";
+          //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Complete";
         }
       );
     });
@@ -167,5 +181,13 @@ export class AppComponent implements OnInit {
       this.printErrorMessage(JSON.stringify(err));
     }
     );
+  }
+
+  onSearch() {
+    this.router.navigateByUrl('/search/' + this.searchString);
+  }
+
+  searchTyping() {
+
   }
 }

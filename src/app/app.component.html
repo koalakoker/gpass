@@ -46,10 +46,22 @@
                             placeholder="Insert master password">
                     </ng-container>
                 </ul>
-                <form class="d-flex" *ngIf="logged">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                <div class="d-flex" *ngIf="logged">
+                    <!-- <input
+                        (change)="searchTyping()"
+                        (keyup.enter)="onSearch()"
+                        [(ngModel)]="searchString"
+                        class="form-control me-2" 
+                        type="text" 
+                        placeholder="Search" 
+                        aria-label="Search"
+                        > -->
+                    <combo-box></combo-box>
+                    <button 
+                        class="btn btn-outline-success" 
+                        type="submit" 
+                        (click)="onSearch()">Search</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -61,5 +73,3 @@
 </div>
 <!-- Comment for producton -->
 <!-- <div>Remove for producton: {{DebugTxt}}</div> -->
-
-
