@@ -4,8 +4,6 @@ import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
 
 export enum KEY_CODE {
-  UP_ARROW = 38,
-  DOWN_ARROW = 40,
   TAB_KEY = 9
 }
 @Component({
@@ -30,22 +28,30 @@ export class ComboBoxComponent implements OnInit {
 
   onFocusEventAction(): void {
     this.counter = -1;
+    console.log("Focus");
   }
   onBlurEventAction(): void {
     this.showDropDown = false;
   }
   onKeyDownAction(event: KeyboardEvent): void {
     this.updateList(() => {
+      console.log("Key Down dummyDataList.length=" + this.dummyDataList.length);
       this.showDropDown = true;
-      if (event.keyCode === KEY_CODE.UP_ARROW) {
+      if (event.key === 'ArrowUp') {
         this.counter = (this.counter === 0) ? this.counter : --this.counter;
         this.checkHighlight(this.counter);
         this.textToSort = this.list[this.counter].name;
       }
-      if (event.keyCode === KEY_CODE.DOWN_ARROW) {
+      if (event.key === 'ArrowDown') {
         this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
         this.checkHighlight(this.counter);
         this.textToSort = this.list[this.counter].name;
+      }
+      if (event.key === 'Escape') {
+        this.reset();
+      }
+      if (event.key ) {
+        console.log(event.key);
       }
     });
   }
@@ -58,6 +64,7 @@ export class ComboBoxComponent implements OnInit {
   ngOnInit() {
     this.reset();
   }
+
   toogleDropDown(): void {
     this.showDropDown = !this.showDropDown;
   }
@@ -77,33 +84,27 @@ export class ComboBoxComponent implements OnInit {
       this.reset();
     }
   }
+  
   updateTextBox(valueSelected) {
     this.textToSort = valueSelected;
     this.showDropDown = false;
   }
 
-  updateList(endClbk:() => void) {
-    this.checklogged(() => endClbk());
-    this.dummyDataList = this.list;
-  }
-
-  checklogged(endClbk: () => void) {
+  updateList(endClbk: () => void) {
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
       this.logged = true;
-      this.enter(() => endClbk());
+      this.getWebPassList(() => {
+        this.dummyDataList = this.list;
+        endClbk();
+      });
     }
     else {
       this.chipher_password = '';
       this.logged = false;
       this.list = [];
-      endClbk();
     }
-  }
-
-  enter(endClbk: () => void) {
-    this.getWebPassList(() => endClbk());
   }
 
   getWebPassList(webPassCbk: () => void) {
