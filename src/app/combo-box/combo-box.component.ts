@@ -19,6 +19,7 @@ export class ComboBoxComponent implements OnInit {
   textToSort: string;
   chipher_password: string;
   logged = false;
+  listToBeUpdated = true;
 
   constructor(
     private configService: WebPassService,
@@ -33,27 +34,35 @@ export class ComboBoxComponent implements OnInit {
   onBlurEventAction(): void {
     this.showDropDown = false;
   }
+
+  changeSelected(event: KeyboardEvent): void {
+    this.showDropDown = true;
+    if (event.key === 'ArrowUp') {
+      this.counter = (this.counter === 0) ? this.counter : --this.counter;
+      this.checkHighlight(this.counter);
+      this.textToSort = this.list[this.counter].name;
+    }
+    if (event.key === 'ArrowDown') {
+      this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
+      this.checkHighlight(this.counter);
+      this.textToSort = this.list[this.counter].name;
+    }
+    if (event.key === 'Escape') {
+      this.reset();
+    }
+  }
+
   onKeyDownAction(event: KeyboardEvent): void {
-    this.updateList(() => {
-      console.log("Key Down dummyDataList.length=" + this.dummyDataList.length);
-      this.showDropDown = true;
-      if (event.key === 'ArrowUp') {
-        this.counter = (this.counter === 0) ? this.counter : --this.counter;
-        this.checkHighlight(this.counter);
-        this.textToSort = this.list[this.counter].name;
-      }
-      if (event.key === 'ArrowDown') {
-        this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
-        this.checkHighlight(this.counter);
-        this.textToSort = this.list[this.counter].name;
-      }
-      if (event.key === 'Escape') {
-        this.reset();
-      }
-      if (event.key ) {
-        console.log(event.key);
-      }
-    });
+    if (this.listToBeUpdated) {
+      console.log("list to be updated");
+      this.updateList(() => {
+         this.changeSelected(event);
+         this.listToBeUpdated = false;
+      });
+    } else {
+      console.log("list not updated");
+      this.changeSelected(event);
+    }
   }
 
   checkHighlight(currentItem: number): boolean {
@@ -71,6 +80,7 @@ export class ComboBoxComponent implements OnInit {
 
   reset(): void {
     this.showDropDown = false;
+    this.listToBeUpdated = true;
   }
 
   textChange(value) {

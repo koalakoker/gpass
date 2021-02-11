@@ -5,8 +5,7 @@
         <input 
           type="text" 
           class="form-control me-2" 
-          
-          (keyup)="onKeyDownAction($event)" 
+          (keydown)="onKeyDownAction($event)"
           (focus)="onFocusEventAction()" 
           (blur)="onBlurEventAction()"
           placeholder="Search" 
