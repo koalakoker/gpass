@@ -4,9 +4,6 @@ import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
 import { promise } from 'protractor';
 
-export enum KEY_CODE {
-  TAB_KEY = 9
-}
 @Component({
   selector: 'combo-box',
   templateUrl: './combo-box.component.html',
@@ -14,7 +11,6 @@ export enum KEY_CODE {
 })
 export class ComboBoxComponent implements OnInit {
   list: WebPass[];
-  dummyDataList: WebPass[];
   showDropDown: boolean;
   counter: number;
   textToSort: string;
@@ -30,7 +26,6 @@ export class ComboBoxComponent implements OnInit {
 
   onFocusEventAction(): void {
     this.counter = -1;
-    console.log("Focus");
   }
   onBlurEventAction(): void {
     this.reset();
@@ -39,15 +34,15 @@ export class ComboBoxComponent implements OnInit {
   changeSelected(event: KeyboardEvent): void {
     if (event.key === 'ArrowUp') {
       this.counter = (this.counter === 0) ? this.counter : --this.counter;
-      if ((this.counter > -1) && (this.counter < this.dummyDataList.length)) {
-        this.textToSort = this.dummyDataList[this.counter].name;
+      if ((this.counter > -1) && (this.counter < this.list.length)) {
+        this.textToSort = this.list[this.counter].name;
       } else {
         this.counter = -1;
       }
     } else if (event.key === 'ArrowDown') {
-      this.counter = (this.counter === this.dummyDataList.length - 1) ? this.counter : ++this.counter;
-      if ((this.counter > -1) && (this.counter < this.dummyDataList.length)) {
-        this.textToSort = this.dummyDataList[this.counter].name;
+      this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
+      if ((this.counter > -1) && (this.counter < this.list.length)) {
+        this.textToSort = this.list[this.counter].name;
       } else {
         this.counter = -1;
       }
@@ -57,19 +52,32 @@ export class ComboBoxComponent implements OnInit {
       this.reset();
     } else {
       // Other key pressed
-      console.log(event.key);
+    }
+  }
+
+  updateList(list: WebPass[]) {
+    if (list) {
+      this.list = list;
+      this.showDropDown = true;
+      this.listToBeUpdated = false;
+    } else {
+      this.list = [];
+      this.showDropDown = false;
+      this.listToBeUpdated = true;
     }
   }
 
   onKeyDownAction(event: KeyboardEvent): void {
     if (this.listToBeUpdated) {
-      console.log("list to be updated");
-      this.updateList(this.textToSort, () => {
-         this.changeSelected(event);
-         this.listToBeUpdated = false;
+      this.getList(this.textToSort)
+      .then((list: WebPass[]) => {
+        this.updateList(list);
+        this.changeSelected(event);
+      })
+      .catch((error) => {
+        console.log("getList rejected with " + JSON.stringify(error));
       });
     } else {
-      console.log("list not updated");
       this.changeSelected(event);
     }
   }
@@ -93,9 +101,12 @@ export class ComboBoxComponent implements OnInit {
   }
 
   textChange(value: string) {
-    console.log("Text change value:" + value);
-    this.updateList(value, () => {
-      this.listToBeUpdated = false;
+    this.getList(value)
+    .then((list: WebPass[]) => {
+      this.updateList(list);
+    })
+    .catch((error) => {
+      console.log("getList rejected with " + JSON.stringify(error));
     });
   }
   
@@ -104,42 +115,18 @@ export class ComboBoxComponent implements OnInit {
     this.showDropDown = false;
   }
 
-  updateList(searchStr: string = "", endClbk: () => void) {
-    const storedPass = this.sessionService.getKey('ChipherPassword');
-    if ((storedPass != undefined) && (storedPass != '')) {
-      this.chipher_password = storedPass;
-      this.logged = true;
-      this.getWebPassList(() => {
-        this.dummyDataList = this.list;
-        if (searchStr != "") {
-          this.dummyDataList = this.list.filter((web: WebPass) => {
-            return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
-          });
-        }
-        if (this.dummyDataList) {
-          this.showDropDown = true;
-        }
-        endClbk();
-      });
-    }
-    else {
-      this.chipher_password = '';
-      this.logged = false;
-      this.list = [];
-    }
-  }
-
   getList(searchStr: string = "") {
-    this.configService.get("", 'gpass').toPromise()
+    return new Promise((resolve,reject) => {
+      this.configService.get("", 'gpass').toPromise()
       .then((data: Array<WebPass>) => {
         // Decode and create a new WebPass list
-        this.list = data.map((x) => {
+        var list: WebPass[] = data.map((x) => {
           const w = new WebPass(x);
           w.decrypt(this.sessionService.getKey('ChipherPassword'));
           return w;
         });
         // Sort WebPass list
-        this.list.sort((a, b) => {
+        list.sort((a, b) => {
           if (a.name < b.name) {
             return -1;
           } else {
@@ -151,46 +138,16 @@ export class ComboBoxComponent implements OnInit {
           }
         });
         // Filter
-        this.dummyDataList = this.list;
         if (searchStr != "") {
-          this.dummyDataList = this.list.filter((web: WebPass) => {
+          list = list.filter((web: WebPass) => {
             return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
           });
         }
-        if (this.dummyDataList) {
-          this.showDropDown = true;
-        }
+        resolve(list);
       })
-    .catch((error) => {
-      console.log("Promise rejected with " + JSON.stringify(error));
-    });
-  }
-  
-  getWebPassList(webPassCbk: () => void) {
-    // Get Webpass list
-    this.configService.get("", 'gpass').subscribe((data: Array<WebPass>) => {
-      // Decode and create a new WebPass list
-      this.list = data.map((x) => {
-        const w = new WebPass(x);
-        w.decrypt(this.chipher_password);
-        return w;
-      }, this);
-      this.list.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        } else {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
+      .catch((error) => {
+        reject(error);
       });
-      webPassCbk();
-    }, err => this.retry(err));
-  }
-
-  retry(err) {
-    console.log(err);
+    });
   }
 }

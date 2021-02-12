@@ -2,7 +2,6 @@
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <button (click)="getList()">GetList</button>
         <input 
           type="text" 
           class="form-control me-2"
@@ -18,10 +17,10 @@
     <div class="row">
       <div class="col-sm">
         <ul class="list-group myList" *ngIf="showDropDown">
-          <li *ngFor="let data of dummyDataList; let i = index"
-            (click)="updateTextBox(data[columnName])" 
+          <li *ngFor="let data of list; let i = index"
+            (click)="updateTextBox(i)" 
             class="list-group-item"
-            [ngClass]="{active:checkHighlight(i)}">{{dummyDataList[i].name}}
+            [ngClass]="{active:checkHighlight(i)}">{{data.name}}
           </li>
         </ul>
       </div>
