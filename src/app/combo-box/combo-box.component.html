@@ -4,7 +4,8 @@
       <div class="col-sm">
         <input 
           type="text" 
-          class="form-control me-2" 
+          class="form-control me-2"
+          [ngModel]="textToSort"
           (keydown)="onKeyDownAction($event)"
           (focus)="onFocusEventAction()" 
           (blur)="onBlurEventAction()"

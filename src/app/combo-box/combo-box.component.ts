@@ -32,7 +32,7 @@ export class ComboBoxComponent implements OnInit {
     console.log("Focus");
   }
   onBlurEventAction(): void {
-    this.showDropDown = false;
+    this.reset();
   }
 
   changeSelected(event: KeyboardEvent): void {
@@ -50,6 +50,7 @@ export class ComboBoxComponent implements OnInit {
     if (event.key === 'Escape') {
       this.reset();
     }
+    this.textChange(this.textToSort);
   }
 
   onKeyDownAction(event: KeyboardEvent): void {
@@ -83,7 +84,8 @@ export class ComboBoxComponent implements OnInit {
     this.listToBeUpdated = true;
   }
 
-  textChange(value) {
+  textChange(value: string) {
+    console.log("Text change value:" + value);
     this.dummyDataList = [];
     if (value.length > 0) {
       this.dummyDataList = this.list.filter((web: WebPass) => {
