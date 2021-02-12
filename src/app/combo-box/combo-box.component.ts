@@ -36,27 +36,34 @@ export class ComboBoxComponent implements OnInit {
   }
 
   changeSelected(event: KeyboardEvent): void {
-    this.showDropDown = true;
     if (event.key === 'ArrowUp') {
       this.counter = (this.counter === 0) ? this.counter : --this.counter;
-      this.checkHighlight(this.counter);
-      this.textToSort = this.list[this.counter].name;
-    }
-    if (event.key === 'ArrowDown') {
-      this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
-      this.checkHighlight(this.counter);
-      this.textToSort = this.list[this.counter].name;
-    }
-    if (event.key === 'Escape') {
+      if ((this.counter > -1) && (this.counter < this.dummyDataList.length)) {
+        this.textToSort = this.dummyDataList[this.counter].name;
+      } else {
+        this.counter = -1;
+      }
+    } else if (event.key === 'ArrowDown') {
+      this.counter = (this.counter === this.dummyDataList.length - 1) ? this.counter : ++this.counter;
+      if ((this.counter > -1) && (this.counter < this.dummyDataList.length)) {
+        this.textToSort = this.dummyDataList[this.counter].name;
+      } else {
+        this.counter = -1;
+      }
+    } else if (event.key === 'Escape') {
       this.reset();
+    } else if (event.key === 'Enter') {
+      this.reset();
+    } else {
+      // Other key pressed
+      console.log(event.key);
     }
-    this.textChange(this.textToSort);
   }
 
   onKeyDownAction(event: KeyboardEvent): void {
     if (this.listToBeUpdated) {
       console.log("list to be updated");
-      this.updateList(() => {
+      this.updateList(this.textToSort, () => {
          this.changeSelected(event);
          this.listToBeUpdated = false;
       });
@@ -86,15 +93,9 @@ export class ComboBoxComponent implements OnInit {
 
   textChange(value: string) {
     console.log("Text change value:" + value);
-    this.dummyDataList = [];
-    if (value.length > 0) {
-      this.dummyDataList = this.list.filter((web: WebPass) => {
-        return (web.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()));
-      });
-      if (this.dummyDataList) { this.showDropDown = true; }
-    } else {
-      this.reset();
-    }
+    this.updateList(value, () => {
+      this.listToBeUpdated = false;
+    });
   }
   
   updateTextBox(valueSelected) {
@@ -102,13 +103,21 @@ export class ComboBoxComponent implements OnInit {
     this.showDropDown = false;
   }
 
-  updateList(endClbk: () => void) {
+  updateList(searchStr: string = "", endClbk: () => void) {
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
       this.logged = true;
       this.getWebPassList(() => {
         this.dummyDataList = this.list;
+        if (searchStr != "") {
+          this.dummyDataList = this.list.filter((web: WebPass) => {
+            return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
+          });
+        }
+        if (this.dummyDataList) {
+          this.showDropDown = true;
+        }
         endClbk();
       });
     }

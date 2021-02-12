@@ -5,14 +5,14 @@
         <input 
           type="text" 
           class="form-control me-2"
-          [ngModel]="textToSort"
+          [ngModel]="textToSort" 
+          (ngModelChange)="textChange($event)"
           (keydown)="onKeyDownAction($event)"
           (focus)="onFocusEventAction()" 
           (blur)="onBlurEventAction()"
           placeholder="Search" 
           aria-label="Search" />
-      </div>
-      
+      </div>  
     </div>
     <div class="row">
       <div class="col-sm">
