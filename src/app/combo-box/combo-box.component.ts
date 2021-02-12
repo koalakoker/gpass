@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { WebPass } from '../modules/webpass'
 import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
+import { promise } from 'protractor';
 
 export enum KEY_CODE {
   TAB_KEY = 9
@@ -128,6 +129,43 @@ export class ComboBoxComponent implements OnInit {
     }
   }
 
+  getList(searchStr: string = "") {
+    this.configService.get("", 'gpass').toPromise()
+      .then((data: Array<WebPass>) => {
+        // Decode and create a new WebPass list
+        this.list = data.map((x) => {
+          const w = new WebPass(x);
+          w.decrypt(this.sessionService.getKey('ChipherPassword'));
+          return w;
+        });
+        // Sort WebPass list
+        this.list.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          } else {
+            if (a.name > b.name) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        });
+        // Filter
+        this.dummyDataList = this.list;
+        if (searchStr != "") {
+          this.dummyDataList = this.list.filter((web: WebPass) => {
+            return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
+          });
+        }
+        if (this.dummyDataList) {
+          this.showDropDown = true;
+        }
+      })
+    .catch((error) => {
+      console.log("Promise rejected with " + JSON.stringify(error));
+    });
+  }
+  
   getWebPassList(webPassCbk: () => void) {
     // Get Webpass list
     this.configService.get("", 'gpass').subscribe((data: Array<WebPass>) => {
