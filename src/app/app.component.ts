@@ -1,10 +1,11 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebPassService } from './services/web-pass.service';
 import { SessionService } from './services/session.service';
 import { Refreshable } from './modules/refreshable';
 import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
+import { ComboBoxComponent } from './combo-box/combo-box.component'
 
 @Component({
   selector: 'app-root',
@@ -183,7 +184,11 @@ export class AppComponent implements OnInit {
     );
   }
 
+  @ViewChild(ComboBoxComponent)
+  private comboInput: ComboBoxComponent;
+
   onSearch() {
+    this.searchString = this.comboInput.textToSort;
     this.router.navigateByUrl('/search/' + this.searchString);
   }
 

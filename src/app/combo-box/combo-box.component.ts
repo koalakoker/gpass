@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 import { WebPass } from '../modules/webpass'
 import { WebPassService } from '../services/web-pass.service';
 import { SessionService } from '../services/session.service';
@@ -10,6 +10,8 @@ import { promise } from 'protractor';
   styleUrls: ['./combo-box.component.css']
 })
 export class ComboBoxComponent implements OnInit {
+  @Output() selected = new EventEmitter<string>();
+
   list: WebPass[];
   showDropDown: boolean;
   counter: number;
@@ -50,6 +52,7 @@ export class ComboBoxComponent implements OnInit {
       this.reset();
     } else if (event.key === 'Enter') {
       this.reset();
+      this.selected.emit(this.textToSort);
     } else {
       // Other key pressed
     }
