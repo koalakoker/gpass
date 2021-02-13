@@ -30,7 +30,6 @@ export class ComboBoxComponent implements OnInit {
     this.counter = -1;
   }
   onBlurEventAction(): void {
-    this.reset();
   }
 
   changeSelected(event: KeyboardEvent): void {
@@ -50,10 +49,14 @@ export class ComboBoxComponent implements OnInit {
       }
     } else if (event.key === 'Escape') {
       this.reset();
+      this.textToSort = "";
     } else if (event.key === 'Enter') {
       this.reset();
       this.selected.emit(this.textToSort);
-    } else {
+    } else if (event.key === 'Tab') {
+      this.reset();
+    } 
+    else {
       // Other key pressed
     }
   }
@@ -94,10 +97,6 @@ export class ComboBoxComponent implements OnInit {
     this.reset();
   }
 
-  toogleDropDown(): void {
-    this.showDropDown = !this.showDropDown;
-  }
-
   reset(): void {
     this.showDropDown = false;
     this.listToBeUpdated = true;
@@ -113,9 +112,11 @@ export class ComboBoxComponent implements OnInit {
     });
   }
   
-  updateTextBox(valueSelected) {
+  clickOnElement(valueSelected: string) {
+    console.log(valueSelected);
     this.textToSort = valueSelected;
     this.showDropDown = false;
+    this.selected.emit(this.textToSort);
   }
 
   getList(searchStr: string = "") {

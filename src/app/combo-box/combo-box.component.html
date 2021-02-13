@@ -18,7 +18,7 @@
       <div class="col-sm">
         <ul class="list-group myList" *ngIf="showDropDown">
           <li *ngFor="let data of list; let i = index"
-            (click)="updateTextBox(i)" 
+            (click)="clickOnElement(data.name)" 
             class="list-group-item"
             [ngClass]="{active:checkHighlight(i)}">{{data.name}}
           </li>
