@@ -48,7 +48,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   ngOnInit() {
     this.catID = +this.route.snapshot.paramMap.get('cat');
-    this.searchStr = this.route.snapshot.paramMap.get('searchStr');
+    this.searchStr = this.route.snapshot.paramMap.get('str');
   }
 
   refresh(cmd: string = "") {

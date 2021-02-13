@@ -47,15 +47,6 @@
                     </ng-container>
                 </ul>
                 <div class="d-flex" *ngIf="logged">
-                    <!-- <input
-                        (change)="searchTyping()"
-                        (keyup.enter)="onSearch()"
-                        [(ngModel)]="searchString"
-                        class="form-control me-2" 
-                        type="text" 
-                        placeholder="Search" 
-                        aria-label="Search"
-                        > -->
                     <combo-box (selected)="onSearch()"></combo-box>
                     <button 
                         class="btn btn-outline-success" 
@@ -66,10 +57,10 @@
         </div>
     </nav>
 </header>
+<!-- Comment for producton -->
+<!-- <div>Remove for producton: {{DebugTxt}}</div> -->
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
     {{errorMessage}}
 </div>
-<!-- Comment for producton -->
-<!-- <div>Remove for producton: {{DebugTxt}}</div> -->

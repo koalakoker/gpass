@@ -13,6 +13,8 @@ import { ComboBoxComponent } from './combo-box/combo-box.component'
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
+  @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   
   g: GCrypto;
   chipher_password: string;
@@ -30,19 +32,6 @@ export class AppComponent implements OnInit {
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
-
-  dataList = [
-    { "name": "Afghanistan", "code": "AF" },
-    { "name": "Åland Islands", "code": "AX" },
-    { "name": "Albania", "code": "AL" },
-    { "name": "Algeria", "code": "DZ" },
-    { "name": "American Samoa", "code": "AS" },
-    { "name": "AndorrA", "code": "AD" },
-    { "name": "Angola", "code": "AO" },
-    { "name": "Anguilla", "code": "AI" },
-    { "name": "Antarctica", "code": "AQ" },
-    { "name": "Antigua and Barbuda", "code": "AG" }
-  ];
 
   routerData = [{link: '/category'     , label: "Category"              , activated: ""},
                 {link: '/newPass'      , label: "New password"          , activated: ""},
@@ -183,9 +172,6 @@ export class AppComponent implements OnInit {
     }
     );
   }
-
-  @ViewChild(ComboBoxComponent)
-  private comboInput: ComboBoxComponent;
 
   onSearch() {
     this.searchString = this.comboInput.textToSort;
