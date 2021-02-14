@@ -2,7 +2,7 @@
 
 session_start();
 
-$logFile = fopen("../log/api.txt", "a");
+//$logFile = fopen("../log/api.txt", "a");
 if ($logFile) {
   fwrite($logFile, date("Y-m-d H:i:s") . "\n");
   fwrite($logFile, "session decryptPass:". $_SESSION['decryptPass'] . "\n");

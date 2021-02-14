@@ -7,7 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-$logFile = fopen("../log/login.txt", "a");
+//$logFile = fopen("../log/login.txt", "a");
 if ($logFile) {
   fwrite($logFile, date("Y-m-d H:i:s") . "\n");
 }

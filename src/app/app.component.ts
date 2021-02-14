@@ -132,6 +132,8 @@ export class AppComponent implements OnInit {
           //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Error";
           this.clearSession();
           this.printErrorMessage('Login error');
+          // Debug
+          //console.log(answer);
         },
         () => {
           //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Complete";
