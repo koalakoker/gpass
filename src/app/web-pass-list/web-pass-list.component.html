@@ -26,24 +26,33 @@
           <button 
             type="button"
             style="height: 54px; width: 54px;"
-            class="btn btn-success"
+            class="btn btn-primary"
             ngxClipboard [cbContent]="getUrl('username', i).value" 
             (cbOnSuccess)="sendMessage('Username copied to clipboard')">Usr
           </button>
           <button 
             type="button"
             style="height: 54px; width: 54px;"
-            class="btn btn-success"
+            class="btn btn-primary"
             ngxClipboard [cbContent]="getUrl('pass', i).value"
             (cbOnSuccess)="sendMessage('Password copied to clipboard')">Psw
           </button>
-          <a target="blank" href="http://{{getUrl('url', i).value}}">
+          <a 
+            target="blank" 
+            href="http://{{getUrl('url', i).value}}"
+            *ngIf="getUrl('url', i).value != 'url'">
             <input 
-            type=button
-            style="height: 54px; width: 54px;"
-            class="btn btn-success"
-            value="Go">
+              type=button
+              style="height: 54px; width: 54px;"
+              class="btn btn-success"
+              value="Go">
           </a>
+          <button
+            *ngIf="getUrl('url', i).value == 'url'"
+            style="height: 54px; width: 54px;"
+            class="btn btn-secondary"
+          >Go
+          </button>
           <button 
             type="button" 
             style="height: 54px; width: 54px;" 
