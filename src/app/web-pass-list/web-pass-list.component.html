@@ -43,13 +43,14 @@
             style="height: 54px; width: 54px;"
             class="btn btn-success"
             value="Go">
-          <button 
-            type="button"
-            style="height: 54px; width: 54px;"
-            class="btn btn-danger"
-            (click)="onButtonRemove(i)">Del
-          </button>
           </a>
+          <button 
+            type="button" 
+            style="height: 54px; width: 54px;" 
+            class="btn btn-danger" 
+            data-bs-toggle="modal"
+            [attr.data-bs-target]="'#confirmModal' + i">Del
+          </button>
         </div>
       </div>
 
@@ -125,6 +126,25 @@
                     <button type="button" class="btn btn-success" (click)="onPlusOneYear(i)">+1 Yr.</button>
                   </div>
                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Modal -->
+      <div class="modal fade" id="confirmModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#confirmModalLabel' + i" aria-hidden="true" >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel{{i}}">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to delete this?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger" (click)="onButtonRemove(i)" data-bs-dismiss="modal">Yes</button>
             </div>
           </div>
         </div>
