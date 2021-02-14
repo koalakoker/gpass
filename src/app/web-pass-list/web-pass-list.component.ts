@@ -186,7 +186,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       (id: number) => {
         webPass.id = id;
         webPass.decrypt(this.chipher_password);
-        this.list.push(webPass);
+        this.list.unshift(webPass);
       }, (err) => {
         this.retry(err);
       }
