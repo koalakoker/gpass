@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "gpass",
+			"path": "../../../../../../Users/koalakoker/.bitnami/stackman/machines/xampp/volumes/root/htdocs/gpass"
+		},
+		{
+			"name": "gpass",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
