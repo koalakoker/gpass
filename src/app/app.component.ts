@@ -201,7 +201,8 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('/search/' + this.searchString);
   }
 
-  searchTyping() {
-
+  plusOneYearAll() {
+    // Propagate to child
+    this.routedComponent.refresh("+1Yr.All");
   }
 }

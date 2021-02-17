@@ -68,6 +68,11 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.searchStr = this.route.snapshot.paramMap.get('str');
       this.checklogged();
     }
+    if (cmd == "+1Yr.All") {
+      this.list.forEach((web) => {
+        web.plusOneYear();
+      })
+    }
   }
 
   checklogged() {
