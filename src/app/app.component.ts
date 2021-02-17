@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebPassService } from './services/web-pass.service';
 import { SessionService } from './services/session.service';
+import { LocalService} from './services/local.service';
 import { Refreshable } from './modules/refreshable';
 import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit {
   constructor(
     private configService: WebPassService,
     private sessionService: SessionService,
+    private localService: LocalService,
     private router: Router
   ) {
     this.g = new GCrypto(this.configService);
@@ -84,6 +86,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    const localPass = this.localService.getKey('ChipherPassword');
+    if ((localPass != undefined) && (localPass != '')) {
+      this.chipher_password = localPass;
+      this.enter();
+    }
+
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
@@ -97,6 +105,13 @@ export class AppComponent implements OnInit {
     this.sessionService.setKey('ChipherPassword', '');
     this.sessionService.setKey('EncryptedPassword', '');
     this.sessionService.setKey('SessionToken', '');
+  }
+
+  clearLocal() {
+    this.chipher_password = '';
+    this.localService.setKey('ChipherPassword', '');
+    this.localService.setKey('EncryptedPassword', '');
+    this.localService.setKey('SessionToken', '');
   }
 
   printErrorMessage(txt : string) {
@@ -120,6 +135,11 @@ export class AppComponent implements OnInit {
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
             this.sessionService.setKey('EncryptedPassword', encrypted);
             this.sessionService.setKey('SessionToken', answer["sessionToken"]);
+            
+            this.localService.setKey('ChipherPassword', this.chipher_password);
+            this.localService.setKey('EncryptedPassword', encrypted);
+            this.localService.setKey('SessionToken', answer["sessionToken"]);
+            
             this.childInjected = this.routedComponent.refresh("");
             this.getCategory();
           }
@@ -147,6 +167,7 @@ export class AppComponent implements OnInit {
       (answer: JSON) => {
         this.logged = false;
         this.clearSession();
+        this.clearLocal();
         this.routedComponent.refresh("");
         this.childInjected = "";
         this.catData = [];

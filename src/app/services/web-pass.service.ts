@@ -11,18 +11,18 @@ export class WebPassService {
   }
 
   // For testing create a LAMP server and clone the DB 
-  //loginAddr = 'http://192.168.64.3/gpass/php/login.php'
-  //urlAddr = 'http://192.168.64.3/gpass/php/api.php';
-  //chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
+  loginAddr = 'http://192.168.64.3/gpass/php/login.php'
+  urlAddr = 'http://192.168.64.3/gpass/php/api.php';
+  chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
   
   // Decomment these for final production server use session vars
-  loginAddr =   'php/login.php'
-  urlAddr =     'php/api.php';
-  chiperAddr =  'php/getCriptDBAccess.php';
+  //loginAddr =   'php/login.php'
+  //urlAddr =     'php/api.php';
+  //chiperAddr =  'php/getCriptDBAccess.php';
 
   setTesting_chiper(encrypted: string) {
     // Comment this for final production server use session vars
-    //this.testing_chipher = encrypted;
+    this.testing_chipher = encrypted;
   }
 
   testing_chipher : string = "";
