@@ -41,12 +41,26 @@
                         </li>
                     </ng-container>
                     <ng-container *ngIf="!logged">
-                        <input 
-                            (change)="enter()" 
-                            [(ngModel)]="chipher_password" 
-                            class="form-control" 
-                            type="password"
-                            placeholder="Insert master password">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input 
+                                        (change)="enter()" 
+                                        [(ngModel)]="chipher_password" 
+                                        class="form-control" 
+                                        type="password"
+                                        placeholder="Insert master password">
+                                </div>
+                                <div class="col-sm align-self-center">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        id="keepMe"
+                                        [(ngModel)]="keepMeLogged">
+                                    <label class="form-check-label" for="keepMe" style="color: white; margin-left:10px " for="vehicle1"> Keep me logged</label>
+                                </div>
+                            </div>
+                        </div>
                     </ng-container>
                 </ul>
                 <div class="d-flex" *ngIf="logged">

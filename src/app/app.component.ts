@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
   category: Category[];
   webpassActive = "active";
   searchString: string = "";
+  keepMeLogged = false;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
@@ -136,9 +137,11 @@ export class AppComponent implements OnInit {
             this.sessionService.setKey('EncryptedPassword', encrypted);
             this.sessionService.setKey('SessionToken', answer["sessionToken"]);
             
-            this.localService.setKey('ChipherPassword', this.chipher_password);
-            this.localService.setKey('EncryptedPassword', encrypted);
-            this.localService.setKey('SessionToken', answer["sessionToken"]);
+            if (this.keepMeLogged) {
+              this.localService.setKey('ChipherPassword', this.chipher_password);
+              this.localService.setKey('EncryptedPassword', encrypted);
+              this.localService.setKey('SessionToken', answer["sessionToken"]);
+            }
             
             this.childInjected = this.routedComponent.refresh("");
             this.getCategory();
