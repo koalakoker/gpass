@@ -44,6 +44,7 @@
             href="http://{{getUrl('url', i).value}}"
             *ngIf="getUrl('url', i).value != 'url'">
             <input 
+              ngxClipboard [cbContent]="getUrl('username', i).value"
               type=button
               style="height: 54px; width: 54px; border: 2px; border-style: solid;
   border-color: rgb(204, 194, 194);"
