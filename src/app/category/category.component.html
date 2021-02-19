@@ -1,37 +1,72 @@
-<div *ngIf="logged" class="list-group-item-primary">
-  <ul class="list-group">
-    <li class="list-group-item" *ngFor="let element of category; let i = index" [class.active]="isSelected(element)"
-      (click)="onSelect(element)">
+<div class="container-fluid" *ngIf="logged">
+  <div class="list-group">
+    <div *ngFor="let element of category; let i = index" (click)="onSelect(element)">
     
-    <!-- Data -->
-    <a target="blank" class="spanColFixed">{{element.name}}</a>
-    <br><br>
-      
-    <!-- Edit button -->
-    <button type="button" class="btn" *ngIf="isSelected(element)" [class.btn-secondary]="!edit" [class.btn-dark]="edit"
-      (click)="onButtonEdit()">
-      Edit
-    </button>
-
-    <!-- Remove button -->
-    <button type="button" class="btn" *ngIf="isSelected(element)" [class.btn-secondary]="!edit" [class.btn-dark]="edit"
-      (click)="onButtonRemove(i)">
-      Del
-    </button>
-    
-    <div class="list-group-item-primary" *ngIf="edit && isSelected(element)">
-    
-      <!-- Edit element -->
-      <div>
-        <label>Name
-          <input type="text" class="form-control" [(ngModel)]="category[i].name" placeholder="category" (change)="save(i)">
-        </label>
-        <br>
+      <!-- Button -->
+      <div class="row">
+        <div class="col">
+          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#Modal' + i">
+            {{element.name}}
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+        border-color: rgb(204, 194, 194);" class="btn btn-danger" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#confirmModal' + i">Del
+          </button>
+        </div>
       </div>
-    
+
+      <!-- Modal -->
+      <div class="modal fade" id="Modal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#ModalLabel' + i" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalLabel{{i}}">{{element.name}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="onCloseEdit()"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Name -->
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input 
+                    class="form-control" 
+                    type="text" 
+                    placeholder="Name" 
+                    [(ngModel)]="category[i].name" 
+                    (change)="save(i)"
+                    aria-label="default input example"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Confirm Modal -->
+      <div class="modal fade" id="confirmModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#confirmModalLabel' + i"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel{{i}}">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to delete this?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger" (click)="onButtonRemove(i)" data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="alert alert-secondary" role="alert" *ngIf="(message!=='')&&(isSelected(element))">
-      {{message}}
-    </div>
-  </ul>
+  </div>
 </div>

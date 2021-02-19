@@ -32,6 +32,17 @@ export class CategoryComponent implements OnInit, Refreshable {
     // User is logged show content
     this.configService.get("", 'category').subscribe((data: Array<Category>) => {
       this.category = data;
+      this.category.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } else {
+          if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+      });
     }, err => console.log(err));
   }
 
@@ -74,7 +85,7 @@ export class CategoryComponent implements OnInit, Refreshable {
     const category = new Category();
     this.configService.createCategory(category, "").subscribe((id: number) => {
       category.id = id;
-      this.category.push(category);
+      this.category.unshift(category);
     }, err => console.log(err));
   }
 
@@ -93,6 +104,10 @@ export class CategoryComponent implements OnInit, Refreshable {
     return (cat === this.selecteCategory);
   }
 
+  isActive(cat: Category): string {
+    return (this.isSelected(cat) ? "active" : "");
+  }
+
   onSelect(cat: Category) {
     if (this.selecteCategory != cat) {
       this.edit = false;
@@ -107,5 +122,8 @@ export class CategoryComponent implements OnInit, Refreshable {
       this.message = '';
       clearInterval(this.interval);
     }, 2000);
+  }
+
+  onCloseEdit() {
   }
 }
