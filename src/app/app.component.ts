@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebPassService } from './services/web-pass.service';
 import { SessionService } from './services/session.service';
@@ -13,7 +13,7 @@ import { ComboBoxComponent } from './combo-box/combo-box.component'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   
@@ -28,18 +28,24 @@ export class AppComponent implements OnInit {
   childInjected: string = "";
   param = "";
   category: Category[];
+
+  @ViewChild('webPassDropDown')  webPassDropDown: ElementRef;
+  @ViewChild('categoryDropDown') categoryDropDown: ElementRef;
   webpassActive = "active";
+  categoryActive = "";
+  
   searchString: string = "";
   keepMeLogged = false;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
 
-  routerData = [{link: '/category'     , label: "Category"              , activated: ""},
-                {link: '/newPass'      , label: "New password"          , activated: ""},
-                {link: '/changePass'   , label: "Change master password", activated: ""},
-                {link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
-                {link: '/dbBackup'     , label: "Backup"                , activated: ""}];
+  routerData = [
+    {link: '/newPass'      , label: "New password"          , activated: ""},
+    {link: '/changePass'   , label: "Change master password", activated: ""},
+    {link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
+    {link: '/dbBackup'     , label: "Backup"                , activated: ""}
+  ];
 
   constructor(
     private configService: WebPassService,
@@ -51,9 +57,8 @@ export class AppComponent implements OnInit {
     router.events.subscribe(val => {
       if (val instanceof NavigationEnd)
       {
-        this.DebugTxt = val.url;
         this.childInjected = this.routedComponent.refresh("");
-        if ((val.url.slice(1,5) == "list") || (val.url === '/')) {
+        if (this.isWepPassPage(val.url)) {
           this.routerData.forEach((link) => {
             link.activated = "";
           });
@@ -65,9 +70,15 @@ export class AppComponent implements OnInit {
               cat.activated = "";
             }
           });
-          this.webpassActive = "active";
-        } else {
-          this.webpassActive = "";
+          this.webpassActive  = "active";
+          this.categoryActive = "";
+        } else if (this.isCategoryPage(val.url)) {
+          this.categoryActive = "active";
+          this.webpassActive  = "";
+        }
+         else {
+          this.webpassActive  = "";
+          this.categoryActive = "";
           this.routerData.forEach((link) => {
             if (link.link === val.url) {
               link.activated = "active";
@@ -98,7 +109,28 @@ export class AppComponent implements OnInit {
       this.chipher_password = storedPass;
       this.logged = true;
     }
+  }
 
+  isWepPassPage(url) {
+    return ((url.slice(1, 5) == "list") || (url === '/'));
+  }
+
+  isCategoryPage(url) {
+    return (url == '/category');
+  }
+
+  ngAfterViewInit() {
+    this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+      if (!this.isWepPassPage(this.router.url)) {
+        this.router.navigateByUrl('/list/0');
+      }
+    });
+
+    this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+      if (!this.isCategoryPage(this.router.url)) {
+        this.router.navigateByUrl("/category");
+      }
+    });
   }
 
   clearSession() {
@@ -152,14 +184,13 @@ export class AppComponent implements OnInit {
           }
         },
         (answer) => {
-          //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Error";
+          // Error
           this.clearSession();
           this.printErrorMessage('Login error');
-          // Debug
           //console.log(answer);
         },
         () => {
-          //this.DebugTxt = "app.component.ts-enter()-login.subscribe()-Complete";
+          // Complete
         }
       );
     });

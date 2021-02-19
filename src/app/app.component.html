@@ -12,14 +12,15 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{webpassActive}}" 
                                 href="#" 
-                                id="navbarDropdown" 
+                                id="navbarDropdownWebPass" 
                                 role="button"
                                 data-bs-toggle="dropdown" 
-                                aria-expanded="false">
+                                aria-expanded="false"
+                                #webPassDropDown>
                                 WebPass
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li *ngIf="childInjected=='btnInsert'">
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownWebPass">
+                                <li *ngIf="childInjected=='btnInsertWebPass'">
                                     <a class="dropdown-item" (click)="onNewFunc()">New</a>
                                 </li>
                                 <li>
@@ -33,6 +34,23 @@
                                 </li>
                                 <li *ngFor="let cat of catData">
                                     <a class="dropdown-item {{cat.activated}}" [routerLink]="cat.link">{{cat.label}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a 
+                                class="nav-link dropdown-toggle {{categoryActive}}" 
+                                href="#" 
+                                id="navbarCategoryDropdown" 
+                                role="button"
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false"
+                                #categoryDropDown>
+                                Category
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarCategoryDropdown">
+                                <li *ngIf="childInjected=='btnInsertCategory'">
+                                    <a class="dropdown-item" (click)="onNewFunc()">New</a>
                                 </li>
                             </ul>
                         </li>
@@ -75,7 +93,7 @@
     </nav>
 </header>
 <!-- Comment for producton -->
-<!-- <div>Remove for producton: {{DebugTxt}}</div> -->
+<div>Remove for producton: {{DebugTxt}}</div>
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">

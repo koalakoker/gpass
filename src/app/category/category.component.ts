@@ -43,7 +43,7 @@ export class CategoryComponent implements OnInit, Refreshable {
     if (cmd == "")
     {
       this.checklogged();
-      return "btnInsert";
+      return "btnInsertCategory";
     }
     if (cmd == "btnPress") {
       this.onNewFunc();

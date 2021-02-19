@@ -58,7 +58,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.searchStr = this.route.snapshot.paramMap.get('str');
       this.DebugTxt = "cat:" + this.catID + " src:" + this.searchStr;
       this.checklogged();
-      return "btnInsert";
+      return "btnInsertWebPass";
     }
     if (cmd == "btnPress") {
       this.onNewFunc();
