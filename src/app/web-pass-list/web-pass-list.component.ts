@@ -54,7 +54,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then(() => {
-          this.enter();
+          this.getWebPassList();
           resolve("btnInsertWebPass");
         })
         .catch((err) => {
@@ -69,7 +69,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then (() => {
-          this.enter();
+          this.getWebPassList();
           resolve("");
         })
         .catch ((err) => {
@@ -107,12 +107,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
         }
       }
     }
-  }
-
-  enter() {
-    // catIndex = 0 no filter
-    // catIndex-1 => category[]
-    this.getWebPassList();
   }
 
   retry(err) {
@@ -221,7 +215,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   onCloseEdit() {
     if (this.needReenter) {
       if (this.catID != 0) {
-        this.enter();
+        this.getWebPassList();
       }
       this.needReenter = false;
     }
