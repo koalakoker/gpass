@@ -5,7 +5,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
-import { WebPassService } from './services/web-pass.service';
+import { WebService } from './services/web.service';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
 import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
@@ -42,7 +42,7 @@ import { UsersComponent } from './users/users.component';
     StorageServiceModule,
     RouterModule
   ],
-  providers: [WebPassService],
+  providers: [WebService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

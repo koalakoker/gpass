@@ -1,5 +1,5 @@
 import  * as CryptoJS from '../../../node_modules/crypto-js'
-import { WebPassService } from '../services/web-pass.service';
+import { WebService } from '../services/web.service';
 
 function ascii_to_hexa(str) {
     var arr1 = [];
@@ -22,7 +22,7 @@ function hexa_to_ascii(hexx) {
 export class GCrypto {
     
     constructor(
-        private configService: WebPassService
+        private configService: WebService
     ) { }
 
     static crypt(text: string, key: string): string {

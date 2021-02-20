@@ -3,10 +3,10 @@ import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaders, HttpParams } 
 import { Observable } from 'rxjs';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
-import { RelWebCat } from './../modules/relwebcat';
+import { RelWebCat } from '../modules/relwebcat';
 
 @Injectable()
-export class WebPassService {
+export class WebService {
   constructor(private http: HttpClient) {
   }
 

@@ -1,7 +1,7 @@
 import { Category } from './../modules/category';
 import { Component, OnInit } from '@angular/core';
 import { Refreshable } from '../modules/refreshable';
-import { WebPassService } from '../services/web-pass.service';
+import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   message: string = '';
   interval;
 
-  constructor(private configService: WebPassService,
+  constructor(private configService: WebService,
               private loginService: LoginService) {
   };
 

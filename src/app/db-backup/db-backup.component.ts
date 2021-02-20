@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { WebPassService } from '../services/web-pass.service';
+import { WebService } from '../services/web.service';
 import { PopupMessageComponent } from '../popup-message/popup-message.component';
 import { Refreshable } from '../modules/refreshable';
 
@@ -15,7 +15,7 @@ export class dbBackupForm {
 })
 export class DbBackupComponent implements OnInit, Refreshable {
 
-  constructor(private httpService: WebPassService) { }
+  constructor(private httpService: WebService) { }
 
   url: string = "db_backup.php";
   val: dbBackupForm = new dbBackupForm();

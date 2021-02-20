@@ -1,8 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 import { WebPass } from '../modules/webpass'
-import { WebPassService } from '../services/web-pass.service';
+import { WebService } from '../services/web.service';
 import { SessionService } from '../services/session.service';
-import { promise } from 'protractor';
 
 @Component({
   selector: 'combo-box',
@@ -21,7 +20,7 @@ export class ComboBoxComponent implements OnInit {
   listToBeUpdated = true;
 
   constructor(
-    private configService: WebPassService,
+    private configService: WebService,
     private sessionService: SessionService) {
     this.reset();
   }

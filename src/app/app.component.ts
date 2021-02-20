@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
-import { WebPassService } from './services/web-pass.service';
+import { WebService } from './services/web.service';
 import { SessionService } from './services/session.service';
 import { LocalService} from './services/local.service';
 import { Refreshable } from './modules/refreshable';
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ];
 
   constructor(
-    private configService: WebPassService,
+    private configService: WebService,
     private sessionService: SessionService,
     private localService: LocalService,
     private router: Router

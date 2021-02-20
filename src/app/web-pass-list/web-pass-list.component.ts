@@ -1,10 +1,10 @@
-import { RelWebCat } from './../modules/relwebcat';
 import { Component, OnInit } from '@angular/core';
 import { WebPass } from '../modules/webpass';
-import { WebPassService } from '../services/web-pass.service';
+import { Category } from '../modules/category';
+import { RelWebCat } from './../modules/relwebcat';
+import { WebService } from '../services/web.service';
 import { GCrypto } from '../modules/gcrypto';
 import { Refreshable } from '../modules/refreshable';
-import { Category } from '../modules/category';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
 
@@ -38,10 +38,10 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   constructor(
     private route: ActivatedRoute,
-    private configService: WebPassService,
+    private webService: WebService,
     private loginService: LoginService) {
 
-    this.g = new GCrypto(this.configService);
+    this.g = new GCrypto(this.webService);
 
   }
 
@@ -138,7 +138,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     categoryCbk: () => void,
     relCbk: () => void) {
     // Get Webpass list
-    this.configService.get("",'gpass').subscribe((data: Array<WebPass>) => {
+    this.webService.get("",'gpass').subscribe((data: Array<WebPass>) => {
       // Decode and create a new WebPass list
       this.list = data.map((x) => {
         const w = new WebPass(x);
@@ -161,14 +161,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }, err => this.retry(err));
 
     // Get Category list
-    this.configService.get("", 'category').subscribe( (data: Array<Category>) => {
+    this.webService.get("", 'category').subscribe( (data: Array<Category>) => {
       this.category = data;
       this.categoryLoad = true;
       categoryCbk();
     }, err => this.retry(err));
 
     // Get RelWebCat
-    this.configService.get("", 'webcatrel').subscribe((data: Array<RelWebCat>) => {
+    this.webService.get("", 'webcatrel').subscribe((data: Array<RelWebCat>) => {
       this.relWebCat = data;
       this.relLoad = true;
       relCbk();
@@ -178,7 +178,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.loginService.chipher_password);
-    this.configService.update(webPass, "").subscribe(() => {
+    this.webService.update(webPass, "").subscribe(() => {
       this.sendMessage("Database updated");
     }, err => this.retry(err));
   }
@@ -186,7 +186,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.loginService.chipher_password);
-    this.configService.create(webPass, "").subscribe(
+    this.webService.create(webPass, "").subscribe(
       (id: number) => {
         webPass.id = id;
         webPass.decrypt(this.loginService.chipher_password);
@@ -211,7 +211,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
       this.webPassIndexSelected = webPassIndexSelected;
-      this.configService.get("", 'webcatrel').subscribe((allRelWebCat: Array<RelWebCat>) => {
+      this.webService.get("", 'webcatrel').subscribe((allRelWebCat: Array<RelWebCat>) => {
         this.category.forEach((cat) => {
           var found: boolean = false;
           allRelWebCat.forEach((rel) => {
@@ -239,7 +239,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.configService.delete(webPass.id, "").subscribe(() => {
+    this.webService.delete(webPass.id, "").subscribe(() => {
       this.list.splice(i, 1);
     }, err => this.retry(err));
     
@@ -260,13 +260,13 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   saveRel(rel: RelWebCat) {
-    this.configService.updateRelWebCat(rel, "").subscribe(() => {
+    this.webService.updateRelWebCat(rel, "").subscribe(() => {
       this.sendMessage("Database updated");
     }, err => this.retry(err));
   }
 
   newRel(rel: RelWebCat) {
-    this.configService.createRelWebCat(rel, "").subscribe((id: number) => {
+    this.webService.createRelWebCat(rel, "").subscribe((id: number) => {
       rel.id = id;
       this.sendMessage("Database updated");
     }, err => this.retry(err));

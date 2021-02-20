@@ -1,6 +1,6 @@
 import { Refreshable } from './../modules/refreshable';
 import { PopupMessageComponent } from './../popup-message/popup-message.component';
-import { WebPassService } from './../services/web-pass.service';
+import { WebService } from '../services/web.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 export class dbCreateTableForm {
@@ -18,7 +18,7 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
   val: dbCreateTableForm = new dbCreateTableForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
 
-  constructor(private httpService: WebPassService) { }
+  constructor(private httpService: WebService) { }
 
   refresh(): Promise<string> {
     return new Promise((resolve, reject) => {

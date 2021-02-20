@@ -1,6 +1,6 @@
 import { Refreshable } from './../modules/refreshable';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { WebPassService } from '../services/web-pass.service';
+import { WebService } from '../services/web.service';
 import { WebPass } from '../modules/webpass';
 import { Observable } from '../../../node_modules/rxjs';
 import { GCrypto } from '../modules/gcrypto';
@@ -23,7 +23,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
-  constructor(private configService: WebPassService) { }
+  constructor(private configService: WebService) { }
 
   ngOnInit() {
   }
