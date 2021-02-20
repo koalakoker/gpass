@@ -22,10 +22,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   list: WebPass[];
   category: Category[];
   relWebCat: RelWebCat[];
-  listLoad: boolean = false;
-  categoryLoad: boolean = false;
-  relLoad: boolean = false;
-  passRetry = false;
+  
   selectedWebPassCatChecked: boolean[];
   selectedWebPass: WebPass;
   errorMessage: string = '';
@@ -89,28 +86,24 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   afterLoad() {
-    var completed: boolean = this.listLoad && this.categoryLoad && this.relLoad;
-    if (completed)
-    {
-      // Select only by cat (0 = all)
-      if (this.catID != 0) {
-        this.relWebCat = this.relWebCat.filter((x) => {
-          return ((x.id_cat == this.catID) && (x.enabled == 1));
-        });
-        var filtWebId: number[] = [];
-        this.relWebCat.forEach((rel) => {
-          filtWebId.push(rel.id_web);
-        });
-        this.list = this.list.filter((web) => {
-          return this.include(filtWebId, web.id);
-        });
-      } else {
-        if (this.searchStr != null) {
-          if (this.searchStr != "") {
-            this.list = this.list.filter((web) => {
-              return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
-            });
-          }
+    // Select only by cat (0 = all)
+    if (this.catID != 0) {
+      this.relWebCat = this.relWebCat.filter((x) => {
+        return ((x.id_cat == this.catID) && (x.enabled == 1));
+      });
+      var filtWebId: number[] = [];
+      this.relWebCat.forEach((rel) => {
+        filtWebId.push(rel.id_web);
+      });
+      this.list = this.list.filter((web) => {
+        return this.include(filtWebId, web.id);
+      });
+    } else {
+      if (this.searchStr != null) {
+        if (this.searchStr != "") {
+          this.list = this.list.filter((web) => {
+            return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
+          });
         }
       }
     }
@@ -119,26 +112,18 @@ export class WebPassListComponent implements OnInit, Refreshable {
   enter() {
     // catIndex = 0 no filter
     // catIndex-1 => category[]
-    this.listLoad     = false;
-    this.categoryLoad = false;
-    this.relLoad      = false;
-    this.passRetry    = false;
-    this.getWebPassList(
-      () => this.afterLoad(), 
-      () => this.afterLoad(), 
-      () => this.afterLoad());
+    this.getWebPassList();
   }
 
   retry(err) {
     console.log(err);
   }
 
-  getWebPassList(
-    webPassCbk: () => void,
-    categoryCbk: () => void,
-    relCbk: () => void) {
+  async getWebPassList() {
+    
     // Get Webpass list
-    this.webService.get("",'gpass').subscribe((data: Array<WebPass>) => {
+    await this.webService.get("", 'gpass').toPromise()
+    .then((data: Array<WebPass>) => {
       // Decode and create a new WebPass list
       this.list = data.map((x) => {
         const w = new WebPass(x);
@@ -156,23 +141,29 @@ export class WebPassListComponent implements OnInit, Refreshable {
           }
         }
       });
-      this.listLoad = true;
-      webPassCbk();
-    }, err => this.retry(err));
-
+    })
+    .catch((err) => {
+      this.retry(err);
+    });
+    
     // Get Category list
-    this.webService.get("", 'category').subscribe( (data: Array<Category>) => {
+    await this.webService.get("", 'category').toPromise()
+    .then( (data: Array<Category>) => {
       this.category = data;
-      this.categoryLoad = true;
-      categoryCbk();
-    }, err => this.retry(err));
+    })
+    .catch((err) => {
+      this.retry(err);
+    });
 
     // Get RelWebCat
-    this.webService.get("", 'webcatrel').subscribe((data: Array<RelWebCat>) => {
+    await this.webService.get("", 'webcatrel').toPromise()
+    .then((data: Array<RelWebCat>) => {
       this.relWebCat = data;
-      this.relLoad = true;
-      relCbk();
-    }, err => this.retry(err));
+    })
+    .catch((err) => {
+      this.retry(err);
+    });
+    this.afterLoad();
   }
 
   save(index: number) {
