@@ -18,6 +18,7 @@ import { DbBackupComponent } from './db-backup/db-backup.component';
 import { PopupMessageComponent } from './popup-message/popup-message.component';
 import { CategoryComponent } from './category/category.component';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { ComboBoxComponent } from './combo-box/combo-box.component';
     DbBackupComponent,
     PopupMessageComponent,
     CategoryComponent,
-    ComboBoxComponent
+    ComboBoxComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

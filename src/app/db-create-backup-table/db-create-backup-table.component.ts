@@ -20,8 +20,10 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
 
   constructor(private httpService: WebPassService) { }
 
-  refresh() {
-    return "";
+  refresh(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      resolve("");
+    })
   }
 
   ngOnInit() {

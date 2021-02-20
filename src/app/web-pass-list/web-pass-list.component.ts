@@ -2,11 +2,11 @@ import { RelWebCat } from './../modules/relwebcat';
 import { Component, OnInit } from '@angular/core';
 import { WebPass } from '../modules/webpass';
 import { WebPassService } from '../services/web-pass.service';
-import { SessionService } from '../services/session.service';
 import { GCrypto } from '../modules/gcrypto';
 import { Refreshable } from '../modules/refreshable';
 import { Category } from '../modules/category';
 import { ActivatedRoute } from '@angular/router';
+import { LoginService } from '../services/login.service';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -28,8 +28,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
   passRetry = false;
   selectedWebPassCatChecked: boolean[];
   selectedWebPass: WebPass;
-  chipher_password: string;
-  logged = false;
   errorMessage: string = '';
   message: string = '';
   interval;
@@ -41,52 +39,53 @@ export class WebPassListComponent implements OnInit, Refreshable {
   constructor(
     private route: ActivatedRoute,
     private configService: WebPassService,
-    private sessionService: SessionService
-    ) {
-      this.g = new GCrypto(this.configService);
-    }
+    private loginService: LoginService) {
+
+    this.g = new GCrypto(this.configService);
+
+  }
 
   ngOnInit() {
     this.catID = +this.route.snapshot.paramMap.get('cat');
     this.searchStr = this.route.snapshot.paramMap.get('str');
   }
-
-  refresh(cmd: string = "") {
-    if (cmd == "")
-    {
-      this.catID = +this.route.snapshot.paramMap.get('cat');
-      this.searchStr = this.route.snapshot.paramMap.get('str');
-      this.DebugTxt = "cat:" + this.catID + " src:" + this.searchStr;
-      this.checklogged();
-      return "btnInsertWebPass";
-    }
-    if (cmd == "btnPress") {
-      this.onNewFunc();
-    }
-    if (cmd == "srcPress") {
-      this.catID = 0;
-      this.searchStr = this.route.snapshot.paramMap.get('str');
-      this.checklogged();
-    }
-    if (cmd == "+1Yr.All") {
-      this.list.forEach((web) => {
-        web.plusOneYear();
-      })
-    }
-  }
-
-  checklogged() {
-    const storedPass = this.sessionService.getKey('ChipherPassword');
-    if ((storedPass != undefined) && (storedPass != '')) {
-      this.chipher_password = storedPass;
-      this.logged = true;
-      this.enter();
-    }
-    else {
-      this.chipher_password = '';
-      this.logged = false;
-      this.list = [];
-    }
+  
+  refresh(cmd: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (cmd == "") {
+        this.catID = +this.route.snapshot.paramMap.get('cat');
+        this.searchStr = this.route.snapshot.paramMap.get('str');
+        this.loginService.checklogged()
+        .then(() => {
+          this.enter();
+          resolve("btnInsertWebPass");
+        })
+        .catch((err) => {
+          this.list = [];
+          reject(err);
+        })
+      } else if (cmd == "btnPress") {
+        this.onNewFunc();
+        resolve("");
+      } else if (cmd == "srcPress") {
+        this.catID = 0;
+        this.searchStr = this.route.snapshot.paramMap.get('str');
+        this.loginService.checklogged()
+        .then (() => {
+          this.enter();
+          resolve("");
+        })
+        .catch ((err) => {
+          this.list = [];
+          reject(err);
+        })
+      } else if (cmd == "+1Yr.All") {
+        this.list.forEach((web) => {
+          web.plusOneYear();
+        })
+        resolve("");
+      }
+    })
   }
 
   afterLoad() {
@@ -143,7 +142,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       // Decode and create a new WebPass list
       this.list = data.map((x) => {
         const w = new WebPass(x);
-        w.decrypt(this.chipher_password);
+        w.decrypt(this.loginService.chipher_password);
         return w;
       }, this);
       this.list.sort((a, b) => {
@@ -178,7 +177,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
-    webPass.crypt(this.chipher_password);
+    webPass.crypt(this.loginService.chipher_password);
     this.configService.update(webPass, "").subscribe(() => {
       this.sendMessage("Database updated");
     }, err => this.retry(err));
@@ -186,11 +185,11 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onNewFunc() {
     const webPass = new WebPass();
-    webPass.crypt(this.chipher_password);
+    webPass.crypt(this.loginService.chipher_password);
     this.configService.create(webPass, "").subscribe(
       (id: number) => {
         webPass.id = id;
-        webPass.decrypt(this.chipher_password);
+        webPass.decrypt(this.loginService.chipher_password);
         this.list.unshift(webPass);
       }, (err) => {
         this.retry(err);

@@ -1,3 +1,3 @@
 export interface Refreshable {
-    refresh: (string) => string;
+    refresh: (string) => Promise<string>;
 }

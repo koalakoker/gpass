@@ -41,10 +41,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   catData = [];
 
   routerData = [
-    {link: '/newPass'      , label: "New password"          , activated: ""},
-    {link: '/changePass'   , label: "Change master password", activated: ""},
-    {link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
-    {link: '/dbBackup'     , label: "Backup"                , activated: ""}
+    { link: '/newPass'      , label: "New password"          , activated: ""},
+    { link: '/changePass'   , label: "Change master password", activated: ""},
+    { link: '/users'        , label: "Users"                 , activated: "" },
+    { link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
+    { link: '/dbBackup'     , label: "Backup"                , activated: ""}
   ];
 
   constructor(
@@ -57,37 +58,42 @@ export class AppComponent implements OnInit, AfterViewInit {
     router.events.subscribe(val => {
       if (val instanceof NavigationEnd)
       {
-        this.childInjected = this.routedComponent.refresh("");
-        if (this.isWepPassPage(val.url)) {
-          this.routerData.forEach((link) => {
-            link.activated = "";
-          });
-          this.catData.forEach((cat) => {
-            if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
-              cat.activated = "active";
-            }
-            else {
-              cat.activated = "";
-            }
-          });
-          this.webpassActive  = "active";
-          this.categoryActive = "";
-        } else if (this.isCategoryPage(val.url)) {
-          this.categoryActive = "active";
-          this.webpassActive  = "";
-        }
-         else {
-          this.webpassActive  = "";
-          this.categoryActive = "";
-          this.routerData.forEach((link) => {
-            if (link.link === val.url) {
-              link.activated = "active";
-            }
-            else {
+        this.routedComponent.refresh("")
+        .then ((strReturn) => {
+          this.childInjected = strReturn;
+          if (this.isWepPassPage(val.url)) {
+            this.routerData.forEach((link) => {
               link.activated = "";
-            }
-          });
-        }
+            });
+            this.catData.forEach((cat) => {
+              if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
+                cat.activated = "active";
+              }
+              else {
+                cat.activated = "";
+              }
+            });
+            this.webpassActive  = "active";
+            this.categoryActive = "";
+          } else if (this.isCategoryPage(val.url)) {
+            this.categoryActive = "active";
+            this.webpassActive  = "";
+          } else {
+            this.webpassActive  = "";
+            this.categoryActive = "";
+            this.routerData.forEach((link) => {
+              if (link.link === val.url) {
+                link.activated = "active";
+              }
+              else {
+                link.activated = "";
+              }
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("Promise error: " + err);
+        });
       }
     });
     this.catData.push(this.catDataAll);
@@ -175,7 +181,13 @@ export class AppComponent implements OnInit, AfterViewInit {
               this.localService.setKey('SessionToken', answer["sessionToken"]);
             }
             
-            this.childInjected = this.routedComponent.refresh("");
+            this.routedComponent.refresh("")
+            .then((str) => {
+              this.childInjected = str;
+            })
+            .catch ((err) => {
+              console.log("Promise error: " + err);
+            });
             this.getCategory();
           }
           else {

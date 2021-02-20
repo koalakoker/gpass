@@ -1,9 +1,8 @@
 import { Category } from './../modules/category';
 import { Component, OnInit } from '@angular/core';
-import { SessionService } from '../services/session.service';
 import { Refreshable } from '../modules/refreshable';
-import { GCrypto } from '../modules/gcrypto';
 import { WebPassService } from '../services/web-pass.service';
+import { LoginService } from '../services/login.service';
 
 @Component({
   selector: 'app-category',
@@ -12,20 +11,16 @@ import { WebPassService } from '../services/web-pass.service';
 })
 export class CategoryComponent implements OnInit, Refreshable {
 
+  show: boolean = false;
   edit: boolean;
   selecteCategory: Category;
-  logged = false;
-  chipher_password: string;
-  g: GCrypto;
   category: Category[];
   errorMessage: string = '';
   message: string = '';
   interval;
 
-  constructor(
-    private sessionService: SessionService,
-    private configService: WebPassService) {
-    this.g = new GCrypto(this.configService);
+  constructor(private configService: WebPassService,
+              private loginService: LoginService) {
   };
 
   enter() {
@@ -47,31 +42,37 @@ export class CategoryComponent implements OnInit, Refreshable {
   }
 
   ngOnInit() {
-    this.checklogged();
-  }
-
-  refresh(cmd: string = "") {
-    if (cmd == "")
-    {
-      this.checklogged();
-      return "btnInsertCategory";
-    }
-    if (cmd == "btnPress") {
-      this.onNewFunc();
-    }
-  }
-
-  checklogged() {
-    const storedPass = this.sessionService.getKey('ChipherPassword');
-    if ((storedPass != undefined) && (storedPass != '')) {
-      this.chipher_password = storedPass;
-      this.logged = true;
+    this.loginService.checklogged()
+    .then (() => {
+      this.show = true;
       this.enter();
-    }
-    else {
-      this.chipher_password = '';
-      this.logged = false;
-    }
+    })
+    .catch ((err) => {
+      console.log("promise failed with err:" + err);
+    })
+  }
+
+  refresh(cmd: string = ""): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (cmd == "") {
+        this.loginService.checklogged()
+        .then(() => {
+          this.show = true;
+          this.enter();
+          resolve("btnInsertCategory");
+        })
+        .catch((err) => {
+          reject("Not logged");
+        });
+      }
+      else if (cmd == "btnPress") {
+        this.onNewFunc();
+        resolve("");
+      }
+      else {
+        reject("Wrong command");
+      }
+    })
   }
 
   save(index: number) {

@@ -6,6 +6,7 @@ import { PassGeneratorComponent } from './pass-generator/pass-generator.componen
 import { ChangePassComponent } from './change-pass/change-pass.component';
 import { DbBackupComponent } from './db-backup/db-backup.component';
 import { CategoryComponent } from './category/category.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'category', component: CategoryComponent },
   { path: 'newPass', component: PassGeneratorComponent },
   { path: 'changePass', component: ChangePassComponent },
+  { path: 'users', component: UsersComponent },
   { path: 'dbCreateTable', component: DbCreateBackupTableComponent },
   { path: 'dbBackup', component: DbBackupComponent },
   { path: 'search/:str', component: WebPassListComponent}

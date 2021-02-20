@@ -24,8 +24,10 @@ export class DbBackupComponent implements OnInit, Refreshable {
   ngOnInit() {
   }
 
-  refresh() {
-    return "";
+  refresh(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      resolve("");
+    })
   }
 
   onSubmit() {
