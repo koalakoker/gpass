@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from '../modules/relwebcat';
+import { User } from '../modules/user'
 
 @Injectable()
 export class WebService {
@@ -111,6 +112,18 @@ export class WebService {
     });
   }
 
+  updateUser(user: User, chipher_password: string, table: string = 'users'): Observable<any> {
+    if (this.testing_chipher != "") {
+      chipher_password = this.testing_chipher;
+    }
+    return this.http.put(this.urlAddr + '/' + table + "/" + user.id, user, {
+      params: { ["chipher_password"]: chipher_password },
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
   create(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Observable<number> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
@@ -140,6 +153,18 @@ export class WebService {
       chipher_password = this.testing_chipher;
     }
     return this.http.post<number>(this.urlAddr + '/' + table, rel, {
+      params: { ["chipher_password"]: chipher_password },
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    })
+  }
+
+  createUser(user: User, chipher_password: string, table: string = 'users'): Observable<number> {
+    if (this.testing_chipher != "") {
+      chipher_password = this.testing_chipher;
+    }
+    return this.http.post<number>(this.urlAddr + '/' + table, user, {
       params: { ["chipher_password"]: chipher_password },
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

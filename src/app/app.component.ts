@@ -29,10 +29,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   param = "";
   category: Category[];
 
-  @ViewChild('webPassDropDown')  webPassDropDown: ElementRef;
+  @ViewChild('webPassDropDown')  webPassDropDown:  ElementRef;
   @ViewChild('categoryDropDown') categoryDropDown: ElementRef;
+  @ViewChild('usersDropDown')    usersDropDown:    ElementRef;
   webpassActive = "active";
   categoryActive = "";
+  userActive = "";
   
   searchString: string = "";
   keepMeLogged = false;
@@ -41,11 +43,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   catData = [];
 
   routerData = [
-    { link: '/newPass'      , label: "New password"          , activated: ""},
-    { link: '/changePass'   , label: "Change master password", activated: ""},
-    { link: '/users'        , label: "Users"                 , activated: "" },
-    { link: '/dbCreateTable', label: "CreateBackupTable"     , activated: ""},
-    { link: '/dbBackup'     , label: "Backup"                , activated: ""}
+    { link: '/newPass'      , label: "New password"          , activated: "" },
+    { link: '/changePass'   , label: "Change master password", activated: "" },
+    { link: '/dbCreateTable', label: "CreateBackupTable"     , activated: "" },
+    { link: '/dbBackup'     , label: "Backup"                , activated: "" }
   ];
 
   constructor(
@@ -75,12 +76,19 @@ export class AppComponent implements OnInit, AfterViewInit {
             });
             this.webpassActive  = "active";
             this.categoryActive = "";
+            this.userActive     = "";
           } else if (this.isCategoryPage(val.url)) {
             this.categoryActive = "active";
             this.webpassActive  = "";
+            this.userActive     = "";
+          } else if (this.isUsersPage(val.url)) {
+            this.categoryActive = "";
+            this.webpassActive  = "";
+            this.userActive     = "active";
           } else {
             this.webpassActive  = "";
             this.categoryActive = "";
+            this.userActive     = "";
             this.routerData.forEach((link) => {
               if (link.link === val.url) {
                 link.activated = "active";
@@ -125,6 +133,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     return (url == '/category');
   }
 
+  isUsersPage(url) {
+    return (url == '/users');
+  }
+
   ngAfterViewInit() {
     this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
       if (!this.isWepPassPage(this.router.url)) {
@@ -135,6 +147,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
       if (!this.isCategoryPage(this.router.url)) {
         this.router.navigateByUrl("/category");
+      }
+    });
+
+    this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+      if (!this.isUsersPage(this.router.url)) {
+        this.router.navigateByUrl("/users");
       }
     });
   }

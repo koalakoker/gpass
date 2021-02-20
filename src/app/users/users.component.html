@@ -1,1 +1,82 @@
-<p>users-component works!</p>
+<div class="container-fluid" *ngIf="show">
+  <div class="list-group">
+    <div *ngFor="let element of user; let i = index" (click)="onSelect(element)">
+
+      <!-- Button -->
+      <div class="row">
+        <div class="col">
+          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}"
+            data-bs-toggle="modal" [attr.data-bs-target]="'#Modal' + i">
+            {{element.username}}
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+        border-color: rgb(204, 194, 194);" class="btn btn-danger" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#confirmModal' + i">Del
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="Modal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#ModalLabel' + i"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalLabel{{i}}">{{element.username}}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="onCloseEdit()"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Name -->
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" placeholder="Name" [(ngModel)]="user[i].username"
+                    (change)="save(i)" aria-label="default input example">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" placeholder="Password" [(ngModel)]="user[i].password" (change)="save(i)"
+                    aria-label="default input example">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Level</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" placeholder="Level" [(ngModel)]="user[i].level" (change)="save(i)"
+                    aria-label="default input example">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Modal -->
+      <div class="modal fade" id="confirmModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#confirmModalLabel' + i"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel{{i}}">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to delete this?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger" (click)="onButtonRemove(i)"
+                data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
