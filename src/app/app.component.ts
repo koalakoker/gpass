@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebService } from './services/web.service';
 import { SessionService } from './services/session.service';
@@ -8,12 +8,19 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
 import { ComboBoxComponent } from './combo-box/combo-box.component'
 
+enum AppState {
+  userNameInsert,
+  passwordInsert,
+  masterPasswordInsert,
+  logged
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit {
 
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   
@@ -37,6 +44,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   userActive = "";
   
   searchString: string = "";
+
+  appState : AppState = AppState.userNameInsert;
+  user : string = ""
+  password: string = "";
   keepMeLogged = false;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
@@ -112,16 +123,29 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const localPass = this.localService.getKey('ChipherPassword');
-    if ((localPass != undefined) && (localPass != '')) {
+    const localPass         = this.localService.getKey('ChipherPassword');
+    const localUserName     = this.localService.getKey('UserName');
+    const localUserPassword = this.localService.getKey('UserPassword');
+    if ((localPass         != undefined) && (localPass         != '') &&
+        (localUserName     != undefined) && (localUserName     != '') &&
+        (localUserPassword != undefined) && (localUserPassword != '')) {
       this.chipher_password = localPass;
+      this.user             = localUserName;
+      this.password         = localUserPassword;
       this.enter();
     }
 
-    const storedPass = this.sessionService.getKey('ChipherPassword');
-    if ((storedPass != undefined) && (storedPass != '')) {
+    const storedPass         = this.sessionService.getKey('ChipherPassword');
+    const storedUserName     = this.sessionService.getKey('UserName');
+    const storedUserPassword = this.sessionService.getKey('UserPassword');
+
+    if ((storedPass         != undefined) && (storedPass         != '') &&
+        (storedUserName     != undefined) && (storedUserName     != '') &&
+        (storedUserPassword != undefined) && (storedUserPassword != '')) {
       this.chipher_password = storedPass;
-      this.logged = true;
+      this.user             = storedUserName;
+      this.password         = storedUserPassword;
+      this.logged           = true;
     }
   }
 
@@ -137,24 +161,34 @@ export class AppComponent implements OnInit, AfterViewInit {
     return (url == '/users');
   }
 
-  ngAfterViewInit() {
-    this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-      if (!this.isWepPassPage(this.router.url)) {
-        this.router.navigateByUrl('/list/0');
-      }
-    });
+  ngAfterViewChecked() {
+    this.bindDropDown();
+  }
 
-    this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-      if (!this.isCategoryPage(this.router.url)) {
-        this.router.navigateByUrl("/category");
-      }
-    });
+  bindDropDown() {
+    if (this.webPassDropDown) {
+      this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+        if (!this.isWepPassPage(this.router.url)) {
+          this.router.navigateByUrl('/list/0');
+        }
+      });
+    }
+    
+    if (this.categoryDropDown) {
+      this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+        if (!this.isCategoryPage(this.router.url)) {
+          this.router.navigateByUrl("/category");
+        }
+      });
+    }
 
-    this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-      if (!this.isUsersPage(this.router.url)) {
-        this.router.navigateByUrl("/users");
-      }
-    });
+    if (this.usersDropDown) {
+      this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+        if (!this.isUsersPage(this.router.url)) {
+          this.router.navigateByUrl("/users");
+        }
+      });
+    }
   }
 
   clearSession() {
@@ -162,6 +196,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.sessionService.setKey('ChipherPassword', '');
     this.sessionService.setKey('EncryptedPassword', '');
     this.sessionService.setKey('SessionToken', '');
+    this.sessionService.setKey('UserName', '');
+    this.sessionService.setKey('UserPassword', '');
+    this.appState = AppState.userNameInsert;
   }
 
   clearLocal() {
@@ -169,6 +206,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.localService.setKey('ChipherPassword', '');
     this.localService.setKey('EncryptedPassword', '');
     this.localService.setKey('SessionToken', '');
+    this.localService.setKey('UserName', '');
+    this.localService.setKey('UserPassword', '');
   }
 
   printErrorMessage(txt : string) {
@@ -180,50 +219,75 @@ export class AppComponent implements OnInit, AfterViewInit {
     }, 2000);
   }
 
-  enter() {
+  isUserNameState() {
+    return this.appState == AppState.userNameInsert;
+  }
+
+  usernameEntered() {
+    this.appState = AppState.passwordInsert;
+  }
+
+  isPasswordState() {
+    return this.appState == AppState.passwordInsert;
+  }
+
+  passwordEntered() {
+    this.appState = AppState.masterPasswordInsert;
+  }
+
+  isMasterPasswordState() {
+    return this.appState == AppState.masterPasswordInsert;
+  }
+
+  isLoggedState() {
+    return this.appState == AppState.logged;
+  }
+
+  async enter() {
     this.errorMessage = '';
-    this.g.cryptPass(this.chipher_password, (encrypted) => {
-      this.configService.login(encrypted).subscribe(
-        (answer: JSON) => {
-          this.logged = answer["logged"];
-          // answer["encrypted"] can be used if session variable is not available in the server
-          this.configService.setTesting_chiper(answer["encrypted"]);
-          if (this.logged) {
-            this.sessionService.setKey('ChipherPassword', this.chipher_password);
-            this.sessionService.setKey('EncryptedPassword', encrypted);
-            this.sessionService.setKey('SessionToken', answer["sessionToken"]);
-            
-            if (this.keepMeLogged) {
-              this.localService.setKey('ChipherPassword', this.chipher_password);
-              this.localService.setKey('EncryptedPassword', encrypted);
-              this.localService.setKey('SessionToken', answer["sessionToken"]);
-            }
-            
-            this.routedComponent.refresh("")
+    var encrypted    = await this.g.promise_cryptPass(this.chipher_password);
+    var userName     = await this.g.promise_cryptPass(this.user);
+    var userPassword = await this.g.promise_cryptPass(this.password);
+    this.configService.login(encrypted, userName, userPassword).toPromise()
+      .then((answer: JSON) => {
+        this.logged = answer["logged"];
+        // answer["encrypted"] can be used if session variable is not available in the server
+        this.configService.setTesting_chiper(answer["encrypted"]);
+        if (this.logged) {
+          this.sessionService.setKey('ChipherPassword', this.chipher_password);
+          this.sessionService.setKey('EncryptedPassword', encrypted);
+          this.sessionService.setKey('SessionToken', answer["sessionToken"]);
+          this.sessionService.setKey('UserName', this.user);
+          this.sessionService.setKey('UserPassword', this.password);
+
+          if (this.keepMeLogged) {
+            this.localService.setKey('ChipherPassword', this.chipher_password);
+            this.localService.setKey('EncryptedPassword', encrypted);
+            this.localService.setKey('SessionToken', answer["sessionToken"]);
+            this.localService.setKey('UserName', this.user);
+            this.localService.setKey('UserPassword', this.password);
+          }
+
+          this.appState = AppState.logged;
+          this.routedComponent.refresh("")
             .then((str) => {
               this.childInjected = str;
             })
-            .catch ((err) => {
+            .catch((err) => {
               console.log("Promise error: " + err);
             });
-            this.getCategory();
-          }
-          else {
-            this.clearSession();
-            this.printErrorMessage('Password not correct');
-          }
-        },
-        (answer) => {
-          // Error
-          this.clearSession();
-          this.printErrorMessage('Login error');
-          //console.log(answer);
-        },
-        () => {
-          // Complete
+          this.getCategory();
         }
-      );
-    });
+        else {
+          this.clearSession();
+          this.printErrorMessage('Password not correct');
+        }
+      })
+      .catch((err) => {
+        this.clearSession();
+        this.printErrorMessage('Login error');
+        console.log(err);
+      });
   }
 
   logOut() {

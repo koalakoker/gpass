@@ -8,7 +8,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <ng-container *ngIf="logged">
+                    <ng-container *ngIf="isLoggedState()">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{webpassActive}}" 
                                 href="#" 
@@ -69,12 +69,15 @@
                             <a class="nav-link" [routerLink]="link.link">{{link.label}}</a>
                         </li>
                     </ng-container>
-                    <ng-container *ngIf="!logged">
+
+                    <!-- Master Password -->
+                    <ng-container *ngIf="isMasterPasswordState()">
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
                                     <input 
-                                        (change)="enter()" 
+                                        (change)="enter()"
+                                        (keyup.enter)="usernameEntered()"
                                         [(ngModel)]="chipher_password" 
                                         class="form-control" 
                                         type="password"
@@ -91,8 +94,32 @@
                             </div>
                         </div>
                     </ng-container>
+
+                    <!-- Username -->
+                    <ng-container *ngIf="isUserNameState()">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="user" class="form-control" type="text"
+                                        placeholder="Insert username">
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Password -->
+                    <ng-container *ngIf="isPasswordState()">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input (keyup.enter)="usernameEntered()" (change)="passwordEntered()" [(ngModel)]="password" class="form-control" type="password"
+                                        placeholder="Insert password">
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
                 </ul>
-                <div class="d-flex" *ngIf="logged">
+                <div class="d-flex" *ngIf="isLoggedState()">
                     <combo-box (selected)="onSearch()"></combo-box>
                     <button 
                         class="btn btn-outline-success" 
@@ -105,6 +132,9 @@
 </header>
 <!-- Comment for producton -->
 <!-- <div>Remove for producton: {{DebugTxt}}</div> -->
+<!-- <button (click)="bindDropDown()">
+    Comment for production
+</button> -->
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">

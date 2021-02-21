@@ -37,9 +37,11 @@ export class WebService {
   // **************************************************
   // **********           Common             **********
   // **************************************************
-  login(chipher_password: string) {
+  login(chipher_password: string, userName: string, userPassword: string) {
     return this.http.get(this.loginAddr, {
-      params: { ["chipher_password"]: chipher_password },
+      params: { ["chipher_password"]: chipher_password,
+                ["user_name"]: userName,
+                ["user_password"]: userPassword},
       responseType: 'json'
     });
   }
