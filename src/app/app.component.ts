@@ -1,12 +1,11 @@
 import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebService } from './services/web.service';
-import { SessionService } from './services/session.service';
-import { LocalService} from './services/local.service';
 import { Refreshable } from './modules/refreshable';
 import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
 import { ComboBoxComponent } from './combo-box/combo-box.component'
+import { LoginService } from './services/login.service'
 
 enum AppState {
   userNameInsert,
@@ -25,8 +24,7 @@ export class AppComponent implements OnInit {
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   
   g: GCrypto;
-  chipher_password: string;
-  logged: boolean = false;
+
   errorMessage: string = '';
   message: string = '';
   DebugTxt: string = "";
@@ -46,9 +44,6 @@ export class AppComponent implements OnInit {
   searchString: string = "";
 
   appState : AppState = AppState.userNameInsert;
-  user : string = ""
-  password: string = "";
-  keepMeLogged = false;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
@@ -62,9 +57,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private configService: WebService,
-    private sessionService: SessionService,
-    private localService: LocalService,
-    private router: Router
+    private router: Router,
+    public loginService: LoginService
   ) {
     this.g = new GCrypto(this.configService);
     router.events.subscribe(val => {
@@ -123,30 +117,25 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    const localPass         = this.localService.getKey('ChipherPassword');
-    const localUserName     = this.localService.getKey('UserName');
-    const localUserPassword = this.localService.getKey('UserPassword');
-    if ((localPass         != undefined) && (localPass         != '') &&
-        (localUserName     != undefined) && (localUserName     != '') &&
-        (localUserPassword != undefined) && (localUserPassword != '')) {
-      this.chipher_password = localPass;
-      this.user             = localUserName;
-      this.password         = localUserPassword;
+    console.log("Reload");
+    if (this.loginService.getSession()) {
+      console.log("Found session");
       this.enter();
-    }
-
-    const storedPass         = this.sessionService.getKey('ChipherPassword');
-    const storedUserName     = this.sessionService.getKey('UserName');
-    const storedUserPassword = this.sessionService.getKey('UserPassword');
-
-    if ((storedPass         != undefined) && (storedPass         != '') &&
-        (storedUserName     != undefined) && (storedUserName     != '') &&
-        (storedUserPassword != undefined) && (storedUserPassword != '')) {
-      this.chipher_password = storedPass;
-      this.user             = storedUserName;
-      this.password         = storedUserPassword;
-      this.logged           = true;
-    }
+    } else {
+      if (this.loginService.getLocal()) {
+        console.log("Found local");
+        this.enter();
+      } else {
+        if (this.loginService.userName = '') {
+          this.appState = AppState.userNameInsert;
+        } else if (this.loginService.userPassword = '') {
+          this.appState = AppState.passwordInsert;
+        } else if (this.loginService.chipher_password = '') {
+          this.appState = AppState.masterPasswordInsert;
+        }
+      };
+    };
+    
   }
 
   isWepPassPage(url) {
@@ -191,25 +180,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  clearSession() {
-    this.chipher_password = '';
-    this.sessionService.setKey('ChipherPassword', '');
-    this.sessionService.setKey('EncryptedPassword', '');
-    this.sessionService.setKey('SessionToken', '');
-    this.sessionService.setKey('UserName', '');
-    this.sessionService.setKey('UserPassword', '');
-    this.appState = AppState.userNameInsert;
-  }
-
-  clearLocal() {
-    this.chipher_password = '';
-    this.localService.setKey('ChipherPassword', '');
-    this.localService.setKey('EncryptedPassword', '');
-    this.localService.setKey('SessionToken', '');
-    this.localService.setKey('UserName', '');
-    this.localService.setKey('UserPassword', '');
-  }
-
   printErrorMessage(txt : string) {
     this.errorMessage = txt;
     clearInterval(this.interval);
@@ -245,57 +215,36 @@ export class AppComponent implements OnInit {
 
   async enter() {
     this.errorMessage = '';
-    var encrypted    = await this.g.promise_cryptPass(this.chipher_password);
-    var userName     = await this.g.promise_cryptPass(this.user);
-    var userPassword = await this.g.promise_cryptPass(this.password);
-    this.configService.login(encrypted, userName, userPassword).toPromise()
-      .then((answer: JSON) => {
-        this.logged = answer["logged"];
-        // answer["encrypted"] can be used if session variable is not available in the server
-        this.configService.setTesting_chiper(answer["encrypted"]);
-        if (this.logged) {
-          this.sessionService.setKey('ChipherPassword', this.chipher_password);
-          this.sessionService.setKey('EncryptedPassword', encrypted);
-          this.sessionService.setKey('SessionToken', answer["sessionToken"]);
-          this.sessionService.setKey('UserName', this.user);
-          this.sessionService.setKey('UserPassword', this.password);
-
-          if (this.keepMeLogged) {
-            this.localService.setKey('ChipherPassword', this.chipher_password);
-            this.localService.setKey('EncryptedPassword', encrypted);
-            this.localService.setKey('SessionToken', answer["sessionToken"]);
-            this.localService.setKey('UserName', this.user);
-            this.localService.setKey('UserPassword', this.password);
-          }
-
-          this.appState = AppState.logged;
-          this.routedComponent.refresh("")
-            .then((str) => {
-              this.childInjected = str;
-            })
-            .catch((err) => {
-              console.log("Promise error: " + err);
-            });
-          this.getCategory();
-        }
-        else {
-          this.clearSession();
-          this.printErrorMessage('Password not correct');
-        }
-      })
-      .catch((err) => {
-        this.clearSession();
-        this.printErrorMessage('Login error');
-        console.log(err);
-      });
+    this.loginService.checkLogin()
+    .then( (logged: boolean) => {
+      if (logged) {
+        this.appState = AppState.logged;
+        this.routedComponent.refresh("")
+        .then((str) => {
+          this.childInjected = str;
+        })
+        .catch((err) => {
+          console.log("Promise error: " + err);
+        });
+        this.getCategory();
+      } else {
+        this.appState = AppState.userNameInsert;
+        this.printErrorMessage('Password not correct');
+      }
+    })
+    .catch((err) => {
+      this.appState = AppState.userNameInsert;
+      this.printErrorMessage('Login error');
+      console.log(err);
+    });
   }
 
   logOut() {
     this.configService.logout().subscribe(
       (answer: JSON) => {
-        this.logged = false;
-        this.clearSession();
-        this.clearLocal();
+        this.loginService.clearSession();
+        this.appState = AppState.userNameInsert;
+        this.loginService.clearLocal();
         this.routedComponent.refresh("");
         this.childInjected = "";
         this.catData = [];

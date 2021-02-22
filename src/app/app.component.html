@@ -78,7 +78,7 @@
                                     <input 
                                         (change)="enter()"
                                         (keyup.enter)="usernameEntered()"
-                                        [(ngModel)]="chipher_password" 
+                                        [(ngModel)]="loginService.chipher_password" 
                                         class="form-control" 
                                         type="password"
                                         placeholder="Insert master password">
@@ -88,7 +88,7 @@
                                         class="form-check-input" 
                                         type="checkbox" 
                                         id="keepMe"
-                                        [(ngModel)]="keepMeLogged">
+                                        [(ngModel)]="loginService.keepMeLogged">
                                     <label class="form-check-label" for="keepMe" style="color: white; margin-left:10px " for="vehicle1"> Keep me logged</label>
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="user" class="form-control" type="text"
+                                    <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="loginService.userName" class="form-control" type="text"
                                         placeholder="Insert username">
                                 </div>
                             </div>
@@ -112,7 +112,7 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input (keyup.enter)="usernameEntered()" (change)="passwordEntered()" [(ngModel)]="password" class="form-control" type="password"
+                                    <input (keyup.enter)="usernameEntered()" (change)="passwordEntered()" [(ngModel)]="loginService.userPassword" class="form-control" type="password"
                                         placeholder="Insert password">
                                 </div>
                             </div>
