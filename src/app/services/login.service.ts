@@ -22,14 +22,27 @@ export class LoginService {
     this.g = new GCrypto(this.configService);
   }
 
+  async sendLink(username: string, userpassword:string): Promise<boolean> {
+    var encrypted = await this.g.promise_cryptPass(this.chipher_password);
+    var userName = await this.g.promise_cryptPass(username);
+    var userPassword = await this.g.promise_cryptPass(userpassword);
+    return new Promise<boolean>((resolve, reject) => {
+      this.configService.email(encrypted, userName, userPassword).toPromise()
+        .then((answer: JSON) => {
+          resolve(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          reject(false);
+        })
+      })
+  }
+
   async checkLogin(): Promise<boolean> {
     var encrypted = await this.g.promise_cryptPass(this.chipher_password);
     var userName = await this.g.promise_cryptPass(this.userName);
     var userPassword = await this.g.promise_cryptPass(this.userPassword);
     return new Promise<boolean>((resolve, reject) => {
-      console.log("Username:" + this.userName);
-      console.log("Password:" + this.userPassword);
-      console.log("Master:" + this.chipher_password);
       this.configService.login(encrypted, userName, userPassword).toPromise()
         .then((answer: JSON) => {
           this.logged = answer["logged"];
@@ -82,6 +95,14 @@ export class LoginService {
   getLocal(): boolean {
     var retVal: boolean = true;
 
+    this.chipher_password = '';
+    const localPass = this.localService.getKey('ChipherPassword');
+    if ((localPass != undefined) && (localPass != '')) {
+      this.chipher_password = localPass;
+    } else {
+      retVal = false;
+    }
+
     this.userName = '';
     const localUserName = this.localService.getKey('UserName');
     if ((localUserName != undefined) && (localUserName != ''))
@@ -95,14 +116,6 @@ export class LoginService {
     const localUserPassword = this.localService.getKey('UserPassword');
     if ((localUserPassword != undefined) && (localUserPassword != '')) {
       this.userPassword = localUserPassword;
-    } else {
-      retVal = false;
-    }
-    
-    this.chipher_password = '';
-    const localPass = this.localService.getKey('ChipherPassword');
-    if ((localPass != undefined) && (localPass != '')) {
-      this.chipher_password = localPass;
     } else {
       retVal = false;
     }
@@ -140,11 +153,9 @@ export class LoginService {
   }
 
   clearSession() {
-    this.chipher_password = '';
+    this.logged = false;
     this.userName = '';
     this.userPassword = '';
-    this.logged = false;
-    this.sessionService.setKey('ChipherPassword', '');
     this.sessionService.setKey('EncryptedPassword', '');
     this.sessionService.setKey('SessionToken', '');
     this.sessionService.setKey('UserName', '');
@@ -152,11 +163,9 @@ export class LoginService {
   }
 
   clearLocal() {
-    this.chipher_password = '';
-    this.userPassword = '';
-    this.userPassword = '';
     this.logged = false;
-    this.localService.setKey('ChipherPassword', '');
+    this.userName = '';
+    this.userPassword = '';
     this.localService.setKey('EncryptedPassword', '');
     this.localService.setKey('SessionToken', '');
     this.localService.setKey('UserName', '');

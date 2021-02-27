@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent },
   { path: 'dbCreateTable', component: DbCreateBackupTableComponent },
   { path: 'dbBackup', component: DbBackupComponent },
-  { path: 'search/:str', component: WebPassListComponent}
+  { path: 'search/:str', component: WebPassListComponent},
 ];
 
 @NgModule({

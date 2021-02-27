@@ -11,6 +11,10 @@
           </button>
         </div>
         <div class="col">
+          <button *ngIf="element.email != ''" type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+                  border-color: rgb(204, 194, 194);" class="btn btn-success" data-bs-toggle="modal"
+            [attr.data-bs-target]="'#inviteModal' + i">Inv
+          </button>
           <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
         border-color: rgb(204, 194, 194);" class="btn btn-danger" data-bs-toggle="modal"
             [attr.data-bs-target]="'#confirmModal' + i">Del
@@ -35,6 +39,13 @@
                 <div class="col-sm-10">
                   <input class="form-control" type="text" placeholder="Name" [(ngModel)]="user[i].username"
                     (change)="save(i)" aria-label="default input example">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" placeholder="Email" [(ngModel)]="user[i].email" (change)="save(i)"
+                    aria-label="default input example">
                 </div>
               </div>
               <div class="row mb-3">
@@ -76,6 +87,28 @@
           </div>
         </div>
       </div>
+
+      <!-- Invite Modal -->
+      <div class="modal fade" id="inviteModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#confirmModalLabel' + i"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel{{i}}">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to sent invitation to this user?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger" (click)="onButtonInvite(i)"
+                data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
     </div>
   </div>

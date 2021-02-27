@@ -97,4 +97,26 @@ export class UsersComponent implements OnInit, Refreshable {
     }, err => console.log(err));
   }
 
+  returnUrl: string = 'http://localhost:4200/changePass';
+
+  onButtonInvite(i: number) {
+    const usr = this.user[i];
+    console.log("Send invitation to user: " + usr.username + " Email:" + usr.email);
+
+    var params = {
+      "cryptopass": "PasswordSupersegretissima",
+      "returnurl": this.returnUrl,
+      "username": usr.username
+    };
+    
+    this.loginService.sendLink(usr.username, usr.password)
+      .then((logged) => {
+        if (logged) {
+          console.log("Done");
+        }
+      })
+    
+    // window.location.href = this.emailServiceUrl + '?' + new URLSearchParams(params).toString();
+  }
+
 }

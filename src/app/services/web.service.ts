@@ -13,11 +13,13 @@ export class WebService {
 
   // For testing create a LAMP server and clone the DB 
   loginAddr = 'http://192.168.64.3/gpass/php/login.php'
+  emailAddr = 'http://192.168.64.3/gpass/php/email.php'
   urlAddr = 'http://192.168.64.3/gpass/php/api.php';
   chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
   
   // Decomment these for final production server use session vars
   //loginAddr =   'php/login.php'
+  //emailAddr = 'php/email.php'
   //urlAddr =     'php/api.php';
   //chiperAddr =  'php/getCriptDBAccess.php';
 
@@ -42,6 +44,17 @@ export class WebService {
       params: { ["chipher_password"]: chipher_password,
                 ["user_name"]: userName,
                 ["user_password"]: userPassword},
+      responseType: 'json'
+    });
+  }
+
+  email(chipher_password: string, userName: string, userPassword: string) {
+    return this.http.get(this.emailAddr, {
+      params: {
+        ["chipher_password"]: chipher_password,
+        ["user_name"]: userName,
+        ["user_password"]: userPassword
+      },
       responseType: 'json'
     });
   }

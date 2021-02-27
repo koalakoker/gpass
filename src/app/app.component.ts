@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
   
   searchString: string = "";
 
-  appState : AppState = AppState.userNameInsert;
+  appState : AppState = AppState.masterPasswordInsert;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
@@ -117,21 +117,18 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("Reload");
     if (this.loginService.getSession()) {
-      console.log("Found session");
       this.enter();
     } else {
       if (this.loginService.getLocal()) {
-        console.log("Found local");
         this.enter();
       } else {
-        if (this.loginService.userName = '') {
-          this.appState = AppState.userNameInsert;
-        } else if (this.loginService.userPassword = '') {
-          this.appState = AppState.passwordInsert;
-        } else if (this.loginService.chipher_password = '') {
+        if (this.loginService.chipher_password == '') {
           this.appState = AppState.masterPasswordInsert;
+        } else if (this.loginService.userName == '') {
+          this.appState = AppState.userNameInsert;
+        } else if (this.loginService.userPassword == '') {
+          this.appState = AppState.passwordInsert;
         }
       };
     };
@@ -192,21 +189,21 @@ export class AppComponent implements OnInit {
   isUserNameState() {
     return this.appState == AppState.userNameInsert;
   }
-
-  usernameEntered() {
-    this.appState = AppState.passwordInsert;
-  }
-
   isPasswordState() {
     return this.appState == AppState.passwordInsert;
   }
-
-  passwordEntered() {
-    this.appState = AppState.masterPasswordInsert;
-  }
-
   isMasterPasswordState() {
     return this.appState == AppState.masterPasswordInsert;
+  }
+
+  materPasswordEntered() {
+    this.appState = AppState.userNameInsert;
+  }
+  usernameEntered() {
+    this.appState = AppState.passwordInsert;
+  }
+  passwordEntered() {
+    this.enter();
   }
 
   isLoggedState() {
@@ -242,9 +239,10 @@ export class AppComponent implements OnInit {
   logOut() {
     this.configService.logout().subscribe(
       (answer: JSON) => {
+        console.log("Callback");
         this.loginService.clearSession();
-        this.appState = AppState.userNameInsert;
         this.loginService.clearLocal();
+        this.appState = AppState.userNameInsert;
         this.routedComponent.refresh("");
         this.childInjected = "";
         this.catData = [];
