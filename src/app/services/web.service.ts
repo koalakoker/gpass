@@ -48,13 +48,12 @@ export class WebService {
     });
   }
 
-  email(chipher_password: string, userName: string, userPassword: string) {
+  email(params: any) {
+    if (this.testing_chipher != "") {
+      params["chipher_password"] = this.testing_chipher;
+    }
     return this.http.get(this.emailAddr, {
-      params: {
-        ["chipher_password"]: chipher_password,
-        ["user_name"]: userName,
-        ["user_password"]: userPassword
-      },
+      params: params,
       responseType: 'json'
     });
   }

@@ -3,6 +3,7 @@ import { Refreshable } from '../modules/refreshable';
 import { LoginService } from '../services/login.service'
 import { WebService } from '../services/web.service'
 import { User } from '../modules/user'
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-users-component',
@@ -104,12 +105,12 @@ export class UsersComponent implements OnInit, Refreshable {
     console.log("Send invitation to user: " + usr.username + " Email:" + usr.email);
 
     var params = {
-      "cryptopass": "PasswordSupersegretissima",
       "returnurl": this.returnUrl,
-      "username": usr.username
+      "user_name": usr.username,
+      "user_password": usr.password
     };
     
-    this.loginService.sendLink(usr.username, usr.password)
+    this.loginService.sendLink(params)
       .then((logged) => {
         if (logged) {
           console.log("Done");

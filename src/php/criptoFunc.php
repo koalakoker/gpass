@@ -66,4 +66,22 @@ function passDecrypt($encrypted)
     }
     return $decript;
 }
+
+function passDecrypt_oneMonth($list)
+{
+    $json = json_decode(file_get_contents('https://worldtimeapi.org/api/timezone/Europe/Rome'));
+    $dateStr = substr($json->{'datetime'},0,7);
+    
+    $secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
+    $hmac = hash_hmac('sha256',$dateStr,$secret);
+
+    $returnList = $list;
+    
+    foreach ($list as $key => $encrypted) {
+        $decript = deChipher($encrypted,hexToStr($hmac));
+        $returnList[$key] = $decript;
+    }
+    
+    return $returnList;
+}
 ?>

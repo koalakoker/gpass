@@ -3,6 +3,7 @@ import { GCrypto } from '../modules/gcrypto';
 import { SessionService } from './session.service';
 import { LocalService } from './local.service';
 import { WebService } from './web.service';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +23,15 @@ export class LoginService {
     this.g = new GCrypto(this.configService);
   }
 
-  async sendLink(username: string, userpassword:string): Promise<boolean> {
-    var encrypted = await this.g.promise_cryptPass(this.chipher_password);
-    var userName = await this.g.promise_cryptPass(username);
-    var userPassword = await this.g.promise_cryptPass(userpassword);
+  async sendLink(params: any): Promise<boolean> {
+    var strList: string[] = [];
+    strList.push(params["user_name"]);
+    strList.push(params["user_password"]);
+    const strListCrypt = await this.g.promise_cryptText_oneMonth(strList);
+    params["user_name"] = strListCrypt[0];
+    params["user_password"] = strListCrypt[1];
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.email(encrypted, userName, userPassword).toPromise()
+      this.configService.email(params).toPromise()
         .then((answer: JSON) => {
           resolve(true);
         })
@@ -39,6 +43,9 @@ export class LoginService {
   }
 
   async checkLogin(): Promise<boolean> {
+    console.log(this.userName);
+    console.log(this.userPassword);
+    console.log(this.chipher_password);
     var encrypted = await this.g.promise_cryptPass(this.chipher_password);
     var userName = await this.g.promise_cryptPass(this.userName);
     var userPassword = await this.g.promise_cryptPass(this.userPassword);

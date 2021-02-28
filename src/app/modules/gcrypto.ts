@@ -105,4 +105,31 @@ export class GCrypto {
 
         }) 
     }
+
+    promise_cryptText_oneMonth(text: string[]) {
+        const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
+        return new Promise<string[]>((resolve, reject) => {
+            this.configService.apiGet(url).toPromise()
+                .then((data: JSON) => {
+                    const dateStr: string = data['datetime'].slice(0, 7);
+                    const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
+                    var hash = CryptoJS.HmacSHA256(dateStr, secret);
+                    const iv_str = "8DCB7300E8BCA8E5";
+                    const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
+                    
+                    var encrypted: string[] = [];
+                    text.forEach(str => {
+                        var crypted = CryptoJS.AES.encrypt(str, (hash), {
+                            iv: iv
+                        });
+                        encrypted.push(crypted.ciphertext.toString());
+                    });
+                    resolve(encrypted);
+                })
+                .catch((err) => {
+                    reject(err)
+                });
+
+        })
+    }
 }
