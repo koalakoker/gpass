@@ -24,12 +24,14 @@ export class LoginService {
   }
 
   async sendLink(params: any): Promise<boolean> {
+    
     var strList: string[] = [];
     strList.push(params["user_name"]);
     strList.push(params["user_password"]);
-    const strListCrypt = await this.g.promise_cryptText_oneMonth(strList);
+    const strListCrypt = await this.g.promise_cryptText(strList, 'Month');
     params["user_name"] = strListCrypt[0];
     params["user_password"] = strListCrypt[1];
+
     return new Promise<boolean>((resolve, reject) => {
       this.configService.email(params).toPromise()
         .then((answer: JSON) => {
@@ -43,15 +45,12 @@ export class LoginService {
   }
 
   async checkLogin(): Promise<boolean> {
-    console.log(this.userName);
-    console.log(this.userPassword);
-    console.log(this.chipher_password);
+
     var strList: string[] = [];
     strList.push(this.chipher_password);
     strList.push(this.userName);
     strList.push(this.userPassword);
-
-    const strListCrypt = await this.g.promise_cryptPass(strList);
+    const strListCrypt = await this.g.promise_cryptText(strList);
     var chipher_password = strListCrypt[0];
     var userName = strListCrypt[1];
     var userPassword = strListCrypt[2];

@@ -83,12 +83,16 @@ export class GCrypto {
         });
     }
 
-    promise_cryptPass(strList: string[]) {
+    promise_cryptText(strList: string[], duration: string = '') {
+        var charIndex = 16;
+        if (duration == 'Month') {
+            charIndex = 7;
+        }
         const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
         return new Promise<string[]>((resolve, reject) => {
             this.configService.apiGet(url).toPromise()
                 .then((data: JSON) => {
-                    const dateStr: string = data['datetime'].slice(0, 16);
+                    const dateStr: string = data['datetime'].slice(0, charIndex);
                     const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
                     var hash = CryptoJS.HmacSHA256(dateStr, secret);
                     const iv_str = "8DCB7300E8BCA8E5";
