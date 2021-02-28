@@ -6,16 +6,11 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
+// Comment following line for production
 $logFile = fopen("../log/email.txt", "a");
 if ($logFile) {
   fwrite($logFile, "-----------------------------------------------------------------------------\n");
   fwrite($logFile, date("Y-m-d H:i:s") . "\n");
-
-  fwrite($logFile, "Params:\n");
-  foreach ($_GET as $key => $value) {
-    fwrite($logFile, "['" . $key . "']='" . $value . "'");
-  }
-  fwrite($logFile,"\n");
 }
 
 if (!isset($_GET["chipher_password"]))
@@ -65,7 +60,7 @@ if ($logFile) {
 }
 
 $inputList = array('chipher_password' => $chipher_password,'user_name' => $user_name,'user_password' => $user_password );
-$outputList = passDecrypt_oneMonth($inputList);
+$outputList = passDecrypt($inputList, true);
 
 $decryptPass = $outputList['chipher_password'];
 $user_name = $outputList['user_name'];

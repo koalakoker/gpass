@@ -40,37 +40,15 @@ function hashPass($password)
     return strToHex(substr(hash($method, $password, true), 0, 32));
 }
 
-function passDecrypt($encrypted)
-{
-    $verbose = false;
-    $json = json_decode(file_get_contents('https://worldtimeapi.org/api/timezone/Europe/Rome'));
-    $dateStr = substr($json->{'datetime'},0,16);
-    if ($verbose)
-    {
-        print("Date:" . $dateStr);
-        echo ("\n");
-    }
-    $secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
-    $hmac = hash_hmac('sha256',$dateStr,$secret);
-    if ($verbose)
-    {
-        print("HMAC:" . $hmac);
-        echo ("\n");
-    }
-    $encrypted = $encrypted;
-    $decript = deChipher($encrypted,hexToStr($hmac));
-    if ($verbose)
-    {
-        print("Encrypted:" . $encrypted . "\n");
-        print("Decrypted:" . $decript . "\n");
-    }
-    return $decript;
-}
-
-function passDecrypt_oneMonth($list)
+function passDecrypt($list, $oneMonth)
 {
     $json = json_decode(file_get_contents('https://worldtimeapi.org/api/timezone/Europe/Rome'));
-    $dateStr = substr($json->{'datetime'},0,7);
+    if ($oneMonth) {
+        $lastCharIndex = 7;
+    } else {
+        $lastCharIndex = 16;
+    }
+    $dateStr = substr($json->{'datetime'},0,$lastCharIndex);
     
     $secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
     $hmac = hash_hmac('sha256',$dateStr,$secret);

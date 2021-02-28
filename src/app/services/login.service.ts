@@ -46,25 +46,32 @@ export class LoginService {
     console.log(this.userName);
     console.log(this.userPassword);
     console.log(this.chipher_password);
-    var encrypted = await this.g.promise_cryptPass(this.chipher_password);
-    var userName = await this.g.promise_cryptPass(this.userName);
-    var userPassword = await this.g.promise_cryptPass(this.userPassword);
+    var strList: string[] = [];
+    strList.push(this.chipher_password);
+    strList.push(this.userName);
+    strList.push(this.userPassword);
+
+    const strListCrypt = await this.g.promise_cryptPass(strList);
+    var chipher_password = strListCrypt[0];
+    var userName = strListCrypt[1];
+    var userPassword = strListCrypt[2];
+    
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.login(encrypted, userName, userPassword).toPromise()
+      this.configService.login(chipher_password, userName, userPassword).toPromise()
         .then((answer: JSON) => {
           this.logged = answer["logged"];
           // answer["encrypted"] can be used if session variable is not available in the server
           this.configService.setTesting_chiper(answer["encrypted"]);
           if (this.logged) {
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
-            this.sessionService.setKey('EncryptedPassword', encrypted);
+            this.sessionService.setKey('EncryptedPassword', chipher_password);
             this.sessionService.setKey('SessionToken', answer["sessionToken"]);
             this.sessionService.setKey('UserName', this.userName);
             this.sessionService.setKey('UserPassword', this.userPassword);
   
             if (this.keepMeLogged) {
               this.localService.setKey('ChipherPassword', this.chipher_password);
-              this.localService.setKey('EncryptedPassword', encrypted);
+              this.localService.setKey('EncryptedPassword', chipher_password);
               this.localService.setKey('SessionToken', answer["sessionToken"]);
               this.localService.setKey('UserName', this.userName);
               this.localService.setKey('UserPassword', this.userPassword);

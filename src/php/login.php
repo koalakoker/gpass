@@ -7,6 +7,7 @@ header("Content-Type: application/json; charset=UTF-8");
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
+// Comment following line for production
 $logFile = fopen("../log/login.txt", "a");
 if ($logFile) {
   fwrite($logFile, "\n\n" . date("Y-m-d H:i:s") . "\n");
@@ -48,11 +49,11 @@ if (!isset($_GET["user_password"]))
 }');
 }
 
-$upw = $_GET["chipher_password"];
-$usrName = $_GET['user_name'];
-$usrPass = $_GET['user_password'];
+$chipher_password = $_GET["chipher_password"];
+$user_name = $_GET['user_name'];
+$user_password = $_GET['user_password'];
 
-if ($upw == "logout")
+if ($chipher_password == "logout")
 {
   session_unset();
   session_destroy();
@@ -80,35 +81,36 @@ else {
   $prevSessionUserPass ='';
 }
 
-$decryptPass = passDecrypt($upw);
-$decryptPass = hashPass($decryptPass);
-$_SESSION['decryptPass'] = $decryptPass;
-
 if ($logFile) {
   fwrite($logFile, "*** Received ***\n");
-  fwrite($logFile, "UserName = "     . $usrName . "\n");
-  fwrite($logFile, "UserPassword = " . $usrPass . "\n");
+  fwrite($logFile, "UserName = "     . $user_name . "\n");
+  fwrite($logFile, "UserPassword = " . $user_password . "\n");
 }
 
-$usrName = passDecrypt($usrName);
-$_SESSION['userName'] = $usrName;
+$inputList = array('chipher_password' => $chipher_password,'user_name' => $user_name,'user_password' => $user_password );
+$outputList = passDecrypt($inputList, false);
 
-$usrPass = passDecrypt($usrPass);
+$decryptPass = $outputList['chipher_password'];
+$user_name = $outputList['user_name'];
+$user_password = $outputList['user_password'];
 
 if ($logFile) {
   fwrite($logFile, "*** Decoded ***\n");
-  fwrite($logFile, "UserName = "     . $usrName . "\n");
-  fwrite($logFile, "UserPassword = " . $usrPass . "\n");
+  fwrite($logFile, "UserName = "     . $user_name . "\n");
+  fwrite($logFile, "UserPassword = " . $user_password . "\n");
 }
 
-$usrPass = hashPass($usrPass);
+$decryptPass = hashPass($decryptPass);
+$user_password = hashPass($user_password);
 
 if ($logFile) {
   fwrite($logFile, "*** Hash ***\n");
-  fwrite($logFile, "UserPassword = " . $usrPass . "\n");
+  fwrite($logFile, "UserPassword = " . $user_password . "\n");
 }
 
-$_SESSION['userPass'] = $usrPass;
+$_SESSION['decryptPass'] = $decryptPass;
+$_SESSION['userName'] = $user_name;
+$_SESSION['userPass'] = $user_password;
 
 $Server   = deChipher($Server,  $decryptPass);
 $Username = deChipher($Username,$decryptPass);
