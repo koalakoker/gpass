@@ -23,14 +23,22 @@ export class LoginService {
     this.g = new GCrypto(this.configService);
   }
 
+  async decryptList(strList: string[]) {
+    //this.g.test(strList); -> Da rimuovere in gcrypto.ts
+    const strListCrypt = await this.g.promise_deCryptText(strList, 'Month');
+    return strListCrypt;
+  }
+
   async sendLink(params: any): Promise<boolean> {
     
     var strList: string[] = [];
     strList.push(params["user_name"]);
     strList.push(params["user_password"]);
+    strList.push(this.chipher_password);
     const strListCrypt = await this.g.promise_cryptText(strList, 'Month');
     params["user_name"] = strListCrypt[0];
     params["user_password"] = strListCrypt[1];
+    params["chipher_password"] = strListCrypt[2];
 
     return new Promise<boolean>((resolve, reject) => {
       this.configService.email(params).toPromise()
@@ -183,5 +191,10 @@ export class LoginService {
     this.localService.setKey('SessionToken', '');
     this.localService.setKey('UserName', '');
     this.localService.setKey('UserPassword', '');
+  }
+
+  removeMasterKey() {
+    this.sessionService.setKey('ChipherPassword', '');
+    this.localService.setKey('ChipherPassword', '');
   }
 }

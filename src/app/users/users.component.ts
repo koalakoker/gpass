@@ -3,7 +3,6 @@ import { Refreshable } from '../modules/refreshable';
 import { LoginService } from '../services/login.service'
 import { WebService } from '../services/web.service'
 import { User } from '../modules/user'
-import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-users-component',
@@ -98,7 +97,7 @@ export class UsersComponent implements OnInit, Refreshable {
     }, err => console.log(err));
   }
 
-  returnUrl: string = 'http://localhost:4200/changePass';
+  returnUrl: string = 'http://localhost:4200/newuser';
 
   onButtonInvite(i: number) {
     const usr = this.user[i];
@@ -109,7 +108,7 @@ export class UsersComponent implements OnInit, Refreshable {
       "user_name": usr.username,
       "user_password": usr.password
     };
-    
+
     this.loginService.sendLink(params)
       .then((logged) => {
         if (logged) {

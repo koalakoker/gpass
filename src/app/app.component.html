@@ -65,6 +65,17 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{adminActive}}" href="#" id="navbarUsersDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false" #adminDropDown>
+                                Admin
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarAdminDropdown">
+                                <li>
+                                    <a class="dropdown-item" (click)="removeMasterKey()">Remove master key</a>
+                                </li>
+                            </ul>
+                        </li>
                         <li *ngFor="let link of routerData" class="nav-item {{link.activated}}">
                             <a class="nav-link" [routerLink]="link.link">{{link.label}}</a>
                         </li>

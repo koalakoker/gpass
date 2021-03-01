@@ -49,9 +49,6 @@ export class WebService {
   }
 
   email(params: any) {
-    if (this.testing_chipher != "") {
-      params["chipher_password"] = this.testing_chipher;
-    }
     return this.http.get(this.emailAddr, {
       params: params,
       responseType: 'json'

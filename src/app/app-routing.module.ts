@@ -7,6 +7,7 @@ import { ChangePassComponent } from './change-pass/change-pass.component';
 import { DbBackupComponent } from './db-backup/db-backup.component';
 import { CategoryComponent } from './category/category.component';
 import { UsersComponent } from './users/users.component';
+import { NewUserComponent } from './new-user/new-user.component'
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'dbCreateTable', component: DbCreateBackupTableComponent },
   { path: 'dbBackup', component: DbBackupComponent },
   { path: 'search/:str', component: WebPassListComponent},
+  { path: 'newuser/:user_name/:user_password/:chipher_password', component: NewUserComponent}
 ];
 
 @NgModule({

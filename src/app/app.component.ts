@@ -280,4 +280,9 @@ export class AppComponent implements OnInit {
     // Propagate to child
     this.routedComponent.refresh("+1Yr.All");
   }
+
+  removeMasterKey() {
+    this.loginService.removeMasterKey();
+    this.logOut();
+  }
 }

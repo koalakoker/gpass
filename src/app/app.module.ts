@@ -19,6 +19,7 @@ import { PopupMessageComponent } from './popup-message/popup-message.component';
 import { CategoryComponent } from './category/category.component';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { UsersComponent } from './users/users.component';
+import { NewUserComponent } from './new-user/new-user.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { UsersComponent } from './users/users.component';
     PopupMessageComponent,
     CategoryComponent,
     ComboBoxComponent,
-    UsersComponent
+    UsersComponent,
+    NewUserComponent
   ],
   imports: [
     BrowserModule,
