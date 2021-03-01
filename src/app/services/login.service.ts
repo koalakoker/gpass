@@ -24,7 +24,6 @@ export class LoginService {
   }
 
   async decryptList(strList: string[]) {
-    //this.g.test(strList); -> Da rimuovere in gcrypto.ts
     const strListCrypt = await this.g.promise_deCryptText(strList, 'Month');
     return strListCrypt;
   }

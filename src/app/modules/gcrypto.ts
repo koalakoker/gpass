@@ -1,4 +1,3 @@
-import { ResolvedStaticSymbol } from '@angular/compiler';
 import  * as CryptoJS from '../../../node_modules/crypto-js'
 import { WebService } from '../services/web.service';
 
@@ -20,21 +19,12 @@ function hexa_to_ascii(hexx) {
     return str;
 }
 
-function ToInteger(x) {
-    x = Number(x);
-    return x < 0 ? Math.ceil(x) : Math.floor(x);
+function toUint32(x: number) {
+    return (x % Math.pow(2, 32));
 }
 
-function modulo(a, b) {
-    return a - Math.floor(a / b) * b;
-}
-
-function ToUint32(x) {
-    return modulo(ToInteger(x), Math.pow(2, 32));
-}
-
-function ToInt32(x) {
-    var uint32 = ToUint32(x);
+function toInt32(x) {
+    var uint32 = toUint32(x);
     if (uint32 >= Math.pow(2, 31)) {
         return uint32 - Math.pow(2, 32)
     } else {
@@ -43,23 +33,16 @@ function ToInt32(x) {
 }
 
 function chipherString(text: string) {
-    var words = strHex_to_words(text);
-    return {
-            ciphertext: {
-                words: words,
-                sigBytes: 4 * words.length
-            }
-        };
-}
-
-function strHex_to_words(str: string): Number[] {
-    var out: Number[] = [];
-    for (let index = 0; index < str.length / 8; index++) {
-        var sub = str.substring(0 + (index * 8), 8 + (index * 8));
+    // To decrypt the text is reuiqred first to reconstruct the chiperText 
+    // as array of int32 bit values starting from the exadecimal value 
+    // (8 char) of the input text
+    var words: number[] = [];
+    for (let index = 0; index < text.length / 8; index++) {
+        var sub = text.substring(0 + (index * 8), 8 + (index * 8));
         var yourNumber: number = parseInt(sub, 16);
-        out.push(ToInt32(yourNumber));
+        words.push(toInt32(yourNumber));
     }
-    return out;
+    return { ciphertext: { words: words, sigBytes: 4 * words.length}};
 }
 
 export class GCrypto {
@@ -155,35 +138,6 @@ export class GCrypto {
                 });
 
         }) 
-    }
-
-    test(strList) {
-        const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-        var charIndex = 7;
-        this.configService.apiGet(url).toPromise()
-            .then((data: JSON) => {
-                const dateStr: string = data['datetime'].slice(0, charIndex);
-                const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
-                var hash = CryptoJS.HmacSHA256(dateStr, secret);
-                const iv_str = "8DCB7300E8BCA8E5";
-                const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
-        
-                //var text = "Precivitevolissimo evolmentte. Nelmezzo del cammin di nostra vita mi ritrovai per una selva oscura!";
-            
-                strList.forEach(text => {
-                    
-                    
-                    // var crypted = CryptoJS.AES.encrypt(text, hash, {
-                    //     iv: iv
-                    // });
-                        
-                    // var text = crypted.ciphertext.toString();
-                    console.log(text);
-                        
-                    var decrypt = CryptoJS.AES.decrypt(chipherString(text), hash, {iv:iv});
-                    console.log("Finally I get this:",decrypt.toString(CryptoJS.enc.Utf8));
-                });
-            });
     }
 
     promise_deCryptText(strList: string[], duration: string = '') {
