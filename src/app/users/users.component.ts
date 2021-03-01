@@ -103,10 +103,12 @@ export class UsersComponent implements OnInit, Refreshable {
     const usr = this.user[i];
     console.log("Send invitation to user: " + usr.username + " Email:" + usr.email);
 
+    // Add the params that needs to be crypted in loginService.sendLink
     var params = {
       "returnurl": this.returnUrl,
       "user_name": usr.username,
-      "user_password": usr.password
+      "user_password": usr.password,
+      "email": usr.email
     };
 
     this.loginService.sendLink(params)

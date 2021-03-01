@@ -33,11 +33,13 @@ export class LoginService {
     var strList: string[] = [];
     strList.push(params["user_name"]);
     strList.push(params["user_password"]);
+    strList.push(params["email"]);
     strList.push(this.chipher_password);
     const strListCrypt = await this.g.promise_cryptText(strList, 'Month');
     params["user_name"] = strListCrypt[0];
     params["user_password"] = strListCrypt[1];
-    params["chipher_password"] = strListCrypt[2];
+    params["email"] = strListCrypt[2];
+    params["chipher_password"] = strListCrypt[3];
 
     return new Promise<boolean>((resolve, reject) => {
       this.configService.email(params).toPromise()
