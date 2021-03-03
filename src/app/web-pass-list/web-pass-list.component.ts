@@ -4,7 +4,12 @@ import { Category } from '../modules/category';
 import { RelWebCat } from './../modules/relwebcat';
 import { WebService } from '../services/web.service';
 import { GCrypto } from '../modules/gcrypto';
-import { Refreshable } from '../modules/refreshable';
+
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
 
@@ -47,40 +52,48 @@ export class WebPassListComponent implements OnInit, Refreshable {
     this.searchStr = this.route.snapshot.paramMap.get('str');
   }
   
-  refresh(cmd: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (cmd == "") {
+  refresh(cmd: string): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.webPassPage;
+
+
+      if (cmd == InputCodes.Refresh) {
         this.catID = +this.route.snapshot.paramMap.get('cat');
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then(() => {
-          this.getWebPassList();
-          resolve("btnInsertWebPass");
+          this.getWebPassList();    
+          ret.childInject = ReturnCodes.ButtonInsertWebPass;  
+          resolve(ret);
         })
         .catch((err) => {
           this.list = [];
           reject(err);
         })
-      } else if (cmd == "btnPress") {
+      } else if (cmd == InputCodes.BtnPress) {
         this.onNewFunc();
-        resolve("");
-      } else if (cmd == "srcPress") {
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
+      } else if (cmd == InputCodes.SrcPress) {
         this.catID = 0;
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then (() => {
           this.getWebPassList();
-          resolve("");
+          ret.childInject = ReturnCodes.None;
+          resolve(ret);
         })
         .catch ((err) => {
           this.list = [];
           reject(err);
         })
-      } else if (cmd == "+1Yr.All") {
+      } else if (cmd == InputCodes.PlusOneYearAll) {
         this.list.forEach((web) => {
           web.plusOneYear();
         })
-        resolve("");
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
       }
     })
   }

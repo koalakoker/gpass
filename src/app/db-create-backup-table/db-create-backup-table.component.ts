@@ -1,4 +1,8 @@
-import { Refreshable } from './../modules/refreshable';
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 import { PopupMessageComponent } from './../popup-message/popup-message.component';
 import { WebService } from '../services/web.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -20,9 +24,12 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
 
   constructor(private httpService: WebService) { }
 
-  refresh(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      resolve("");
+  refresh(): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.dbCreateBackupTable;
+      ret.childInject = ReturnCodes.None;
+      resolve(ret);
     })
   }
 

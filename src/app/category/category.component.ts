@@ -1,6 +1,11 @@
 import { Category } from './../modules/category';
 import { Component, OnInit } from '@angular/core';
-import { Refreshable } from '../modules/refreshable';
+
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
@@ -52,14 +57,17 @@ export class CategoryComponent implements OnInit, Refreshable {
     })
   }
 
-  refresh(cmd: string = ""): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (cmd == "") {
+  refresh(cmd: string = ""): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.categoryPage;
+      if (cmd == InputCodes.Refresh) {
         this.loginService.checklogged()
         .then(() => {
           this.show = true;
           this.enter();
-          resolve("btnInsertCategory");
+          ret.childInject = ReturnCodes.ButtonInsertCategory
+          resolve(ret);
         })
         .catch((err) => {
           reject("Not logged");
@@ -67,7 +75,8 @@ export class CategoryComponent implements OnInit, Refreshable {
       }
       else if (cmd == "btnPress") {
         this.onNewFunc();
-        resolve("");
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
       }
       else {
         reject("Wrong command");

@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Refreshable } from '../modules/refreshable';
+
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 import { LoginService } from '../services/login.service'
 import { WebService } from '../services/web.service'
 import { User } from '../modules/user'
@@ -38,22 +43,26 @@ export class UsersComponent implements OnInit, Refreshable {
     }, err => console.log(err));
   }
 
-  refresh(cmd: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (cmd == "") {
+  refresh(cmd: string): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.usersPage;
+      if (cmd == InputCodes.Refresh) {
         this.loginService.checklogged()
           .then(() => {
             this.show = true;
             this.enter();
-            resolve("btnInsertUsers");
+            ret.childInject = ReturnCodes.ButtonInsertUsers;
+            resolve(ret);
           })
           .catch((err) => {
             reject("Not logged");
           });
       }
-      else if (cmd == "btnPress") {
+      else if (cmd == InputCodes.BtnPress) {
         this.onNewFunc();
-        resolve("");
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
       }
       else {
         reject("Wrong command");

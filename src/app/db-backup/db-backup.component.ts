@@ -1,7 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { PopupMessageComponent } from '../popup-message/popup-message.component';
-import { Refreshable } from '../modules/refreshable';
+
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
 
 export class dbBackupForm {
   chiper_key  : string = '';
@@ -24,9 +28,12 @@ export class DbBackupComponent implements OnInit, Refreshable {
   ngOnInit() {
   }
 
-  refresh(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      resolve("");
+  refresh(): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.dbBackup;
+      ret.childInject = ReturnCodes.None;
+      resolve(ret);
     })
   }
 

@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import  * as CryptoJS from '../../../node_modules/crypto-js'
-import { Refreshable } from '../modules/refreshable';
+
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 
 @Component({
   selector: 'app-pass-generator',
@@ -28,9 +33,12 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
   ngOnInit() {
   }
 
-  refresh(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      resolve("");
+  refresh(): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.passGenerator;
+      ret.childInject = ReturnCodes.None;
+      resolve(ret);
     })
   }
 

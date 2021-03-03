@@ -1,4 +1,8 @@
-import { Refreshable } from './../modules/refreshable';
+import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
+import * as PageCodes from '../modules/refreshable/pagesCodes'
+import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import * as InputCodes from '../modules/refreshable/inputCodes';
+
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { WebPass } from '../modules/webpass';
@@ -28,9 +32,12 @@ export class ChangePassComponent implements OnInit, Refreshable {
   ngOnInit() {
   }
 
-  refresh(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      resolve("");
+  refresh(): Promise<RefreshReturnData> {
+    return new Promise<RefreshReturnData>((resolve, reject) => {
+      var ret: RefreshReturnData = new RefreshReturnData;
+      ret.pageCode = PageCodes.changePass;
+      ret.childInject = ReturnCodes.None;
+      resolve(ret);
     })
   }
 

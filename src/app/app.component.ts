@@ -1,7 +1,12 @@
 import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { WebService } from './services/web.service';
-import { Refreshable } from './modules/refreshable';
+
+import { Refreshable } from './modules/refreshable/refreshable';
+import * as PageCodes from './modules/refreshable/pagesCodes'
+import * as ReturnCodes from './modules/refreshable/returnCodes';
+import * as InputCodes from './modules/refreshable/inputCodes';
+
 import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
 import { ComboBoxComponent } from './combo-box/combo-box.component'
@@ -31,6 +36,7 @@ export class AppComponent implements OnInit {
   interval;
   private routedComponent: Refreshable;
   childInjected: string = "";
+  pageCode: string = "";
   param = "";
   category: Category[];
 
@@ -64,44 +70,57 @@ export class AppComponent implements OnInit {
     router.events.subscribe(val => {
       if (val instanceof NavigationEnd)
       {
-        this.routedComponent.refresh("")
-        .then ((strReturn) => {
-          this.childInjected = strReturn;
-          if (this.isWepPassPage(val.url)) {
-            this.routerData.forEach((link) => {
-              link.activated = "";
-            });
-            this.catData.forEach((cat) => {
-              if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
-                cat.activated = "active";
-              }
-              else {
-                cat.activated = "";
-              }
-            });
-            this.webpassActive  = "active";
-            this.categoryActive = "";
-            this.userActive     = "";
-          } else if (this.isCategoryPage(val.url)) {
-            this.categoryActive = "active";
-            this.webpassActive  = "";
-            this.userActive     = "";
-          } else if (this.isUsersPage(val.url)) {
-            this.categoryActive = "";
-            this.webpassActive  = "";
-            this.userActive     = "active";
-          } else {
-            this.webpassActive  = "";
-            this.categoryActive = "";
-            this.userActive     = "";
-            this.routerData.forEach((link) => {
-              if (link.link === val.url) {
-                link.activated = "active";
-              }
-              else {
+        this.routedComponent.refresh(InputCodes.Refresh)
+        .then ((returnData) => {
+          this.childInjected = returnData.childInject;
+          this.pageCode = returnData.pageCode;
+
+          switch (returnData.pageCode) {
+            case PageCodes.webPassPage:
+              this.routerData.forEach((link) => {
                 link.activated = "";
+              });
+              this.catData.forEach((cat) => {
+                if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
+                  cat.activated = "active";
+                }
+                else {
+                  cat.activated = "";
+                }
+              });
+              this.webpassActive = "active";
+              this.categoryActive = "";
+              this.userActive = "";
+              break;
+            case PageCodes.categoryPage:
+              this.categoryActive = "active";
+              this.webpassActive  = "";
+              this.userActive     = "";
+              break;
+            case PageCodes.usersPage:
+              this.categoryActive = "";
+              this.webpassActive  = "";
+              this.userActive     = "active";
+              break;
+            case PageCodes.newUserPage:
+              if (returnData.childInject == ReturnCodes.LoginValid) {
+                this.router.navigateByUrl("/");
               }
-            });
+              break;
+          
+            default:
+              this.webpassActive  = "";
+              this.categoryActive = "";
+              this.userActive     = "";
+              this.routerData.forEach((link) => {
+                if (link.link === val.url) {
+                  link.activated = "active";
+                }
+                else {
+                  link.activated = "";
+                }
+              });
+              break;
           }
         })
         .catch((err) => {
@@ -135,18 +154,6 @@ export class AppComponent implements OnInit {
     
   }
 
-  isWepPassPage(url) {
-    return ((url.slice(1, 5) == "list") || (url === '/'));
-  }
-
-  isCategoryPage(url) {
-    return (url == '/category');
-  }
-
-  isUsersPage(url) {
-    return (url == '/users');
-  }
-
   ngAfterViewChecked() {
     this.bindDropDown();
   }
@@ -154,7 +161,7 @@ export class AppComponent implements OnInit {
   bindDropDown() {
     if (this.webPassDropDown) {
       this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!this.isWepPassPage(this.router.url)) {
+        if (!(this.pageCode == PageCodes.webPassPage)) {
           this.router.navigateByUrl('/list/0');
         }
       });
@@ -162,7 +169,7 @@ export class AppComponent implements OnInit {
     
     if (this.categoryDropDown) {
       this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!this.isCategoryPage(this.router.url)) {
+        if (!(this.pageCode == PageCodes.categoryPage)) {
           this.router.navigateByUrl("/category");
         }
       });
@@ -170,7 +177,7 @@ export class AppComponent implements OnInit {
 
     if (this.usersDropDown) {
       this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!this.isUsersPage(this.router.url)) {
+        if (!(this.pageCode == PageCodes.usersPage)) {
           this.router.navigateByUrl("/users");
         }
       });
@@ -216,9 +223,10 @@ export class AppComponent implements OnInit {
     .then( (logged: boolean) => {
       if (logged) {
         this.appState = AppState.logged;
-        this.routedComponent.refresh("")
-        .then((str) => {
-          this.childInjected = str;
+        this.routedComponent.refresh(InputCodes.Refresh)
+          .then((returnData) => {
+            this.childInjected = returnData.childInject;
+            this.pageCode = returnData.pageCode;
         })
         .catch((err) => {
           console.log("Promise error: " + err);
@@ -239,12 +247,12 @@ export class AppComponent implements OnInit {
   logOut() {
     this.configService.logout().subscribe(
       (answer: JSON) => {
-        console.log("Callback");
         this.loginService.clearSession();
         this.loginService.clearLocal();
         this.appState = AppState.userNameInsert;
-        this.routedComponent.refresh("");
+        this.routedComponent.refresh(InputCodes.Refresh);
         this.childInjected = "";
+        this.pageCode = "";
         this.catData = [];
         this.catData.push(this.catDataAll);
       });
@@ -252,7 +260,7 @@ export class AppComponent implements OnInit {
 
   onNewFunc() {
     // Propagate to child
-    this.routedComponent.refresh("btnPress");
+    this.routedComponent.refresh(InputCodes.BtnPress);
   }
 
   getCategory(encrypted = "") {
@@ -278,7 +286,7 @@ export class AppComponent implements OnInit {
 
   plusOneYearAll() {
     // Propagate to child
-    this.routedComponent.refresh("+1Yr.All");
+    this.routedComponent.refresh(InputCodes.PlusOneYearAll);
   }
 
   removeMasterKey() {
