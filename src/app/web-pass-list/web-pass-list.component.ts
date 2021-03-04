@@ -224,7 +224,11 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.webPassIndexSelected = webPassIndexSelected;
       this.webService.get("", 'webcatrel')
         .then((json: JSON) => {
-          var allRelWebCat: Array<RelWebCat>;
+          var allRelWebCat: Array<RelWebCat> = [];
+          for (var i in json) {
+            let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
+            allRelWebCat.push(elem);
+          }
           this.category.forEach((cat) => {
             var found: boolean = false;
             allRelWebCat.forEach((rel) => {
