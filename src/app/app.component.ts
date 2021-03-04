@@ -245,7 +245,8 @@ export class AppComponent implements OnInit {
   }
 
   logOut() {
-    this.configService.logout().subscribe(
+    this.configService.logout()
+    .then(
       (answer: JSON) => {
         this.loginService.clearSession();
         this.loginService.clearLocal();
@@ -265,18 +266,24 @@ export class AppComponent implements OnInit {
 
   getCategory(encrypted = "") {
     // Get Category list
-    this.configService.get(encrypted, 'category').subscribe((data: Array<Category>) => {
-      this.category = data;
-      this.catData = [];
-      this.catData.push(this.catDataAll);
-      data.forEach(cat => {
-        var newCatList = { link: '/list/' + cat.id, label: cat.name, activated: "" };
-        this.catData.push(newCatList);
-      });
-    }, err => {
-      this.printErrorMessage(JSON.stringify(err));
-    }
-    );
+    this.configService.get(encrypted, 'category')
+      .then((json: JSON) => {
+        var data: Array <Category> = [];
+        for (var i in json) {
+          let elem: Category = Object.assign(new Category(), json[i]);
+          data.push(elem);
+        }
+        this.category = data;
+        this.catData = [];
+        this.catData.push(this.catDataAll);
+        data.forEach(cat => {
+          var newCatList = { link: '/list/' + cat.id, label: cat.name, activated: "" };
+          this.catData.push(newCatList);
+        });
+      })
+      .catch(err => {
+        this.printErrorMessage(JSON.stringify(err));
+       });
   }
 
   onSearch() {
@@ -292,5 +299,9 @@ export class AppComponent implements OnInit {
   removeMasterKey() {
     this.loginService.removeMasterKey();
     this.logOut();
+  }
+
+  test() {
+    
   }
 }

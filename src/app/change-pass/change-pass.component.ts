@@ -44,8 +44,9 @@ export class ChangePassComponent implements OnInit, Refreshable {
   onChangePass() {
 
     // Get the DB values and decrypt with old pass
-    this.configService.get(this.old_chipher_password).subscribe(
-      (data: Array<WebPass>) => {
+    this.configService.get(this.old_chipher_password)
+      .then((json: JSON) => {
+        var data: Array<WebPass>;
         // Decode and create a new WebPass list
         const list: WebPass[] = data.map((x) => {
           const w = new WebPass(x);
@@ -59,15 +60,15 @@ export class ChangePassComponent implements OnInit, Refreshable {
           const newWebPass = new WebPass(webPass);
           webPass.crypt(this.new_chipher_password);
           
-          const ob: Observable<any> = this.configService.update(webPass, this.old_chipher_password);
-          ob.subscribe( 
-            () => {
+          const ob: Promise<JSON> = this.configService.update(webPass, this.old_chipher_password);
+          ob.then( 
+            (json: JSON) => {
               this.itemToBeSentNbr--;
               if (this.itemToBeSentNbr === 0)
               {
                 // Calculate the new access file for the db
-                this.configService.callChipher(this.old_chipher_password).subscribe(
-                  (data) => {
+                this.configService.callChipher(this.old_chipher_password)
+                  .then((data) => {
                     const key: string = GCrypto.hash(this.new_chipher_password);
                     this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';
                     this.serverAccess += '$Password = "' + key + '";\n';

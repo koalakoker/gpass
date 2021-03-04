@@ -41,8 +41,10 @@ export class DbBackupComponent implements OnInit, Refreshable {
     let body = new URLSearchParams();
     body.set('chipher_password', this.val.chiper_key);
     body.set('newtable', this.val.newtablename);
+    console.log("Verify this");
     this.httpService.post(body, 'https://www.koalakoker.com/angular/php/' + this.url)
-      .subscribe(res => {
+      .then((json: JSON) => {
+        var res: string;
         this.popupMessage.sendMessage(res, 3000);
       })
   }

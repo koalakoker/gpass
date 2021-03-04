@@ -122,75 +122,88 @@ export class WebPassListComponent implements OnInit, Refreshable {
     }
   }
 
-  retry(err) {
-    console.log(err);
-  }
-
-  async getWebPassList() {
-    
+  async getWebPassList() {    
     // Get Webpass list
-    await this.webService.get("", 'gpass').toPromise()
-    .then((data: Array<WebPass>) => {
-      // Decode and create a new WebPass list
-      this.list = data.map((x) => {
-        const w = new WebPass(x);
-        w.decrypt(this.loginService.chipher_password);
-        return w;
-      }, this);
-      this.list.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        } else {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
+    await this.webService.get("", 'gpass')
+      .then((json: JSON) => {
+        var data: Array<WebPass> = [];
+        for (var i in json) {
+          let elem: WebPass = Object.assign(new WebPass(), json[i]);
+          data.push(elem);
         }
-      });
+        // Decode and create a new WebPass list
+        this.list = data.map((x) => {
+          const w = new WebPass(x);
+          w.decrypt(this.loginService.chipher_password);
+          return w;
+        }, this);
+        this.list.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          } else {
+            if (a.name > b.name) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        });
     })
     .catch((err) => {
-      this.retry(err);
+      console.log(err);
     });
     
     // Get Category list
-    await this.webService.get("", 'category').toPromise()
-    .then( (data: Array<Category>) => {
-      this.category = data;
-    })
-    .catch((err) => {
-      this.retry(err);
-    });
+    await this.webService.get("", 'category')
+      .then( (json: JSON) => {
+        var data: Array<Category> = [];
+        for (var i in json) {
+          let elem: Category = Object.assign(new Category(), json[i]);
+          data.push(elem);
+        }
+        this.category = data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     // Get RelWebCat
-    await this.webService.get("", 'webcatrel').toPromise()
-    .then((data: Array<RelWebCat>) => {
-      this.relWebCat = data;
-    })
-    .catch((err) => {
-      this.retry(err);
-    });
-    this.afterLoad();
+    await this.webService.get("", 'webcatrel')
+      .then((json: JSON) => {
+        var data: Array <RelWebCat> = [];
+        for (var i in json) {
+          let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
+          data.push(elem);
+        }
+        this.relWebCat = data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
+      this.afterLoad();
   }
 
   save(index: number) {
     const webPass = new WebPass(this.list[index]);
     webPass.crypt(this.loginService.chipher_password);
-    this.webService.update(webPass, "").subscribe(() => {
+    this.webService.update(webPass, "")
+    .then(() => {
       this.sendMessage("Database updated");
-    }, err => this.retry(err));
+    }, err => console.log(err));
   }
 
   onNewFunc() {
     const webPass = new WebPass();
     webPass.crypt(this.loginService.chipher_password);
-    this.webService.create(webPass, "").subscribe(
-      (id: number) => {
-        webPass.id = id;
+    webPass.userid = this.loginService.userid;
+    this.webService.create(webPass, "")
+      .then((json: JSON) => {
+        webPass.id = +json;
         webPass.decrypt(this.loginService.chipher_password);
         this.list.unshift(webPass);
       }, (err) => {
-        this.retry(err);
+        console.log(err);
       }
     );
     
@@ -209,19 +222,24 @@ export class WebPassListComponent implements OnInit, Refreshable {
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
       this.webPassIndexSelected = webPassIndexSelected;
-      this.webService.get("", 'webcatrel').subscribe((allRelWebCat: Array<RelWebCat>) => {
-        this.category.forEach((cat) => {
-          var found: boolean = false;
-          allRelWebCat.forEach((rel) => {
-            if ((rel.id_web == this.list[this.webPassIndexSelected].id) &&
-              (rel.id_cat == cat.id) &&
-              (rel.enabled == 1)) {
-              found = true;
-            }
+      this.webService.get("", 'webcatrel')
+        .then((json: JSON) => {
+          var allRelWebCat: Array<RelWebCat>;
+          this.category.forEach((cat) => {
+            var found: boolean = false;
+            allRelWebCat.forEach((rel) => {
+              if ((rel.id_web == this.list[this.webPassIndexSelected].id) &&
+                (rel.id_cat == cat.id) &&
+                (rel.enabled == 1)) {
+                found = true;
+              }
+            });
+            this.selectedWebPassCatChecked.push(found);
           });
-          this.selectedWebPassCatChecked.push(found);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      }, err => this.retry(err));
     }
   }
 
@@ -237,9 +255,10 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.webService.delete(webPass.id, "").subscribe(() => {
+    this.webService.delete(webPass.id, "")
+      .then(() => {
       this.list.splice(i, 1);
-    }, err => this.retry(err));
+    }, err => console.log(err));
     
   }
 
@@ -258,16 +277,21 @@ export class WebPassListComponent implements OnInit, Refreshable {
   }
 
   saveRel(rel: RelWebCat) {
-    this.webService.updateRelWebCat(rel, "").subscribe(() => {
-      this.sendMessage("Database updated");
-    }, err => this.retry(err));
+    this.webService.updateRelWebCat(rel, "")
+      .then(() => {
+        this.sendMessage("Database updated");
+      })
+      .catch(err => console.log(err));
   }
 
   newRel(rel: RelWebCat) {
-    this.webService.createRelWebCat(rel, "").subscribe((id: number) => {
-      rel.id = id;
-      this.sendMessage("Database updated");
-    }, err => this.retry(err));
+    this.webService.createRelWebCat(rel, "")
+      .then((json: JSON) => {
+        var id: number;
+        rel.id = id;
+        this.sendMessage("Database updated");
+      })
+      .catch(err => console.log(err));
   }
 
   onCatCheckChange(webPassIndex: number, catIndex: number)

@@ -15,6 +15,7 @@ export class LoginService {
   logged = false;
   chipher_password: string = "";
   userName: string = ""
+  userid: number;
   userPassword: string = "";
 
   constructor(private sessionService: SessionService,
@@ -42,8 +43,9 @@ export class LoginService {
     params["chipher_password"] = strListCrypt[3];
 
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.email(params).toPromise()
+      this.configService.email(params)
         .then((answer: JSON) => {
+          console.log(answer);
           resolve(true);
         })
         .catch((err) => {
@@ -65,9 +67,10 @@ export class LoginService {
     var userPassword = strListCrypt[2];
     
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.login(chipher_password, userName, userPassword).toPromise()
+      this.configService.login(chipher_password, userName, userPassword)
         .then((answer: JSON) => {
           this.logged = answer["logged"];
+          this.userid = answer["userID"];
           // answer["encrypted"] can be used if session variable is not available in the server
           this.configService.setTesting_chiper(answer["encrypted"]);
           if (this.logged) {

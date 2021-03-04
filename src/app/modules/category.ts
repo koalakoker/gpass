@@ -1,6 +1,7 @@
 export class Category {
     id: number;
     name: string;
+    userid: number;
 
     constructor(category?: Category) {
         if (category == null) {

@@ -30,20 +30,27 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   enter() {
     // User is logged show content
-    this.configService.get("", 'category').subscribe((data: Array<Category>) => {
-      this.category = data;
-      this.category.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        } else {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
+    this.configService.get("", 'category')
+      .then((json: JSON) => {
+        var data: Array<Category> = [];
+        for (var i in json) {
+          let elem: Category = Object.assign(new Category(), json[i]);
+          data.push(elem);
         }
-      });
-    }, err => console.log(err));
+        this.category = data;
+        this.category.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          } else {
+            if (a.name > b.name) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        })
+      })
+      .catch(err => console.log(err));
   }
 
   ngOnInit() {
@@ -86,17 +93,22 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   save(index: number) {
     const category = new Category(this.category[index]);
-    this.configService.updateCategory(category, "").subscribe(() => {
-      this.sendMessage("Database updated");
-    }, err => console.log(err));
+    this.configService.updateCategory(category, "")
+      .then(() => {
+        this.sendMessage("Database updated");
+      })
+      .catch(err => console.log(err));
   }
 
   onNewFunc() {
     const category = new Category();
-    this.configService.createCategory(category, "").subscribe((id: number) => {
-      category.id = id;
-      this.category.unshift(category);
-    }, err => console.log(err));
+    category.userid = this.loginService.userid;
+    this.configService.createCategory(category, "")
+      .then((json: JSON) => {
+        category.id = +json;
+        this.category.unshift(category);
+      })
+      .catch(err => console.log(err));
   }
 
   onButtonEdit() {
@@ -105,9 +117,11 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const cat = this.category[i];
-    this.configService.delete(cat.id, "", 'category').subscribe(() => {
-      this.category.splice(i, 1);
-    }, err => console.log(err));
+    this.configService.delete(cat.id, "", 'category')
+      .then(() => {
+        this.category.splice(i, 1);
+      })
+      .catch(err => console.log(err));
   }
 
   isSelected(cat: Category): boolean {

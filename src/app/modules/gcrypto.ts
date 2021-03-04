@@ -93,7 +93,8 @@ export class GCrypto {
 
     cryptPass(pass: string, callback : (crypted: string) => void) {
         const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-        this.configService.apiGet(url).subscribe( (data: JSON)=> {
+        this.configService.api(url)
+            .then( (data: JSON)=> {
             const dateStr: string = data['datetime'].slice(0, 16);
             const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
             var hash = CryptoJS.HmacSHA256(dateStr, secret);
@@ -116,7 +117,7 @@ export class GCrypto {
         }
         const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
         return new Promise<string[]>((resolve, reject) => {
-            this.configService.apiGet(url).toPromise()
+            this.configService.api(url)
                 .then((data: JSON) => {
                     const dateStr: string = data['datetime'].slice(0, charIndex);
                     const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
@@ -147,7 +148,7 @@ export class GCrypto {
         }
         const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
         return new Promise<string[]>((resolve, reject) => {
-            this.configService.apiGet(url).toPromise()
+            this.configService.api(url)
                 .then((data: JSON) => {
                     const dateStr: string = data['datetime'].slice(0, charIndex);
                     console.log(dateStr);

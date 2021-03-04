@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from 'rxjs';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
@@ -8,20 +7,20 @@ import { User } from '../modules/user'
 
 @Injectable()
 export class WebService {
-  constructor(private http: HttpClient) {
+  constructor() {
   }
 
-  // For testing create a LAMP server and clone the DB 
+  // For testing create a LAMP server and clone the DB use the following
   loginAddr = 'http://192.168.64.3/gpass/php/login.php'
   emailAddr = 'http://192.168.64.3/gpass/php/email.php'
-  urlAddr = 'http://192.168.64.3/gpass/php/api.php';
+  urlAddr   = 'http://192.168.64.3/gpass/php/api.php';
   chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
   
   // Decomment these for final production server use session vars
-  //loginAddr =   'php/login.php'
-  //emailAddr = 'php/email.php'
-  //urlAddr =     'php/api.php';
-  //chiperAddr =  'php/getCriptDBAccess.php';
+  //loginAddr =  'https://www.koalakoker.com/gpass/php/login.php'
+  //emailAddr =  'https://www.koalakoker.com/gpass/php/email.php'
+  //urlAddr =    'https://www.koalakoker.com/gpass/php/api.php';
+  //chiperAddr = 'https://www.koalakoker.com/gpass/php/getCriptDBAccess.php';
 
   setTesting_chiper(encrypted: string) {
     // Comment this for final production server use session vars
@@ -30,174 +29,202 @@ export class WebService {
 
   testing_chipher : string = "";
 
-  apiGet(url: string) {
-    return this.http.get(url, {
-      responseType: 'json'
-    });
+  api(url: string, params?: any, method: string = 'GET', data: any = {} ): Promise<JSON> {
+    if (params != null) {
+      url += '?' + new URLSearchParams(params).toString();
+    }
+    var fetchData: any;
+    if (method == 'GET')
+    {
+      fetchData = {
+        method: method
+      }
+    } else {
+      fetchData = {
+        method: method,
+        body: JSON.stringify(data)
+      }
+    }
+    return new Promise<JSON>((resolve, reject) => {
+      fetch(url, fetchData)
+        .then(Response => {
+          resolve(Response.json())
+        })
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        })
+    })
   }
 
   // **************************************************
   // **********           Common             **********
   // **************************************************
   login(chipher_password: string, userName: string, userPassword: string) {
-    return this.http.get(this.loginAddr, {
-      params: { ["chipher_password"]: chipher_password,
-                ["user_name"]: userName,
-                ["user_password"]: userPassword},
-      responseType: 'json'
-    });
+    var params = {
+      'chipher_password': chipher_password,
+      'user_name': userName,
+      'user_password': userPassword
+    }
+    return this.api(this.loginAddr, params); 
   }
 
   email(params: any) {
-    return this.http.get(this.emailAddr, {
-      params: params,
-      responseType: 'json'
-    });
+    return this.api(this.emailAddr,params);
   }
 
   logout() {
-    return this.http.get(this.loginAddr, {
-      params: { ["chipher_password"]: "logout" },
-      responseType: 'json'
-    });
+    var params = {
+      'chipher_password': "logout"
+    };
+    return this.api(this.loginAddr, params);
   }
   
-  get(chipher_password: string, table: string = 'gpass') {
+  get(chipher_password: string, table: string = 'gpass'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.get(this.urlAddr + '/' + table, {
-      params: {["chipher_password"]: chipher_password},
-      responseType: 'json'
-    });
+    var params = {
+      'chipher_password': chipher_password
+    }
+    return this.api(this.urlAddr + '/' + table, params);
   }
 
-  delete(id: number, chipher_password: string, table: string = 'gpass'): Observable<{}> {
+  delete(id: number, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.delete(this.urlAddr + '/' + table + "/" + id, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    })
+    var url = this.urlAddr + '/' + table + "/" + id;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'DELETE');
   }
+
+//   {
+//   method: 'POST', // *GET, POST, PUT, DELETE, etc.
+//   mode: 'cors', // no-cors, *cors, same-origin
+//   cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+//   credentials: 'same-origin', // include, *same-origin, omit
+//   headers: {
+//     'Content-Type': 'application/json'
+//     // 'Content-Type': 'application/x-www-form-urlencoded',
+//   },
+//   redirect: 'follow', // manual, *follow, error
+//   referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+//   body: JSON.stringify(data) // body data type must match "Content-Type" header
+// }
 
   // **************************************************
   // **********          Specific            **********
   // **************************************************
-  update(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Observable<any> {
+  update(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.put(this.urlAddr + '/' + table +"/"+webPass.id, webPass, {
-      params: {["chipher_password"]: chipher_password},
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
+    var url = this.urlAddr + '/' + table + "/" + webPass.id;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'PUT', webPass);
   }
 
-  updateCategory(category: Category, chipher_password: string, table: string = 'category'): Observable<any> {
+  updateCategory(category: Category, chipher_password: string, table: string = 'category'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.put(this.urlAddr + '/' + table + "/" + category.id, category, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
+    var url = this.urlAddr + '/' + table + "/" + category.id;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'PUT', category);
   }
 
-  updateRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Observable<any> {
+  updateRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.put(this.urlAddr + '/' + table + "/" + rel.id, rel, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
+    var url = this.urlAddr + '/' + table + "/" + rel.id;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'PUT', rel);
   }
 
-  updateUser(user: User, chipher_password: string, table: string = 'users'): Observable<any> {
+  updateUser(user: User, chipher_password: string, table: string = 'users'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.put(this.urlAddr + '/' + table + "/" + user.id, user, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
+    var url = this.urlAddr + '/' + table + "/" + user.id;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'PUT', user);
   }
 
-  create(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Observable<number> {
+  create(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.post<number>(this.urlAddr + '/' + table, webPass, {
-      params: {["chipher_password"]: chipher_password},
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    })
+    var url = this.urlAddr + '/' + table;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'POST', webPass);
   }
 
-  createCategory(category: Category, chipher_password: string, table: string = 'category'): Observable<number> {
+  createCategory(category: Category, chipher_password: string, table: string = 'category'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.post<number>(this.urlAddr + '/' + table, category, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    })
+    var url = this.urlAddr + '/' + table;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'POST', category);
   }
 
-  createRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Observable<number> {
+  createRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.post<number>(this.urlAddr + '/' + table, rel, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    })
+    var url = this.urlAddr + '/' + table;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'POST', rel);
   }
 
-  createUser(user: User, chipher_password: string, table: string = 'users'): Observable<number> {
+  createUser(user: User, chipher_password: string, table: string = 'users'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    return this.http.post<number>(this.urlAddr + '/' + table, user, {
-      params: { ["chipher_password"]: chipher_password },
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    })
+    var url = this.urlAddr + '/' + table;
+    var params = {
+      'chipher_password': chipher_password,
+    }
+    return this.api(url, params, 'POST', user);
   }
 
   post(body, uri) {
-    return this.http.post(uri, body.toString(), {
-      responseType: 'text',
-      observe: 'body',
-      headers: new HttpHeaders({
-        'Accept': 'text/html, application/xhtml+xml, */*',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    })
+    console.log("Post to be implemented");
+    return this.api(uri);
+    // return this.http.post(uri, body.toString(), {
+    //   responseType: 'text',
+    //   observe: 'body',
+    //   headers: new HttpHeaders({
+    //     'Accept': 'text/html, application/xhtml+xml, */*',
+    //     'Content-Type': 'application/x-www-form-urlencoded'
+    //   })
+    // })
   }
 
   callChipher(chipher_password: string) {
-    return this.http.get(this.chiperAddr, {
-      params: {["chipher_password"]: chipher_password},
-      responseType: 'json'
-    })
+    console.log("callChipher to be implemented");
+    return this.api(this.chiperAddr);
+  //   return this.http.get(this.chiperAddr, {
+  //     params: {["chipher_password"]: chipher_password},
+  //     responseType: 'json'
+  //   })
   }
 }

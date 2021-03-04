@@ -120,8 +120,9 @@ export class ComboBoxComponent implements OnInit {
 
   getList(searchStr: string = "") {
     return new Promise((resolve,reject) => {
-      this.configService.get("", 'gpass').toPromise()
-      .then((data: Array<WebPass>) => {
+      this.configService.get("", 'gpass')
+      .then((json: JSON) => {
+        var data: Array<WebPass>;
         // Decode and create a new WebPass list
         var list: WebPass[] = data.map((x) => {
           const w = new WebPass(x);

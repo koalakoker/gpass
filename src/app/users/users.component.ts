@@ -37,8 +37,14 @@ export class UsersComponent implements OnInit, Refreshable {
 
   enter() {
     // User is logged show content
-    this.webService.get("", 'users').toPromise()
-    .then((data: Array<User>) => {
+    this.webService.get("", 'users')
+    .then((json: JSON) => {
+      var data: Array<User> = [];
+      for (var i in json) {
+        let elem: User = Object.assign(new User(), json[i]);
+        data.push(elem);
+      }
+
       this.user = data;
     }, err => console.log(err));
   }
@@ -72,8 +78,9 @@ export class UsersComponent implements OnInit, Refreshable {
 
   onNewFunc() {
     const user = new User();
-    this.webService.createUser(user, "").subscribe((id: number) => {
-      user.id = id;
+    this.webService.createUser(user, "")
+    .then((json: JSON) => {
+      user.id = +json;
       this.user.unshift(user);
     }, err => console.log(err));
   }
@@ -95,15 +102,18 @@ export class UsersComponent implements OnInit, Refreshable {
 
   save(index: number) {
     const user = new User(this.user[index]);
-    this.webService.updateUser(user, "").subscribe(() => {
-    }, err => console.log(err));
+    this.webService.updateUser(user, "")
+      .then(() => {})
+      .catch(err => console.log(err));
   }
 
   onButtonRemove(i: number) {
     const usr = this.user[i];
-    this.webService.delete(usr.id, "", 'users').subscribe(() => {
-      this.user.splice(i, 1);
-    }, err => console.log(err));
+    this.webService.delete(usr.id, "", 'users')
+      .then(() => {
+        this.user.splice(i, 1);
+      })
+      .catch(err => console.log(err));
   }
 
   returnUrl: string = 'http://localhost:4200/newuser';

@@ -6,6 +6,7 @@ export class WebPass {
     name: string;
     url: string;
     username: string;
+    userid : number;
     pass: string;
     registrationDate: string;
     expirationDate: string;
