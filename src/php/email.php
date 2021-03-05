@@ -1,14 +1,16 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-    
+include_once "config.php";
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-// Comment following lines for production
-$logFile = fopen("../log/email.txt", "a");
-$emailFile = fopen("../log/email.html", "w");
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+
+if (isConfigForTesting()) {
+  $logFile = fopen("../log/email.txt", "a");
+  $emailFile = fopen("../log/email.html", "w");
+}
 
 if ($logFile) {
   fwrite($logFile, "-----------------------------------------------------------------------------\n");
@@ -94,9 +96,14 @@ $message =
     <title>Invitation to GPass service</title>
   </head>
   <body>
-    <p>Dear ' . $outputList['user_name'] . ' &lt;' . $to . '&gt;</p>
-    <p>GPass admins invite you to join to the service. Click the following link you will admit to use GPass</p>
-    <a href="' . $_GET["returnurl"] . '/' . $user_name . '/' . $user_password . '/' . $chipher_password .'">link</a>
+    <div>
+      <h1><span style="color: #003366;">Invitation to GPass service</span></h1>
+    </div>
+    <p>&nbsp;</p>
+    <p>Dear <span style="color: #800000;">' . $outputList['user_name'] . '</span> &lt;' . $to . '&gt;</p>
+    <p>GPass admins invite you to join to the service. Click the following link you will admit to use GPass.</p>
+    <p style="text-align: center;"><a href="' . $_GET["returnurl"] . '/' . $user_name . '/' . $user_password . '/' . $chipher_password .'">Click on this link</a></p>
+    <p>Note that this link will expire in 30 days.</p>
   </body>
 </html> 
 ';

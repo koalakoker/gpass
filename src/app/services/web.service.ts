@@ -17,10 +17,10 @@ export class WebService {
   chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
   
   // Decomment these for final production server use session vars
-  //loginAddr =  'https://www.koalakoker.com/gpass/php/login.php'
-  //emailAddr =  'https://www.koalakoker.com/gpass/php/email.php'
-  //urlAddr =    'https://www.koalakoker.com/gpass/php/api.php';
-  //chiperAddr = 'https://www.koalakoker.com/gpass/php/getCriptDBAccess.php';
+  // loginAddr =  'https://www.koalakoker.com/gpass/php/login.php'
+  // emailAddr =  'https://www.koalakoker.com/gpass/php/email.php'
+  // urlAddr =    'https://www.koalakoker.com/gpass/php/api.php';
+  // chiperAddr = 'https://www.koalakoker.com/gpass/php/getCriptDBAccess.php';
 
   setTesting_chiper(encrypted: string) {
     // Comment this for final production server use session vars

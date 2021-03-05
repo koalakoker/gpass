@@ -1,14 +1,17 @@
 <?php
-session_start();
-
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-    
+include_once "config.php";
 include_once "passDB_cript.php";
 include_once "criptoFunc.php";
 
-// Comment following line for production
-$logFile = fopen("../log/login.txt", "a");
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+
+session_start();
+
+if (isConfigForTesting()) {
+  $logFile = fopen("../log/login.txt", "a");
+}
+
 if ($logFile) {
   fwrite($logFile, "\n\n" . date("Y-m-d H:i:s") . "\n");
 }
@@ -97,7 +100,7 @@ $user_password = $outputList['user_password'];
 if ($logFile) {
   fwrite($logFile, "*** Decoded ***\n");
   fwrite($logFile, "UserName = "     . $user_name . "\n");
-  fwrite($logFile, "UserPassword = " . $user_password . "\n");
+  // fwrite($logFile, "UserPassword = " . $user_password . "\n");
 }
 
 $decryptPass = hashPass($decryptPass);
@@ -127,6 +130,19 @@ if ($Server == "")
     }');
 }
 
+// connect to the mysql database
+$link = mysqli_connect($Server, $Username, $PW, $DB);
+mysqli_set_charset($link,'utf8');
+
+// Create SQL statement
+$sql = "SELECT * FROM `users` WHERE `username`='" . $user_name ."'";
+
+// excecute SQL statement
+$result = mysqli_query($link,$sql);
+
+$obj = mysqli_fetch_object($result);
+$id = $obj->id;
+
 $answer = '{' .
   $prevSession . '
   ' . $prevSessionUserName . '
@@ -135,7 +151,8 @@ $answer = '{' .
   "logged"      : true,
   "encrypted"   : "' . $_SESSION["decryptPass"] . '",
   "userName"    : "' . $_SESSION["userName"] . '",
-  "userPassword": "' . $_SESSION["userPass"] . '"  
+  "userPassword": "' . $_SESSION["userPass"] . '",
+  "userID": "'. $id . '"  
 }'; 
 echo($answer);
 

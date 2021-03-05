@@ -1,22 +1,24 @@
 <?php
-
-session_start();
-
-// Comment following line for production
-$logFile = fopen("../log/api.txt", "a");
-if ($logFile) {
-  fwrite($logFile, date("Y-m-d H:i:s") . "\n");
-  fwrite($logFile, "session decryptPass:". $_SESSION['decryptPass'] . "\n");
-  fwrite($logFile, "get chipher_password:"    . $_GET['chipher_password'] . "\n");
-}
+include_once "config.php";
+include_once "passDB_cript.php";
+include_once "criptoFunc.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: DELETE, PUT, POST, OPTIONS");
 header("Access-Control-Allow-Headers: x-requested-with, Content-Type, origin, authorization, accept, client-security-token");
 header("Content-Type: application/json; charset=UTF-8");
-    
-include_once "passDB_cript.php";
-include_once "criptoFunc.php";
+
+session_start();
+
+if (isConfigForTesting()) {
+  $logFile = fopen("../log/api.txt", "a");
+}
+
+if ($logFile) {
+  fwrite($logFile, date("Y-m-d H:i:s") . "\n");
+  fwrite($logFile, "session decryptPass:". $_SESSION['decryptPass'] . "\n");
+  fwrite($logFile, "get chipher_password:"    . $_GET['chipher_password'] . "\n");
+}
 
 if (isset($_SESSION['decryptPass'])) {
   $decryptPass = $_SESSION['decryptPass'];
@@ -93,6 +95,11 @@ switch ($method) {
 }
  
 if ($sql) {
+
+  if ($logFile) {
+    fwrite($logFile, "sql:"    . $sql . "\n");
+  }
+
   // excecute SQL statement
   $result = mysqli_query($link,$sql);
 
@@ -104,17 +111,29 @@ if ($sql) {
   }
   
   // print results, insert id or affected row count
+  $answer = "";
+
   if ($method == 'GET') {
-    if (!$key) echo '[';
-    for ($i=0;$i<mysqli_num_rows($result);$i++) {
-      echo ($i>0?',':'').json_encode(mysqli_fetch_object($result));
+    if (!$key) {
+      $answer .= '[';
     }
-    if (!$key) echo ']';
+    for ($i = 0; $i < mysqli_num_rows($result); $i++) {
+      $answer .= ($i > 0 ? ',' : '');
+      $answer .= json_encode(mysqli_fetch_object($result));
+    }
+    if (!$key) {
+      $answer .= ']';
+    }
   } elseif ($method == 'POST') {
-    echo mysqli_insert_id($link);
+    $answer .= mysqli_insert_id($link);
   } else {
-    echo mysqli_affected_rows($link);
+    $answer .= mysqli_affected_rows($link);
   }
+  echo($answer);
+
+  if ($logFile) {
+    fwrite($logFile, "answer:"    . $answer . "\n");
+  } 
   
   // close mysql connection
   mysqli_close($link);
