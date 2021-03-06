@@ -1,3 +1,7 @@
+<button type="button" data-bs-toggle="modal"
+  [attr.data-bs-target]="'#newUserModal'">
+  NewUser
+</button>
 <div class="container-fluid" *ngIf="show">
   <div class="list-group">
     <div *ngFor="let element of user; let i = index" (click)="onSelect(element)">
@@ -35,23 +39,9 @@
             <div class="modal-body">
               <!-- Name -->
               <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Username</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" placeholder="Name" [(ngModel)]="user[i].username"
-                    (change)="save(i)" aria-label="default input example">
-                </div>
-              </div>
-              <div class="row mb-3">
                 <label class="col-sm-2 col-form-label">Email</label>
                 <div class="col-sm-10">
                   <input class="form-control" type="text" placeholder="Email" [(ngModel)]="user[i].email" (change)="save(i)"
-                    aria-label="default input example">
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Password</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" placeholder="Password" [(ngModel)]="user[i].password" (change)="save(i)"
                     aria-label="default input example">
                 </div>
               </div>
@@ -89,12 +79,12 @@
       </div>
 
       <!-- Invite Modal -->
-      <div class="modal fade" id="inviteModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#confirmModalLabel' + i"
+      <div class="modal fade" id="inviteModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#inviteModalLabel' + i"
         aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="confirmModalLabel{{i}}">Warning</h5>
+              <h5 class="modal-title" id="inviteModalLabel{{i}}">Warning</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -109,6 +99,31 @@
         </div>
       </div>
 
+      <!-- New User Modal -->
+      <div class="modal fade" id="newUserModal" tabindex="-1" [attr.aria-labelledby]="'#newUserModalLabel' + i"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="newUserModalLabel">Warning</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" placeholder="Name" [(ngModel)]="newUserName"
+                    aria-label="default input example">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger" (click)="createNewUser()" data-bs-dismiss="modal">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

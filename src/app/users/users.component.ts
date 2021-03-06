@@ -19,6 +19,7 @@ export class UsersComponent implements OnInit, Refreshable {
   show: boolean = false;
   user: User[];
   selectedUser: User;
+  newUserName: string;
 
   constructor(
     private loginService: LoginService,
@@ -76,12 +77,18 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   onNewFunc() {
+    this.newUserName = "";
+  }
+
+  createNewUser() {
     const user = new User();
+    user.username = this.newUserName;
+    user.updateHash("password");
     this.webService.createUser(user, "")
-    .then((json: JSON) => {
-      user.id = +json;
-      this.user.unshift(user);
-    }, err => console.log(err));
+      .then((json: JSON) => {
+        user.id = +json;
+        this.user.unshift(user);
+      }, err => console.log(err));
   }
 
   onSelect(usr: User) {
@@ -101,8 +108,7 @@ export class UsersComponent implements OnInit, Refreshable {
 
   save(index: number) {
     const user = new User(this.user[index]);
-    this.webService.updateUser(user, "")
-      .then(() => {})
+    this.webService.updateUser(user)
       .catch(err => console.log(err));
   }
 
@@ -125,7 +131,7 @@ export class UsersComponent implements OnInit, Refreshable {
     var params = {
       "returnurl": this.returnUrl,
       "user_name": usr.username,
-      "user_password": usr.password,
+      "user_hash": usr.userhash,
       "email": usr.email
     };
 

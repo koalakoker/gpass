@@ -192,11 +192,12 @@ export class WebService {
     return this.api(url, params, 'PUT', rel);
   }
 
-  updateUser(user: User, chipher_password: string, table: string = 'users'): Promise<JSON> {
+  updateUser(user: User): Promise<JSON> {
+    var chipher_password: string;
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.getAddr + '/' + table + "/" + user.id;
+    var url = this.getAddr + '/users/' + user.id;
     var params = {
       'chipher_password': chipher_password,
     }
