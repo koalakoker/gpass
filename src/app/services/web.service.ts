@@ -22,7 +22,7 @@ export class WebService {
     if (isConfigForTesting()) {
       this.defineConfigFortesting();
     } else {
-      this.defineConfigFortesting();
+      this.defineConfigForProduction();
     }
   }
 
@@ -37,12 +37,12 @@ export class WebService {
   }
   
   defineConfigForProduction(): void {
-    var baseAddr: string = "https://www.koalakoker.com/gpass/";
-    this.loginAddr       = baseAddr + 'php/login.php'
-    this.emailAddr       = baseAddr + 'php/email.php'
-    this.getAddr         = baseAddr + 'php/api.php';
+    var baseAddr: string = "https://www.koalakoker.com/gpass/php/";
+    this.loginAddr       = baseAddr + 'login.php'
+    this.emailAddr       = baseAddr + 'email.php'
+    this.getAddr         = baseAddr + 'api.php';
     this.getFromUserAddr = baseAddr + 'apiFromUser.php';
-    this.chiperAddr      = baseAddr + 'php/getCriptDBAccess.php';
+    this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
   }
 
   setTesting_chiper(encrypted: string): void {
