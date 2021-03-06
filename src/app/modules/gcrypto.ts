@@ -77,7 +77,7 @@ export class GCrypto {
         return decrypted.toString(CryptoJS.enc.Latin1);
     }
 
-    static hash(key: string) {
+    static hash(key: string): string {
         return CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex).toUpperCase();
     }
 
