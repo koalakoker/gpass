@@ -70,9 +70,13 @@ export class LoginService {
       this.configService.login(chipher_password, userName, userPassword)
         .then((answer: JSON) => {
           this.logged = answer["logged"];
-          this.userid = answer["userID"];
+          this.userid = answer["userid"];
+          
           // answer["encrypted"] can be used if session variable is not available in the server
           this.configService.setTesting_chiper(answer["encrypted"]);
+          // answer["userid"] can be used if session variable is not available in the server
+          this.configService.setTesting_userid(this.userid);
+          
           if (this.logged) {
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
             this.sessionService.setKey('EncryptedPassword', chipher_password);

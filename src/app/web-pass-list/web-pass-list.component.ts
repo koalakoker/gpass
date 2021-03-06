@@ -124,7 +124,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   async getWebPassList() {    
     // Get Webpass list
-    await this.webService.get("", 'gpass')
+    await this.webService.getFromUser('gpass')
       .then((json: JSON) => {
         var data: Array<WebPass> = [];
         for (var i in json) {
@@ -134,7 +134,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
         // Decode and create a new WebPass list
         this.list = data.map((x) => {
           const w = new WebPass(x);
-          w.decrypt(this.loginService.chipher_password);
+          w.decrypt(this.loginService.chipher_password); // To be changed in user password
           return w;
         }, this);
         this.list.sort((a, b) => {
@@ -154,7 +154,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     });
     
     // Get Category list
-    await this.webService.get("", 'category')
+    await this.webService.getFromUser('category')
       .then( (json: JSON) => {
         var data: Array<Category> = [];
         for (var i in json) {
@@ -168,7 +168,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       });
 
     // Get RelWebCat
-    await this.webService.get("", 'webcatrel')
+    await this.webService.get('webcatrel')
       .then((json: JSON) => {
         var data: Array <RelWebCat> = [];
         for (var i in json) {
@@ -222,7 +222,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
       this.webPassIndexSelected = webPassIndexSelected;
-      this.webService.get("", 'webcatrel')
+      this.webService.get('webcatrel')
         .then((json: JSON) => {
           var allRelWebCat: Array<RelWebCat> = [];
           for (var i in json) {

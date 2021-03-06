@@ -141,7 +141,7 @@ $sql = "SELECT * FROM `users` WHERE `username`='" . $user_name ."'";
 $result = mysqli_query($link,$sql);
 
 $obj = mysqli_fetch_object($result);
-$id = $obj->id;
+$_SESSION['userid'] = $obj->id;
 
 $answer = '{' .
   $prevSession . '
@@ -152,7 +152,7 @@ $answer = '{' .
   "encrypted"   : "' . $_SESSION["decryptPass"] . '",
   "userName"    : "' . $_SESSION["userName"] . '",
   "userPassword": "' . $_SESSION["userPass"] . '",
-  "userID": "'. $id . '"  
+  "userid": '        . $_SESSION['userid'] . '  
 }'; 
 echo($answer);
 

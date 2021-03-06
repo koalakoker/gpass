@@ -266,7 +266,7 @@ export class AppComponent implements OnInit {
 
   getCategory(encrypted = "") {
     // Get Category list
-    this.configService.get(encrypted, 'category')
+    this.configService.getFromUser('category')
       .then((json: JSON) => {
         var data: Array <Category> = [];
         for (var i in json) {

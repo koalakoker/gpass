@@ -36,8 +36,7 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   enter() {
-    // User is logged show content
-    this.webService.get("", 'users')
+    this.webService.get('users')
     .then((json: JSON) => {
       var data: Array<User> = [];
       for (var i in json) {

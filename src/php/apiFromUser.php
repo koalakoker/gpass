@@ -11,7 +11,7 @@ header("Content-Type: application/json; charset=UTF-8");
 session_start();
 
 if (isConfigForTesting()) {
-  $logFile = fopen("../log/api.txt", "a");
+  $logFile = fopen("../log/apiFromUser.txt", "a");
 }
 
 if ($logFile) {
@@ -29,6 +29,19 @@ if (isset($_SESSION['decryptPass'])) {
   } else {
     if ($logFile) {
       fwrite($logFile, "Missing decrypt key!");
+    }
+    die();
+  }
+}
+
+if (isset($_SESSION['userid'])) {
+  $userid = $_SESSION['userid'];
+} else {
+  if (isset($_GET["userid"])) {
+    $userid = $_GET["userid"];
+  } else {
+    if ($logFile) {
+      fwrite($logFile, "Missing userid!");
     }
     die();
   }
@@ -82,7 +95,7 @@ if ($input)
 // create SQL based on HTTP method
 switch ($method) {
   case 'GET':
-    $sql = "select * from `$table`".($key?" WHERE id=$key":'');
+    $sql = "select * from `$table` WHERE userid=" . $userid;
     break;
   case 'PUT':
     $sql = "update `$table` set $set where id=$key";

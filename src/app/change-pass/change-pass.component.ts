@@ -44,7 +44,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
   onChangePass() {
 
     // Get the DB values and decrypt with old pass
-    this.configService.get(this.old_chipher_password)
+    this.configService.getFromUser('gpass')
       .then((json: JSON) => {
         var data: Array<WebPass>;
         // Decode and create a new WebPass list

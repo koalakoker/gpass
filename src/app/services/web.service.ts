@@ -4,30 +4,58 @@ import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from '../modules/relwebcat';
 import { User } from '../modules/user'
+import { isConfigForTesting } from '../modules/config'
 
 @Injectable()
 export class WebService {
+
+  loginAddr       : string;
+  emailAddr       : string;
+  getAddr         : string;
+  getFromUserAddr : string;
+  chiperAddr      : string;
+
+  testing_chipher: string = "";
+  userid: number;
+
   constructor() {
+    if (isConfigForTesting()) {
+      this.defineConfigFortesting();
+    } else {
+      this.defineConfigFortesting();
+    }
   }
 
-  // For testing create a LAMP server and clone the DB use the following
-  loginAddr = 'http://192.168.64.3/gpass/php/login.php'
-  emailAddr = 'http://192.168.64.3/gpass/php/email.php'
-  urlAddr   = 'http://192.168.64.3/gpass/php/api.php';
-  chiperAddr = 'http://192.168.64.3/gpass/php/getCriptDBAccess.php';
+  defineConfigFortesting(): void {
+    // For testing create a LAMP server and clone the DB use the following
+    var baseAddr: string = "http://192.168.64.3/gpass/php/";
+    this.loginAddr       = baseAddr + 'login.php'
+    this.emailAddr       = baseAddr + 'email.php'
+    this.getAddr         = baseAddr + 'api.php';
+    this.getFromUserAddr = baseAddr + 'apiFromUser.php';
+    this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
+  }
   
-  // Decomment these for final production server use session vars
-  // loginAddr =  'https://www.koalakoker.com/gpass/php/login.php'
-  // emailAddr =  'https://www.koalakoker.com/gpass/php/email.php'
-  // urlAddr =    'https://www.koalakoker.com/gpass/php/api.php';
-  // chiperAddr = 'https://www.koalakoker.com/gpass/php/getCriptDBAccess.php';
-
-  setTesting_chiper(encrypted: string) {
-    // Comment this for final production server use session vars
-    this.testing_chipher = encrypted;
+  defineConfigForProduction(): void {
+    var baseAddr: string = "https://www.koalakoker.com/gpass/";
+    this.loginAddr       = baseAddr + 'php/login.php'
+    this.emailAddr       = baseAddr + 'php/email.php'
+    this.getAddr         = baseAddr + 'php/api.php';
+    this.getFromUserAddr = baseAddr + 'apiFromUser.php';
+    this.chiperAddr      = baseAddr + 'php/getCriptDBAccess.php';
   }
 
-  testing_chipher : string = "";
+  setTesting_chiper(encrypted: string): void {
+    if (isConfigForTesting) {
+      this.testing_chipher = encrypted;
+    }
+  }
+
+  setTesting_userid(userid: number): void {
+    if (isConfigForTesting) {
+      this.userid = userid;
+    }
+  }
 
   api(url: string, params?: any, method: string = 'GET', data: any = {} ): Promise<JSON> {
     if (params != null) {
@@ -79,22 +107,35 @@ export class WebService {
     };
     return this.api(this.loginAddr, params);
   }
-  
-  get(chipher_password: string, table: string = 'gpass'): Promise<JSON> {
+
+  get(table: string): Promise<JSON> {
+    var chipher_password: string;
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
     var params = {
-      'chipher_password': chipher_password
+      'chipher_password': chipher_password,
     }
-    return this.api(this.urlAddr + '/' + table, params);
+    return this.api(this.getAddr + '/' + table, params);
+  }
+  
+  getFromUser(table: string): Promise<JSON> {
+    var chipher_password: string;
+    if (this.testing_chipher != "") {
+      chipher_password = this.testing_chipher;
+    }
+    var params = {
+      'chipher_password': chipher_password,
+      'userid': this.userid
+    }
+    return this.api(this.getFromUserAddr + '/' + table, params);
   }
 
   delete(id: number, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table + "/" + id;
+    var url = this.getAddr + '/' + table + "/" + id;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -122,7 +163,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table + "/" + webPass.id;
+    var url = this.getAddr + '/' + table + "/" + webPass.id;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -133,7 +174,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table + "/" + category.id;
+    var url = this.getAddr + '/' + table + "/" + category.id;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -144,7 +185,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table + "/" + rel.id;
+    var url = this.getAddr + '/' + table + "/" + rel.id;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -155,7 +196,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table + "/" + user.id;
+    var url = this.getAddr + '/' + table + "/" + user.id;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -166,7 +207,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table;
+    var url = this.getAddr + '/' + table;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -177,7 +218,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table;
+    var url = this.getAddr + '/' + table;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -188,7 +229,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table;
+    var url = this.getAddr + '/' + table;
     var params = {
       'chipher_password': chipher_password,
     }
@@ -199,7 +240,7 @@ export class WebService {
     if (this.testing_chipher != "") {
       chipher_password = this.testing_chipher;
     }
-    var url = this.urlAddr + '/' + table;
+    var url = this.getAddr + '/' + table;
     var params = {
       'chipher_password': chipher_password,
     }
