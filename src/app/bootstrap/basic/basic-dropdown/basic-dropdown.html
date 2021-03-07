@@ -1,0 +1,32 @@
+<div ngbDropdown class="d-inline-block">
+  <button class="btn btn-outline-primary" id="webPassDropdown" ngbDropdownToggle>WebPass</button>
+  <div ngbDropdownMenu aria-labelledby="webPassDropdown">
+    <button ngbDropdownItem>Action - 1</button>
+    <button ngbDropdownItem>Another Action</button>
+    <button ngbDropdownItem>Something else is here</button>
+  </div>
+</div>
+
+<!-- <li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle {{webpassActive}}" href="#" id="navbarDropdownWebPass" role="button"
+    data-bs-toggle="dropdown" aria-expanded="false" #webPassDropDown>
+    WebPass
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="navbarDropdownWebPass">
+    <li *ngIf="childInjected=='btnInsertWebPass'">
+      <a class="dropdown-item" (click)="onNewFunc()">New</a>
+    </li>
+    <li>
+      <a class="dropdown-item" (click)="plusOneYearAll()">+1 Yr. all</a>
+    </li>
+    <li>
+      <a class="dropdown-item" (click)="logOut()">Logout</a>
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+    <li *ngFor="let cat of catData">
+      <a class="dropdown-item {{cat.activated}}" [routerLink]="cat.link">{{cat.label}}</a>
+    </li>
+  </ul>
+</li> -->

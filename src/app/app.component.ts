@@ -39,13 +39,8 @@ export class AppComponent implements OnInit {
   pageCode: string = "";
   param = "";
   category: Category[];
-
-  @ViewChild('webPassDropDown')  webPassDropDown:  ElementRef;
-  @ViewChild('categoryDropDown') categoryDropDown: ElementRef;
-  @ViewChild('usersDropDown')    usersDropDown:    ElementRef;
-  webpassActive = "active";
-  categoryActive = "";
-  userActive = "";
+  activeId = 0;
+  collapsed = true;
   
   searchString: string = "";
 
@@ -54,11 +49,12 @@ export class AppComponent implements OnInit {
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
 
+  // Index for router data starts from 10
   routerData = [
-    { link: '/newPass'      , label: "New password"          , activated: "" },
-    { link: '/changePass'   , label: "Change master password", activated: "" },
-    { link: '/dbCreateTable', label: "CreateBackupTable"     , activated: "" },
-    { link: '/dbBackup'     , label: "Backup"                , activated: "" }
+    { link: '/newPass'      , label: "New password"          , index: 10 },
+    { link: '/changePass'   , label: "Change master password", index: 11 },
+    { link: '/dbCreateTable', label: "CreateBackupTable"     , index: 12 },
+    { link: '/dbBackup'     , label: "Backup"                , index: 13 }
   ];
 
   constructor(
@@ -77,9 +73,6 @@ export class AppComponent implements OnInit {
 
           switch (returnData.pageCode) {
             case PageCodes.webPassPage:
-              this.routerData.forEach((link) => {
-                link.activated = "";
-              });
               this.catData.forEach((cat) => {
                 if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
                   cat.activated = "active";
@@ -88,19 +81,13 @@ export class AppComponent implements OnInit {
                   cat.activated = "";
                 }
               });
-              this.webpassActive = "active";
-              this.categoryActive = "";
-              this.userActive = "";
+              this.activeId = 0;
               break;
             case PageCodes.categoryPage:
-              this.categoryActive = "active";
-              this.webpassActive  = "";
-              this.userActive     = "";
+              this.activeId = 1;
               break;
             case PageCodes.usersPage:
-              this.categoryActive = "";
-              this.webpassActive  = "";
-              this.userActive     = "active";
+              this.activeId = 2;
               break;
             case PageCodes.newUserPage:
               if (returnData.childInject == ReturnCodes.LoginValid) {
@@ -109,15 +96,9 @@ export class AppComponent implements OnInit {
               break;
           
             default:
-              this.webpassActive  = "";
-              this.categoryActive = "";
-              this.userActive     = "";
               this.routerData.forEach((link) => {
                 if (link.link === val.url) {
-                  link.activated = "active";
-                }
-                else {
-                  link.activated = "";
+                  this.activeId = link.index;
                 }
               });
               break;
@@ -159,29 +140,32 @@ export class AppComponent implements OnInit {
   }
 
   bindDropDown() {
-    if (this.webPassDropDown) {
-      this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!(this.pageCode == PageCodes.webPassPage)) {
-          this.router.navigateByUrl('/list/0');
-        }
-      });
-    }
+    // if (this.webPassDropDown) {
+    //   console.log("bindDropDown-webPass");
+    //   this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+    //     if (!(this.pageCode == PageCodes.webPassPage)) {
+    //       this.router.navigateByUrl('/list/0');
+    //     }
+    //   });
+    // }
     
-    if (this.categoryDropDown) {
-      this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!(this.pageCode == PageCodes.categoryPage)) {
-          this.router.navigateByUrl("/category");
-        }
-      });
-    }
-
-    if (this.usersDropDown) {
-      this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-        if (!(this.pageCode == PageCodes.usersPage)) {
-          this.router.navigateByUrl("/users");
-        }
-      });
-    }
+    // if (this.categoryDropDown) {
+    //   console.log("bindDropDown-category");
+    //   this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+    //     if (!(this.pageCode == PageCodes.categoryPage)) {
+    //       this.router.navigateByUrl("/category");
+    //     }
+    //   });
+    // }
+    
+    // if (this.usersDropDown) {
+    //   console.log("bindDropDown-user");
+    //   this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
+    //     if (!(this.pageCode == PageCodes.usersPage)) {
+    //       this.router.navigateByUrl("/users");
+    //     }
+    //   });
+    // }
   }
 
   printErrorMessage(txt : string) {

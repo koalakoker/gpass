@@ -1,0 +1,38 @@
+
+  <a class="nav-link" tabindex="0" ngbDropdownToggle id="webPassDropdown" role="button">
+    WebPass
+  </a>
+  <div ngbDropdownMenu aria-labelledby="webPassDropdown" class="dropdown-menu">
+    <a ngbDropdownItem href="#">New</a>
+    <a ngbDropdownItem href="#">+1 Yr. all</a>
+    <a ngbDropdownItem href="#">Logout</a>
+    <hr ngbDropdownDivider>
+    <a ngbDropdownItem>Cat1</a>
+    <a ngbDropdownItem>Cat2</a>
+    
+  </div>
+
+
+<!-- <li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle {{webpassActive}}" href="#" id="navbarDropdownWebPass" role="button"
+    data-bs-toggle="dropdown" aria-expanded="false" #webPassDropDown>
+    WebPass
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="navbarDropdownWebPass">
+    <li *ngIf="childInjected=='btnInsertWebPass'">
+      <a class="dropdown-item" (click)="onNewFunc()">New</a>
+    </li>
+    <li>
+      <a class="dropdown-item" (click)="plusOneYearAll()">+1 Yr. all</a>
+    </li>
+    <li>
+      <a class="dropdown-item" (click)="logOut()">Logout</a>
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+    <li *ngFor="let cat of catData">
+      <a class="dropdown-item {{cat.activated}}" [routerLink]="cat.link">{{cat.label}}</a>
+    </li>
+  </ul>
+</li> -->

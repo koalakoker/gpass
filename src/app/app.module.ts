@@ -20,6 +20,15 @@ import { CategoryComponent } from './category/category.component';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { UsersComponent } from './users/users.component';
 import { NewUserComponent } from './new-user/new-user.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MainNavbarComponent} from './bootstrap/navbar/main-navbar';
+import { BasicModalComponent } from './bootstrap/basic/basic-modal/basic-modal.component';
+
+import { BasicDropdownComponent } from './bootstrap/basic/basic-dropdown/basic-dropdown';
+import { WebPassDropdownComponent } from './bootstrap/dropdown/webpass-dropdown';
+import { CategoryDropdownComponent } from './bootstrap/dropdown/category-dropdown';
+import { UsersDropdownComponent } from './bootstrap/dropdown/users-dropdown';
+import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
 
 @NgModule({
   declarations: [
@@ -33,7 +42,15 @@ import { NewUserComponent } from './new-user/new-user.component';
     CategoryComponent,
     ComboBoxComponent,
     UsersComponent,
-    NewUserComponent
+    NewUserComponent,
+    MainNavbarComponent,
+    BasicModalComponent,
+
+    BasicDropdownComponent,
+    WebPassDropdownComponent,
+    CategoryDropdownComponent,
+    UsersDropdownComponent,
+    AdminDropdownComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +59,8 @@ import { NewUserComponent } from './new-user/new-user.component';
     AppRoutingModule,
     ClipboardModule,
     StorageServiceModule,
-    RouterModule
+    RouterModule,
+    NgbModule
   ],
   providers: [WebService],
   bootstrap: [AppComponent]

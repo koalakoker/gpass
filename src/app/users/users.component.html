@@ -2,6 +2,7 @@
   [attr.data-bs-target]="'#newUserModal'">
   NewUser
 </button>
+<basic-modal></basic-modal>
 <div class="container-fluid" *ngIf="show">
   <div class="list-group">
     <div *ngFor="let element of user; let i = index" (click)="onSelect(element)">
