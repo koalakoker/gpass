@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
@@ -15,7 +14,9 @@ import * as InputCodes from '../modules/refreshable/inputCodes';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
 
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
+import { WebPassEditModalComponent } from '../bootstrap/modal/webpass-edit-modal.component';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -32,14 +33,12 @@ export class WebPassListComponent implements OnInit, Refreshable {
   category: Category[];
   relWebCat: RelWebCat[];
   
-  selectedWebPassCatChecked: boolean[];
   selectedWebPass: WebPass;
   errorMessage: string = '';
   message: string = '';
   interval;
-  showCategory: boolean = false;
+  
   needReenter: boolean = false;
-  passwordType: string = "password";
   DebugTxt = "";
 
   constructor(
@@ -216,40 +215,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onSelect(webPass: WebPass) {
     if (this.selectedWebPass != webPass) {
-      this.showCategory = false;
+      //this.showCategory = false;
     }
     this.selectedWebPass = webPass;
-  }
-
-  onButtonCategory(webPassIndexSelected: number)
-  {
-    this.showCategory = !this.showCategory;
-    if (this.showCategory) {
-      this.selectedWebPassCatChecked = [];
-      this.webPassIndexSelected = webPassIndexSelected;
-      this.webService.get('webcatrel')
-        .then((json: JSON) => {
-          var allRelWebCat: Array<RelWebCat> = [];
-          for (var i in json) {
-            let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
-            allRelWebCat.push(elem);
-          }
-          this.category.forEach((cat) => {
-            var found: boolean = false;
-            allRelWebCat.forEach((rel) => {
-              if ((rel.id_web == this.list[this.webPassIndexSelected].id) &&
-                (rel.id_cat == cat.id) &&
-                (rel.enabled == 1)) {
-                found = true;
-              }
-            });
-            this.selectedWebPassCatChecked.push(found);
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
   }
 
   onCloseEdit() {
@@ -259,7 +227,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
       }
       this.needReenter = false;
     }
-    this.showCategory = false;
+    //this.showCategory = false;
   }
 
   onButtonRemove(i: number) {
@@ -269,69 +237,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.list.splice(i, 1);
     }, err => console.log(err));
     
-  }
-
-  relExist(webPassIndex: number, catIndex: number, foundCbk: (index: number) => void, notFoundCbk: () => void) {
-    var found: Boolean = false;
-    this.relWebCat.forEach((rel, index) => {
-      if ((rel.id_web == this.list[webPassIndex].id) &&
-          (rel.id_cat == this.category[catIndex].id)) {
-        found = true;
-        foundCbk(index);
-      }
-    });
-    if (!found) {
-      notFoundCbk();
-    }
-  }
-
-  saveRel(rel: RelWebCat) {
-    this.webService.updateRelWebCat(rel, "")
-      .then(() => {
-        this.sendMessage("Database updated");
-      })
-      .catch(err => console.log(err));
-  }
-
-  newRel(rel: RelWebCat) {
-    this.webService.createRelWebCat(rel, "")
-      .then((json: JSON) => {
-        var id: number;
-        rel.id = id;
-        this.sendMessage("Database updated");
-      })
-      .catch(err => console.log(err));
-  }
-
-  onCatCheckChange(webPassIndex: number, catIndex: number)
-  {
-    if (this.selectedWebPassCatChecked[catIndex])
-    {
-      this.relExist(webPassIndex, catIndex,
-        // Found Callback
-        (index: number) => {
-          this.relWebCat[index].enabled = 1;
-          this.saveRel(this.relWebCat[index]);
-        },
-        // Not Found Callback
-        () => {
-          // Create a relation between list[webPasIndex] and category[catIndex]
-          var newRel: RelWebCat = new RelWebCat();
-          newRel.id_web = this.list[webPassIndex].id;
-          newRel.id_cat = this.category[catIndex].id;
-          newRel.enabled = 1;
-          this.relWebCat.push(newRel);
-          this.newRel(newRel);
-      });
-    }
-    else {
-      this.relExist(webPassIndex, catIndex, (index: number) => {
-        this.relWebCat[index].enabled = 0;
-        this.saveRel(this.relWebCat[index]);
-      }, () => {
-      });
-    }
-    this.needReenter = true;
   }
 
   isSelected(webPass: WebPass): boolean {
@@ -349,25 +254,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.message = '';
       clearInterval(this.interval);
     }, 2000);
-  }
-
-  onTodayButton(i: number) {
-    const w: WebPass = this.list[i];
-    const rd: string = w.registrationDate;
-    const ed: string = w.expirationDate;
-    w.setToday();
-    if ((rd!==w.registrationDate)||(ed!==w.expirationDate)) {
-      this.save(i);
-    }
-  }
-
-  onPlusOneYear(i: number) {
-    const w: WebPass = this.list[i];
-    const ed: string = w.expirationDate;
-    w.plusOneYear();
-    if (ed !== w.expirationDate) {
-      this.save(i);
-    }
   }
 
   isExpired(i: number): string {
@@ -437,14 +323,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
     return found;
   }
 
-  showPass() {
-    if (this.passwordType == "password") {
-      this.passwordType = "text";
-    } else {
-      this.passwordType = "password";
-    }
-  }
-
   open(i: number) {
     const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
     modalRef.result
@@ -455,6 +333,14 @@ export class WebPassListComponent implements OnInit, Refreshable {
         console.log(`Dismissed ${this.getDismissReason(reason)}`);
       });
     modalRef.componentInstance.name = 'World';
+  }
+
+  openEditModal(i: number) {
+    const modalRef = this.modalService.open(WebPassEditModalComponent);
+    modalRef.componentInstance.webpass = this.list[i];
+    modalRef.componentInstance.category = this.category;
+    modalRef.componentInstance.relWebCat = this.relWebCat;
+    modalRef.componentInstance.title = this.getUrl('name', i).value;
   }
 
   private getDismissReason(reason: any): string {

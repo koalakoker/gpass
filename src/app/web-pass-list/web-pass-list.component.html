@@ -16,9 +16,7 @@
         <div class="col">
           <button type="button" 
           class="list-group-item list-group-item-action {{isActive(element)}}"
-          data-bs-toggle="modal" 
-          [attr.data-bs-target]="'#Modal' + i"
-          >
+          (click)="openEditModal(i)">
             {{getUrl('name', i).value}}
           </button>
         </div>
@@ -63,89 +61,11 @@
             style="height: 54px; width: 54px; border: 2px; border-style: solid;
   border-color: rgb(204, 194, 194);" 
             class="btn btn-danger"
-            (click)="open(i)" 
-            data-bs-toggle="modal"
-            [attr.data-bs-target]="'#confirmModal' + i">Del
+            (click)="open(i)">Del
           </button>
         </div>
       </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="Modal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#ModalLabel' + i" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="ModalLabel{{i}}">{{getUrl('name', i).value}}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onCloseEdit()"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Name -->
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Name</label>
-                  <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="Name" [(ngModel)]="list[i].name" (change)="save(i)" aria-label="default input example">
-                  </div>
-                </div>
-                <!-- Url -->
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Url</label>
-                  <div class="col-sm-10">
-                    <input class="form-control" type="text" placeholder="Url" [(ngModel)]="list[i].url" (change)="save(i)" aria-label="default input example">
-                  </div>
-                </div>
-                <!-- Category -->
-                <div class="list-group-item list-group-item-success" *ngIf="showCategory">
-                  <div class="form-group form-check" *ngFor="let cat of category; let j = index">
-                    <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
-                      (change)="onCatCheckChange(i,j)">
-                    <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
-                  </div>
-                </div>
-                <!-- UserName -->
-                <div class="row mb-3">
-                  <label class="col-sm-3 col-form-label">User Name</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="User Name" [(ngModel)]="list[i].username" (change)="save(i)" aria-label="default input example">
-                  </div>
-                  <div class="col-sm-3">
-                    <button type="button" class="btn btn-success" (click)="onButtonCategory(i)">Category</button>
-                  </div>
-                </div>
-                <!-- Password -->
-                <div class="row mb-3">
-                  <label class="col-sm-3 col-form-label">Password</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="{{passwordType}}" placeholder="Password" [(ngModel)]="list[i].pass" (change)="save(i)" aria-label="default input example">
-                  </div>
-                  <div class="col-sm-3">
-                    <button type="button" class="btn btn-success" (click)="showPass()">Show</button>
-                  </div>
-                </div>
-                <!-- Registration -->
-                <div class="row mb-3">
-                  <label class="col-sm-3 col-form-label">Registration</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="Registration Date" [(ngModel)]="list[i].registrationDate" (change)="save(i)"
-                      aria-label="default input example">
-                  </div>
-                  <div class="col-sm-3">
-                    <button type="button" class="btn btn-success" (click)="onTodayButton(i)">Today</button>
-                  </div>
-                </div>
-                <!-- Expiration -->
-                <div class="row mb-3">
-                  <label class="col-sm-3 col-form-label">Expiration</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="text" placeholder="Expiration Date" [(ngModel)]="list[i].expirationDate" (change)="save(i)" aria-label="default input example">
-                  </div>
-                  <div class="col-sm-3">
-                    <button type="button" class="btn btn-success" (click)="onPlusOneYear(i)">+1 Yr.</button>
-                  </div>
-                </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

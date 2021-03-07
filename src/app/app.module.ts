@@ -30,6 +30,8 @@ import { CategoryDropdownComponent } from './bootstrap/dropdown/category-dropdow
 import { UsersDropdownComponent } from './bootstrap/dropdown/users-dropdown';
 import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
 
+import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.component'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +52,9 @@ import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
     WebPassDropdownComponent,
     CategoryDropdownComponent,
     UsersDropdownComponent,
-    AdminDropdownComponent
+    AdminDropdownComponent,
+
+    WebPassEditModalComponent
   ],
   imports: [
     BrowserModule,
