@@ -1,9 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { WebPass } from '../../modules/webpass';
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
+
 import { WebService } from '../../services/web.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector:    'webpass-edit-modal',
@@ -12,11 +15,18 @@ import { WebService } from '../../services/web.service';
 export class WebPassEditModalComponent {
   @Input() webpass: WebPass;
   @Input() title: string;
+  @Input() category: Category[];
+  @Input() relWebCat: RelWebCat[];
+  
+  selectedWebPassCatChecked: boolean[];
+  passwordType: string = "password";
+  needReenter: boolean = false;
   showCategory: boolean = false;
 
   constructor(
     public activeModal: NgbActiveModal,
-    private webService: WebService) {
+    private webService: WebService,
+    private loginService: LoginService) {
    }
 
   dismiss(str: string){
@@ -27,15 +37,14 @@ export class WebPassEditModalComponent {
     this.activeModal.close("");
   }
 
-  save(){
-    console.log("Save change. TBI");
+  save() {
+    const webPass = new WebPass(this.webpass);
+    webPass.crypt(this.loginService.chipher_password);
+    this.webService.update(webPass, "")
+      .then(() => {
+        console.log("Database updated");
+      }, err => console.log(err));
   }
-
-  @Input() category: Category[];
-  @Input() relWebCat: RelWebCat[];
-  selectedWebPassCatChecked: boolean[];
-  passwordType: string = "password";
-  needReenter: boolean = false;
 
   onButtonCategory() {
     this.showCategory = !this.showCategory;

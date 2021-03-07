@@ -3,8 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from './../modules/relwebcat';
-import { WebService } from '../services/web.service';
-import { GCrypto } from '../modules/gcrypto';
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
@@ -12,6 +10,9 @@ import * as ReturnCodes from '../modules/refreshable/returnCodes';
 import * as InputCodes from '../modules/refreshable/inputCodes';
 
 import { ActivatedRoute } from '@angular/router';
+
+import { GCrypto } from '../modules/gcrypto';
+import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
@@ -186,15 +187,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
       });
     
       this.afterLoad();
-  }
-
-  save(index: number) {
-    const webPass = new WebPass(this.list[index]);
-    webPass.crypt(this.loginService.chipher_password);
-    this.webService.update(webPass, "")
-    .then(() => {
-      this.sendMessage("Database updated");
-    }, err => console.log(err));
   }
 
   onNewFunc() {
