@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from './../modules/relwebcat';
@@ -12,6 +14,8 @@ import * as InputCodes from '../modules/refreshable/inputCodes';
 
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service';
+
+import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -39,6 +43,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
   DebugTxt = "";
 
   constructor(
+    private modalService: NgbModal,
     private route: ActivatedRoute,
     private webService: WebService,
     private loginService: LoginService) {
@@ -437,6 +442,28 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.passwordType = "text";
     } else {
       this.passwordType = "password";
+    }
+  }
+
+  open(i: number) {
+    const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
+    modalRef.result
+      .then((result) => {
+        this.onButtonRemove(i);
+        console.log(`Closed with: ${result}`);
+      }, (reason) => {
+        console.log(`Dismissed ${this.getDismissReason(reason)}`);
+      });
+    modalRef.componentInstance.name = 'World';
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
     }
   }
 

@@ -15,13 +15,11 @@
                             WebPass
                         </a>
                         <div ngbDropdownMenu aria-labelledby="webPassDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem href="#">New</a>
-                            <a ngbDropdownItem href="#">+1 Yr. all</a>
-                            <a ngbDropdownItem href="#">Logout</a>
+                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertWebPass'">New</a>
+                            <a ngbDropdownItem (click)="plusOneYearAll()">+1 Yr. all</a>
+                            <a ngbDropdownItem (click)="logOut()">Logout</a>
                             <hr ngbDropdownDivider>
-                            <a ngbDropdownItem>Cat1</a>
-                            <a ngbDropdownItem>Cat2</a>
-
+                            <a *ngFor="let cat of catData" ngbDropdownItem [routerLink]="cat.link">{{cat.label}}-{{cat.activated}}</a>
                         </div>
                     </li>
                     <li ngbDropdown [ngbNavItem]="1">
@@ -29,7 +27,7 @@
                             Category
                         </a>
                         <div ngbDropdownMenu aria-labelledby="categoryDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem href="#">New</a>
+                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertCategory'">New</a>
                         </div>
                     </li>
                     <li ngbDropdown [ngbNavItem]="2">
@@ -37,7 +35,7 @@
                             Users
                         </a>
                         <div ngbDropdownMenu aria-labelledby="usersDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem href="#">New</a>
+                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertUsers'">New</a>
                         </div>
                     </li>
                     <li ngbDropdown [ngbNavItem]="3">
@@ -45,8 +43,8 @@
                             Admin
                         </a>
                         <div ngbDropdownMenu aria-labelledby="adminDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem href="#">Remove master key</a>
-                            <a ngbDropdownItem href="#">Test</a>
+                            <a ngbDropdownItem (click)="removeMasterKey()">Remove master key</a>
+                            <a ngbDropdownItem (click)="test()">Test</a>
                         </div>
                     </li>
                     <!-- I used index 10 to separate dropbox index from router data index -->
