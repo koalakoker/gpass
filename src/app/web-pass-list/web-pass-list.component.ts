@@ -15,7 +15,7 @@ import { GCrypto } from '../modules/gcrypto';
 import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
 import { WebPassEditModalComponent } from '../bootstrap/modal/webpass-edit-modal.component';
 
@@ -318,10 +318,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     modalRef.result
       .then((result) => {
         this.onButtonRemove(i);
-        console.log(`Closed with: ${result}`);
-      }, (reason) => {
-        console.log(`Dismissed ${this.getDismissReason(reason)}`);
-      });
+      },()=>{});
   }
 
   openEditModal(i: number) {
@@ -337,15 +334,4 @@ export class WebPassListComponent implements OnInit, Refreshable {
         this.onCloseEdit();
       });
   }
-
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
-  }
-
 }

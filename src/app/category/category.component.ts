@@ -9,6 +9,9 @@ import * as InputCodes from '../modules/refreshable/inputCodes';
 import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
+
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
@@ -25,7 +28,8 @@ export class CategoryComponent implements OnInit, Refreshable {
   interval;
 
   constructor(private configService: WebService,
-              private loginService: LoginService) {
+              private loginService: LoginService,
+              private modalService: NgbModal) {
   };
 
   enter() {
@@ -149,5 +153,13 @@ export class CategoryComponent implements OnInit, Refreshable {
   }
 
   onCloseEdit() {
+  }
+
+  confirmDeleteModal(i: number) {
+    const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
+    modalRef.result
+      .then((result) => {
+        this.onButtonRemove(i);
+      }, () => { });
   }
 }
