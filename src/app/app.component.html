@@ -19,7 +19,7 @@
                             <a ngbDropdownItem (click)="plusOneYearAll()">+1 Yr. all</a>
                             <a ngbDropdownItem (click)="logOut()">Logout</a>
                             <hr ngbDropdownDivider>
-                            <a *ngFor="let cat of catData" ngbDropdownItem [routerLink]="cat.link">{{cat.label}}-{{cat.activated}}</a>
+                            <a *ngFor="let cat of catData" ngbDropdownItem [routerLink]="cat.link" class="dropdown-item {{cat.activated}}">{{cat.label}}</a>
                         </div>
                     </li>
                     <li ngbDropdown [ngbNavItem]="1">
@@ -52,7 +52,7 @@
                         <a ngbNavLink tabindex="10+i" [routerLink]="link.link">{{link.label}}</a>
                     </li>
                 </ng-container>
-                
+
                 <!-- Master Password -->
                 <ng-container *ngIf="isMasterPasswordState()">
                     <div class="container">
