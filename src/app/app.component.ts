@@ -1,16 +1,18 @@
-import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
+
 import { GCrypto } from './modules/gcrypto';
 import { WebService } from './services/web.service';
+import { LoginService } from './services/login.service'
 
+import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
 import * as PageCodes from './modules/refreshable/pagesCodes'
 import * as ReturnCodes from './modules/refreshable/returnCodes';
 import * as InputCodes from './modules/refreshable/inputCodes';
 
-import { Router, NavigationEnd } from '@angular/router';
 import { Category } from './modules/category';
 import { ComboBoxComponent } from './combo-box/combo-box.component'
-import { LoginService } from './services/login.service'
+import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 enum AppState {
   userNameInsert,
@@ -27,7 +29,7 @@ enum AppState {
 export class AppComponent implements OnInit {
 
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
-  
+
   g: GCrypto;
 
   errorMessage: string = '';
@@ -39,6 +41,7 @@ export class AppComponent implements OnInit {
   pageCode: string = "";
   param = "";
   category: Category[];
+  
   activeId = 0;
   collapsed = true;
   
@@ -135,37 +138,29 @@ export class AppComponent implements OnInit {
     
   }
 
-  ngAfterViewChecked() {
-    this.bindDropDown();
-  }
+  tabChange(changeEvent: NgbNavChangeEvent) {
+    switch (changeEvent.nextId) {
+      case 0:
+        if (!(this.pageCode == PageCodes.webPassPage)) {
+          this.router.navigateByUrl('/list/0');
+        }
+        break;
+      
+      case 1:
+        if (!(this.pageCode == PageCodes.categoryPage)) {
+          this.router.navigateByUrl("/category");
+        }
+        break;
 
-  bindDropDown() {
-    // if (this.webPassDropDown) {
-    //   console.log("bindDropDown-webPass");
-    //   this.webPassDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-    //     if (!(this.pageCode == PageCodes.webPassPage)) {
-    //       this.router.navigateByUrl('/list/0');
-    //     }
-    //   });
-    // }
+      case 2:
+        if (!(this.pageCode == PageCodes.usersPage)) {
+          this.router.navigateByUrl("/users");
+        }
+        break;
     
-    // if (this.categoryDropDown) {
-    //   console.log("bindDropDown-category");
-    //   this.categoryDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-    //     if (!(this.pageCode == PageCodes.categoryPage)) {
-    //       this.router.navigateByUrl("/category");
-    //     }
-    //   });
-    // }
-    
-    // if (this.usersDropDown) {
-    //   console.log("bindDropDown-user");
-    //   this.usersDropDown.nativeElement.addEventListener('show.bs.dropdown', () => {
-    //     if (!(this.pageCode == PageCodes.usersPage)) {
-    //       this.router.navigateByUrl("/users");
-    //     }
-    //   });
-    // }
+      default:
+        break;
+    }
   }
 
   printErrorMessage(txt : string) {

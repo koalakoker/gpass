@@ -8,7 +8,7 @@
 
         <div class="navbar-collapse" [class.collapse]="collapsed" id="navbarContent">
 
-            <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto">
+            <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto" (navChange)="tabChange($event)">
                 <ng-container *ngIf="isLoggedState()">
                     <li ngbDropdown [ngbNavItem]="0">
                         <a ngbNavLink tabindex="0" ngbDropdownToggle id="webPassDropdown" role="button">
