@@ -207,7 +207,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onSelect(webPass: WebPass) {
     if (this.selectedWebPass != webPass) {
-      //this.showCategory = false;
     }
     this.selectedWebPass = webPass;
   }
@@ -219,7 +218,6 @@ export class WebPassListComponent implements OnInit, Refreshable {
       }
       this.needReenter = false;
     }
-    //this.showCategory = false;
   }
 
   onButtonRemove(i: number) {
@@ -324,15 +322,20 @@ export class WebPassListComponent implements OnInit, Refreshable {
       }, (reason) => {
         console.log(`Dismissed ${this.getDismissReason(reason)}`);
       });
-    modalRef.componentInstance.name = 'World';
   }
 
   openEditModal(i: number) {
     const modalRef = this.modalService.open(WebPassEditModalComponent);
     modalRef.componentInstance.webpass = this.list[i];
     modalRef.componentInstance.category = this.category;
-    modalRef.componentInstance.relWebCat = this.relWebCat;
+    modalRef.componentInstance.webpassList = this;
     modalRef.componentInstance.title = this.getUrl('name', i).value;
+    modalRef.result
+      .then((result) => {
+        this.onCloseEdit();
+      }, (reason) => {
+        this.onCloseEdit();
+      });
   }
 
   private getDismissReason(reason: any): string {

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { WebPass } from '../../modules/webpass';
+import { WebPassListComponent } from '../../web-pass-list/web-pass-list.component'
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
 
@@ -14,13 +15,12 @@ import { LoginService } from '../../services/login.service';
 })
 export class WebPassEditModalComponent {
   @Input() webpass: WebPass;
-  @Input() title: string;
   @Input() category: Category[];
-  @Input() relWebCat: RelWebCat[];
-  
+  @Input() webpassList: WebPassListComponent;
+  @Input() title: string;
+
   selectedWebPassCatChecked: boolean[];
   passwordType: string = "password";
-  needReenter: boolean = false;
   showCategory: boolean = false;
 
   constructor(
@@ -28,10 +28,6 @@ export class WebPassEditModalComponent {
     private webService: WebService,
     private loginService: LoginService) {
    }
-
-  dismiss(str: string){
-    this.activeModal.dismiss(str);
-  }
 
   onCloseEdit(){
     this.activeModal.close("");
@@ -42,7 +38,7 @@ export class WebPassEditModalComponent {
     webPass.crypt(this.loginService.chipher_password);
     this.webService.update(webPass, "")
       .then(() => {
-        console.log("Database updated");
+        //console.log("Database updated");
       }, err => console.log(err));
   }
 
@@ -58,7 +54,7 @@ export class WebPassEditModalComponent {
             let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
             allRelWebCat.push(elem);
           }
-          this.category.forEach((cat) => {
+          this.webpassList.category.forEach((cat) => {
             var found: boolean = false;
             allRelWebCat.forEach((rel) => {
               if ((rel.id_web == this.webpass.id) &&
@@ -76,11 +72,11 @@ export class WebPassEditModalComponent {
     }
   }
 
-  relExist(webPassIndex: number, catIndex: number, foundCbk: (index: number) => void, notFoundCbk: () => void) {
+  relExist(catIndex: number, foundCbk: (index: number) => void, notFoundCbk: () => void) {
     var found: Boolean = false;
-    this.relWebCat.forEach((rel, index) => {
+    this.webpassList.relWebCat.forEach((rel, index) => {
       if ((rel.id_web == this.webpass.id) &&
-        (rel.id_cat == this.category[catIndex].id)) {
+        (rel.id_cat == this.webpassList.category[catIndex].id)) {
         found = true;
         foundCbk(index);
       }
@@ -93,38 +89,38 @@ export class WebPassEditModalComponent {
   saveRel(rel: RelWebCat) {
     this.webService.updateRelWebCat(rel, "")
       .then(() => {
-        console.log("Database updated");
+        //console.log("Database updated");
       })
       .catch(err => console.log(err));
   }
 
-  onCatCheckChange(webPassIndex: number, catIndex: number) {
+  onCatCheckChange(catIndex: number) {
     if (this.selectedWebPassCatChecked[catIndex]) {
-      this.relExist(webPassIndex, catIndex,
+      this.relExist(catIndex,
         // Found Callback
         (index: number) => {
-          this.relWebCat[index].enabled = 1;
-          this.saveRel(this.relWebCat[index]);
+          this.webpassList.relWebCat[index].enabled = 1;
+          this.saveRel(this.webpassList.relWebCat[index]);
         },
         // Not Found Callback
         () => {
           // Create a relation between list[webPasIndex] and category[catIndex]
           var newRel: RelWebCat = new RelWebCat();
           newRel.id_web = this.webpass.id;
-          newRel.id_cat = this.category[catIndex].id;
+          newRel.id_cat = this.webpassList.category[catIndex].id;
           newRel.enabled = 1;
-          this.relWebCat.push(newRel);
+          this.webpassList.relWebCat.push(newRel);
           this.newRel(newRel);
         });
     }
     else {
-      this.relExist(webPassIndex, catIndex, (index: number) => {
-        this.relWebCat[index].enabled = 0;
-        this.saveRel(this.relWebCat[index]);
+      this.relExist(catIndex, (index: number) => {
+        this.webpassList.relWebCat[index].enabled = 0;
+        this.saveRel(this.webpassList.relWebCat[index]);
       }, () => {
       });
     }
-    this.needReenter = true;
+    this.webpassList.needReenter = true;
   }
 
   newRel(rel: RelWebCat) {
@@ -132,7 +128,7 @@ export class WebPassEditModalComponent {
       .then((json: JSON) => {
         var id: number;
         rel.id = id;
-        console.log("Database updated");
+        //console.log("Database updated");
       })
       .catch(err => console.log(err));
   }

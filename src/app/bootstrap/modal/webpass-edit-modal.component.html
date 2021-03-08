@@ -1,18 +1,3 @@
-<!-- Confirm Modal -->
-<!-- <div class="modal-header">
-  <h5 class="modal-title">Warning</h5>
-  <button type="button" class="close" aria-label="Close" (click)="dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-<div class="modal-body">
-  Are you sure to delete this?
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-success" (click)="dismiss('No click')">No</button>
-  <button type="button" class="btn btn-danger"  (click)="close('yes click')">Yes</button>
-</div> -->
-
 <!-- Modal -->
 <div class="modal-header">
   <h5 class="modal-title">{{title}}</h5>
@@ -41,7 +26,7 @@
   <div class="list-group-item list-group-item-success" *ngIf="showCategory">
     <div class="form-group form-check" *ngFor="let cat of category; let j = index">
       <input type="checkbox" class="form-check-input" id={{cat.name}} [(ngModel)]="selectedWebPassCatChecked[j]"
-        (change)="onCatCheckChange(i,j)">
+        (change)="onCatCheckChange(j)">
       <label class="form-check-label" for={{cat.name}}>{{cat.name}}</label>
     </div>
   </div>
