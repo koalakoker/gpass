@@ -11,6 +11,7 @@ import { LoginService } from '../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
+import { CategoryEditModalComponent } from '../bootstrap/modal/category-edit-modal.component';
 
 @Component({
   selector: 'app-category',
@@ -95,15 +96,6 @@ export class CategoryComponent implements OnInit, Refreshable {
     })
   }
 
-  save(index: number) {
-    const category = new Category(this.category[index]);
-    this.configService.updateCategory(category, "")
-      .then(() => {
-        this.sendMessage("Database updated");
-      })
-      .catch(err => console.log(err));
-  }
-
   onNewFunc() {
     const category = new Category();
     category.userid = this.loginService.userid;
@@ -113,10 +105,6 @@ export class CategoryComponent implements OnInit, Refreshable {
         this.category.unshift(category);
       })
       .catch(err => console.log(err));
-  }
-
-  onButtonEdit() {
-    this.edit = !this.edit;
   }
 
   onButtonRemove(i: number) {
@@ -161,5 +149,16 @@ export class CategoryComponent implements OnInit, Refreshable {
       .then((result) => {
         this.onButtonRemove(i);
       }, () => { });
+  }
+
+  openEditModal(i: number) {
+    const modalRef = this.modalService.open(CategoryEditModalComponent);
+    modalRef.componentInstance.category = this.category[i];
+    modalRef.result
+      .then((result) => {
+        this.onCloseEdit();
+      }, (reason) => {
+        this.onCloseEdit();
+      });
   }
 }

@@ -5,46 +5,19 @@
       <!-- Button -->
       <div class="row">
         <div class="col">
-          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}" data-bs-toggle="modal"
-            [attr.data-bs-target]="'#Modal' + i">
+          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}"
+            (click)="openEditModal(i)">
             {{element.name}}
           </button>
         </div>
         <div class="col">
           <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
-        border-color: rgb(204, 194, 194);" class="btn btn-danger" (click)="confirmDeleteModal(i)">Del
+        border-color: rgb(204, 194, 194);" class="btn btn-danger" (click)="confirmDeleteModal(i)">
+            Del
           </button>
         </div>
       </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="Modal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#ModalLabel' + i" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="ModalLabel{{i}}">{{element.name}}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                (click)="onCloseEdit()"></button>
-            </div>
-            <div class="modal-body">
-              <!-- Name -->
-              <div class="row mb-3">
-                <label class="col-sm-2 col-form-label">Name</label>
-                <div class="col-sm-10">
-                  <input 
-                    class="form-control" 
-                    type="text" 
-                    placeholder="Name" 
-                    [(ngModel)]="category[i].name" 
-                    (change)="save(i)"
-                    aria-label="default input example"
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
