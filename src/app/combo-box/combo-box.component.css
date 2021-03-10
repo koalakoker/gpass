@@ -1,3 +1,7 @@
 .myList {
   position:fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  border: 2px solid #2d21ad;
 }

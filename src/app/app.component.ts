@@ -279,8 +279,4 @@ export class AppComponent implements OnInit {
     this.loginService.removeMasterKey();
     this.logOut();
   }
-
-  test() {
-    
-  }
 }
