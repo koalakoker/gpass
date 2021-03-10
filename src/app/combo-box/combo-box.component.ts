@@ -20,11 +20,18 @@ export class ComboBoxComponent implements OnInit {
   logged = false;
   listToBeUpdated = true;
   firstElementShowed: number = 0;
+  maxElement: number = 0;
 
   constructor(
     private configService: WebService,
     private sessionService: SessionService) {
     this.reset();
+    window.onresize = () => {
+      if (this.showDropDown) {
+        this.reset();
+        this.textToSort = "";
+      }
+    }
   }
 
   onFocusEventAction(): void {
@@ -80,18 +87,18 @@ export class ComboBoxComponent implements OnInit {
   }
 
   scrollDown() {
-    var max = this.getMaxElementsFitWindowHeight();
+    this.maxElement = this.getMaxElementsFitWindowHeight();
     this.firstElementShowed += 1;
     if (this.firstElementShowed === 1) {
       this.firstElementShowed++;
     }
-    this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, max);
+    this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, this.maxElement);
   }
 
   scrollUp() {
-    var max = this.getMaxElementsFitWindowHeight();
+    this.maxElement = this.getMaxElementsFitWindowHeight();
     this.firstElementShowed -= 1;
-    this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, max);
+    this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, this.maxElement);
   }
 
   cutListBetweenBounds(list: WebPass[], firstElement: number, nElement: number): WebPass[] {
@@ -135,7 +142,6 @@ export class ComboBoxComponent implements OnInit {
 
       // Manage here the length of the list to stay in the view
       var max = this.getMaxElementsFitWindowHeight();
-      console.log(max);
       list = this.cutListBetweenBounds(list, this.firstElementShowed, max); 
 
       this.list = list;
@@ -176,6 +182,8 @@ export class ComboBoxComponent implements OnInit {
   reset(): void {
     this.showDropDown = false;
     this.listToBeUpdated = true;
+    this.firstElementShowed = 0;
+    this.maxElement = 0;
   }
 
   textChange(value: string) {
