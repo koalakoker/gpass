@@ -42,26 +42,36 @@ export class ComboBoxComponent implements OnInit {
 
   changeSelected(event: KeyboardEvent): void {
     if (event.key === 'ArrowUp') {
-      this.counter = (this.counter === 0) ? this.counter : --this.counter;
-      if ((this.counter > -1) && (this.counter < this.list.length)) {
-        if (this.list[this.counter].name === '...') {
-          this.scrollUp();
-          this.counter++;
+      if (this.maxElement > 2) {
+        this.counter = (this.counter === 0) ? this.counter : --this.counter;
+        if ((this.counter > -1) && (this.counter < this.list.length)) {
+          if (this.list[this.counter].name === '...') {
+            this.scrollUp();
+            this.counter++;
+          }
+          this.textToSort = this.list[this.counter].name;
+        } else {
+          this.counter = -1;
         }
-        this.textToSort = this.list[this.counter].name;
       } else {
-        this.counter = -1;
+        this.scrollUp();
+        this.textToSort = this.list[this.counter].name;
       }
     } else if (event.key === 'ArrowDown') {
-      this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
-      if ((this.counter > -1) && (this.counter < this.list.length)) {
-        if (this.list[this.counter].name === '...') {
-          this.scrollDown();
-          this.counter--;
+      if (this.maxElement > 2) {
+        this.counter = (this.counter === this.list.length - 1) ? this.counter : ++this.counter;
+        if ((this.counter > -1) && (this.counter < this.list.length)) {
+          if (this.list[this.counter].name === '...') {
+            this.scrollDown();
+            this.counter--;
+          }
+          this.textToSort = this.list[this.counter].name;
+        } else {
+          this.counter = -1;
         }
-        this.textToSort = this.list[this.counter].name;
       } else {
-        this.counter = -1;
+        this.scrollDown();
+        this.textToSort = this.list[this.counter].name;
       }
     } else if (event.key === 'Escape') {
       this.reset();
@@ -88,8 +98,10 @@ export class ComboBoxComponent implements OnInit {
 
   scrollDown() {
     this.maxElement = this.getMaxElementsFitWindowHeight();
-    this.firstElementShowed += 1;
-    if (this.firstElementShowed === 1) {
+    if (this.firstElementShowed < this.retrievedList.length - 1) { 
+      this.firstElementShowed += 1;
+    }
+    if ((this.firstElementShowed === 1) && (this.maxElement > 2)) {
       this.firstElementShowed++;
     }
     this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, this.maxElement);
@@ -97,7 +109,9 @@ export class ComboBoxComponent implements OnInit {
 
   scrollUp() {
     this.maxElement = this.getMaxElementsFitWindowHeight();
-    this.firstElementShowed -= 1;
+    if (this.firstElementShowed > 0) {
+      this.firstElementShowed -= 1;
+    }
     this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, this.maxElement);
   }
 
@@ -106,6 +120,7 @@ export class ComboBoxComponent implements OnInit {
     if (listLenght === 0) return list;
     if (nElement < 3) {
       var retList : WebPass[] = [];
+      retList.push(list[this.firstElementShowed]);
       return retList;
     }
 
@@ -141,8 +156,8 @@ export class ComboBoxComponent implements OnInit {
     if (list) {
 
       // Manage here the length of the list to stay in the view
-      var max = this.getMaxElementsFitWindowHeight();
-      list = this.cutListBetweenBounds(list, this.firstElementShowed, max); 
+      this.maxElement = this.getMaxElementsFitWindowHeight();
+      list = this.cutListBetweenBounds(list, this.firstElementShowed, this.maxElement); 
 
       this.list = list;
       this.showDropDown = true;
@@ -198,7 +213,6 @@ export class ComboBoxComponent implements OnInit {
   }
   
   clickOnElement(valueSelected: string) {
-    console.log(valueSelected);
     this.textToSort = valueSelected;
     this.showDropDown = false;
     this.selected.emit(this.textToSort);
