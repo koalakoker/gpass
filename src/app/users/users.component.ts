@@ -9,21 +9,26 @@ import { LoginService } from '../services/login.service'
 import { WebService } from '../services/web.service'
 import { User } from '../modules/user'
 
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as Modal from '../bootstrap/modal/modal'
+import { NewUserModalComponent } from '../bootstrap/modal/new-user-modal.component'
+import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component'
+import { UserEditModalComponent} from '../bootstrap/modal/user-edit-modal.component'
+
 @Component({
   selector: 'app-users-component',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+  templateUrl: './users.component.html'
 })
 export class UsersComponent implements OnInit, Refreshable {
 
   show: boolean = false;
   user: User[];
   selectedUser: User;
-  newUserName: string;
 
   constructor(
     private loginService: LoginService,
-    private webService: WebService) { }
+    private webService: WebService,
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.loginService.checklogged()
@@ -77,12 +82,19 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   onNewFunc() {
-    this.newUserName = "";
+    const modalRef = this.modalService.open(NewUserModalComponent);
+    const user = new User();
+    modalRef.componentInstance.user = user;
+    modalRef.result
+      .then((result) => {
+        if (result === Modal.MODAL_YES_BUTTON) {
+          this.createNewUser(modalRef.componentInstance.user);
+        }
+      }, (reason) => {
+      });
   }
 
-  createNewUser() {
-    const user = new User();
-    user.username = this.newUserName;
+  createNewUser(user: User) {
     user.updateHash("password");
     this.webService.createUser(user, "")
       .then((json: JSON) => {
@@ -101,15 +113,6 @@ export class UsersComponent implements OnInit, Refreshable {
 
   isActive(usr: User): string {
     return (this.isSelected(usr) ? "active" : "");
-  }
-
-  onCloseEdit() {
-  }
-
-  save(index: number) {
-    const user = new User(this.user[index]);
-    this.webService.updateUser(user)
-      .catch(err => console.log(err));
   }
 
   onButtonRemove(i: number) {
@@ -143,6 +146,25 @@ export class UsersComponent implements OnInit, Refreshable {
       })
     
     // window.location.href = this.emailServiceUrl + '?' + new URLSearchParams(params).toString();
+  }
+
+  confirmDeleteModal(i: number) {
+    const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
+    modalRef.result
+      .then((result) => {
+        this.onButtonRemove(i);
+      }, () => { });
+  }
+
+  openEditModal(i: number) {
+    const modalRef = this.modalService.open(UserEditModalComponent);
+    modalRef.componentInstance.user = this.user[i];
+    modalRef.result
+      .then((result) => {
+        
+      }, (reason) => {
+        
+      });
   }
 
 }

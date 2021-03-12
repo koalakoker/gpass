@@ -32,6 +32,8 @@ import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
 
 import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.component'
 import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-modal.component'
+import { NewUserModalComponent } from './bootstrap/modal/new-user-modal.component';
+import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,9 @@ import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-moda
     AdminDropdownComponent,
 
     WebPassEditModalComponent,
-    CategoryEditModalComponent
+    CategoryEditModalComponent,
+    NewUserModalComponent,
+    UserEditModalComponent
   ],
   imports: [
     BrowserModule,
