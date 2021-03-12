@@ -25,4 +25,9 @@ export class UserEditModalComponent {
     this.webService.updateUser(user)
       .catch(err => console.log(err));
   }
+
+  updateLevel(level: number) {
+    this.user.level = level;
+    this.save();
+  }
 }

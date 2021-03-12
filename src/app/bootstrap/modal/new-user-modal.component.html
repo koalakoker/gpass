@@ -11,6 +11,18 @@
       <input class="form-control" type="text" placeholder="Name" [(ngModel)]="user.username">
     </div>
   </div>
+  <div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Email</label>
+    <div class="col-sm-10">
+      <input class="form-control" type="text" placeholder="Email" [(ngModel)]="user.email">
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Level</label>
+    <div class="col-sm-10">
+      <level-dropdown [selectedElement]="user.level" (changeEvent)="updateLevel($event)"></level-dropdown>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-success" (click)="onClickNo()" >No</button>

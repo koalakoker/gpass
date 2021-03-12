@@ -1,0 +1,10 @@
+<div ngbDropdown class="d-inline-block">
+  <button class="btn btn-outline-dark" id="levelDropdown" ngbDropdownToggle>{{selected()}}</button>
+  <div ngbDropdownMenu aria-labelledby="levelDropdown">
+    <button 
+      *ngFor="let option of options; index as i" 
+      ngbDropdownItem
+      (click)="click(i)"
+      >{{option}}</button>
+  </div>
+</div>

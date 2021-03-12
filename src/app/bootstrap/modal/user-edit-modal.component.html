@@ -5,7 +5,6 @@
   </button>
 </div>
 <div class="modal-body">
-  <!-- Name -->
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Email</label>
     <div class="col-sm-10">
@@ -16,8 +15,9 @@
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Level</label>
     <div class="col-sm-10">
-      <input class="form-control" type="text" placeholder="Level" [(ngModel)]="user.level" (change)="save()"
-        aria-label="default input example">
-    </div>
+      <level-dropdown 
+        [selectedElement]="user.level" 
+        (changeEvent)="updateLevel($event)"></level-dropdown>
+    </div>  
   </div>
 </div>

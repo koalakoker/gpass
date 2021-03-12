@@ -40,4 +40,8 @@ export class NewUserModalComponent {
     this.returnValue = Modal.MODAL_NO_BUTTON;
     this.onCloseEdit();
   }
+
+  updateLevel(level: number) {
+    this.user.level = level;
+  }
 }

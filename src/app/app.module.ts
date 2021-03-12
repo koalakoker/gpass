@@ -29,6 +29,7 @@ import { WebPassDropdownComponent } from './bootstrap/dropdown/webpass-dropdown'
 import { CategoryDropdownComponent } from './bootstrap/dropdown/category-dropdown';
 import { UsersDropdownComponent } from './bootstrap/dropdown/users-dropdown';
 import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
+import { LevelDropdownComponent } from './bootstrap/dropdown/level-dropdown.component';
 
 import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.component'
 import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-modal.component'
@@ -56,6 +57,7 @@ import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.compon
     CategoryDropdownComponent,
     UsersDropdownComponent,
     AdminDropdownComponent,
+    LevelDropdownComponent,
 
     WebPassEditModalComponent,
     CategoryEditModalComponent,
