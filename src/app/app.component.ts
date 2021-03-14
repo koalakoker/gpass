@@ -279,4 +279,9 @@ export class AppComponent implements OnInit {
     this.loginService.removeMasterKey();
     this.logOut();
   }
+
+  isAdmin() {
+    return this.loginService.level === 1 ? true : false;
+  }
+
 }

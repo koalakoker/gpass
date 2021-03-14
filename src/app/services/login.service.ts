@@ -17,6 +17,7 @@ export class LoginService {
   userName: string = ""
   userid: number;
   userPassword: string = "";
+  level: number = 0;
 
   constructor(private sessionService: SessionService,
               private localService: LocalService,
@@ -71,6 +72,7 @@ export class LoginService {
         .then((answer: JSON) => {
           this.logged = answer["logged"];
           this.userid = answer["userid"];
+          this.level = answer["level"];
           
           // answer["encrypted"] can be used if session variable is not available in the server
           this.configService.setTesting_chiper(answer["encrypted"]);
