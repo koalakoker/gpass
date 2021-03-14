@@ -12,7 +12,6 @@ export class WebService {
   loginAddr       : string;
   emailAddr       : string;
   getAddr         : string;
-  getFromUserAddr : string;
   chiperAddr      : string;
 
   testing_chipher: string = "";
@@ -32,7 +31,6 @@ export class WebService {
     this.loginAddr       = baseAddr + 'login.php'
     this.emailAddr       = baseAddr + 'email.php'
     this.getAddr         = baseAddr + 'api.php';
-    this.getFromUserAddr = baseAddr + 'apiFromUser.php';
     this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
   }
   
@@ -41,7 +39,6 @@ export class WebService {
     this.loginAddr       = baseAddr + 'login.php'
     this.emailAddr       = baseAddr + 'email.php'
     this.getAddr         = baseAddr + 'api.php';
-    this.getFromUserAddr = baseAddr + 'apiFromUser.php';
     this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
   }
 
@@ -103,7 +100,7 @@ export class WebService {
 
   logout() {
     var params = {
-      'chipher_password': "logout"
+      'logout': true
     };
     return this.api(this.loginAddr, params);
   }
@@ -126,9 +123,9 @@ export class WebService {
     }
     var params = {
       'chipher_password': chipher_password,
-      'userid': this.userid
+      'fromuser': this.userid
     }
-    return this.api(this.getFromUserAddr + '/' + table, params);
+    return this.api(this.getAddr + '/' + table, params);
   }
 
   delete(id: number, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
