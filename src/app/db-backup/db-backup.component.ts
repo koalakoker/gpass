@@ -21,7 +21,7 @@ export class DbBackupComponent implements OnInit, Refreshable {
 
   constructor(private httpService: WebService) { }
 
-  url: string = "db_backup.php";
+  url: string = "php/db_backup.php";
   val: dbBackupForm = new dbBackupForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
 
@@ -42,7 +42,7 @@ export class DbBackupComponent implements OnInit, Refreshable {
     body.set('chipher_password', this.val.chiper_key);
     body.set('newtable', this.val.newtablename);
     console.log("Verify this");
-    this.httpService.post(body, 'https://www.koalakoker.com/angular/php/' + this.url)
+    this.httpService.post(body, this.url)
       .then((json: JSON) => {
         var res: string;
         this.popupMessage.sendMessage(res, 3000);

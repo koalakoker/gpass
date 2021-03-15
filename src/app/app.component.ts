@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
   // Index for router data starts from 10
   routerData = [
     { link: '/newPass'      , label: "New password"          , index: 10 },
-    { link: '/changePass'   , label: "Change master password", index: 11 },
+    { link: '/changePass'   , label: "Change password"       , index: 11 },
     { link: '/dbCreateTable', label: "CreateBackupTable"     , index: 12 },
     { link: '/dbBackup'     , label: "Backup"                , index: 13 }
   ];

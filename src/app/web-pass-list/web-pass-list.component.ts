@@ -139,7 +139,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
         // Decode and create a new WebPass list
         this.list = data.map((x) => {
           const w = new WebPass(x);
-          w.decrypt(this.loginService.chipher_password); // To be changed in user password
+          w.decrypt(this.loginService.userPassword);
           return w;
         }, this);
         this.list.sort((a, b) => {
@@ -191,12 +191,12 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onNewFunc() {
     const webPass = new WebPass();
-    webPass.crypt(this.loginService.chipher_password);
+    webPass.crypt(this.loginService.userPassword);
     webPass.userid = this.loginService.userid;
     this.webService.create(webPass, "")
       .then((json: JSON) => {
         webPass.id = +json;
-        webPass.decrypt(this.loginService.chipher_password);
+        webPass.decrypt(this.loginService.userPassword);
         this.list.unshift(webPass);
       }, (err) => {
         console.log(err);

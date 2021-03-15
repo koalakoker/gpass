@@ -35,7 +35,7 @@ export class WebPassEditModalComponent {
 
   save() {
     const webPass = new WebPass(this.webpass);
-    webPass.crypt(this.loginService.chipher_password);
+    webPass.crypt(this.loginService.userPassword);
     this.webService.update(webPass, "")
       .then(() => {
         //console.log("Database updated");

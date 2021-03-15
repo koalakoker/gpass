@@ -1,13 +1,12 @@
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
 import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
 
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { WebPass } from '../modules/webpass';
-import { Observable } from '../../../node_modules/rxjs';
 import { GCrypto } from '../modules/gcrypto';
+import { LoginService } from '../services/login.service';
 
 @Component({
   selector: 'app-change-pass',
@@ -16,24 +15,24 @@ import { GCrypto } from '../modules/gcrypto';
 })
 export class ChangePassComponent implements OnInit, Refreshable {
 
-  old_chipher_password        = '';
-  new_chipher_password        = '';
-  repeat_new_chipher_password = '';
-  valid = false;
-  message = '';
+  new_password        : string = '';
+  repeat_new_password : string = '';
+  valid: boolean = false;
+  message: string = '';
   interval;
-  itemToBeSentNbr = 0;
-  serverAccess = '';
+  itemToBeSentNbr: number = 0;
+  serverAccess: string = '';
 
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
-  constructor(private configService: WebService) { }
+  constructor(private configService: WebService,
+              private loginService: LoginService) { }
 
   ngOnInit() {
   }
 
   refresh(): Promise<RefreshReturnData> {
-    return new Promise<RefreshReturnData>((resolve, reject) => {
+    return new Promise<RefreshReturnData>(resolve => {
       var ret: RefreshReturnData = new RefreshReturnData;
       ret.pageCode = PageCodes.changePass;
       ret.childInject = ReturnCodes.None;
@@ -41,67 +40,85 @@ export class ChangePassComponent implements OnInit, Refreshable {
     })
   }
 
-  onChangePass() {
+  async changeUserPass(new_password: string) {
+    var list: WebPass[] = await this.getWebPass();
+    this.cryptWebPass(list);
+    this.updateUserPassword(new_password);
+  }
 
+  updateUserPassword(new_password: string) {
+    this.loginService.updateUserPassword(new_password);
+  }
+
+  getWebPass(): Promise<WebPass[]> {
     // Get the DB values and decrypt with old pass
-    this.configService.getFromUser('gpass')
-      .then((json: JSON) => {
-        var data: Array<WebPass>;
-        // Decode and create a new WebPass list
-        const list: WebPass[] = data.map((x) => {
-          const w = new WebPass(x);
-          w.decrypt(this.old_chipher_password);  
-          return w;
-        }, this);
-        
-        // Cript the values of the DB with the new pass
-        this.itemToBeSentNbr = list.length;
-        list.forEach(webPass => {
-          const newWebPass = new WebPass(webPass);
-          webPass.crypt(this.new_chipher_password);
-          
-          const ob: Promise<JSON> = this.configService.update(webPass, this.old_chipher_password);
-          ob.then( 
-            (json: JSON) => {
+    return new Promise<WebPass[]>((resolve, reject) => {
+      this.configService.getFromUser('gpass')
+        .then((json: JSON) => {
+          var data: Array<WebPass> = [];
+          for (var i in json) {
+            let elem: WebPass = Object.assign(new WebPass(), json[i]);
+            data.push(elem);
+          }
+          // Decode and create a new WebPass list
+          const list: WebPass[] = data.map((x) => {
+            const w = new WebPass(x);
+            w.decrypt(this.loginService.userPassword);
+            return w;
+          }, this);
+          resolve (list);
+        })
+        .catch(err => reject(err));
+      });
+  }
+
+  cryptWebPass(list: WebPass[]): Promise<void> {
+    // Cript the values of the DB with the new pass
+    return new Promise<void>((resolve, reject) => {
+      this.itemToBeSentNbr = list.length;
+      list.forEach(webPass => {
+        const newWebPass = new WebPass(webPass);
+        webPass.crypt(this.new_password);
+        this.configService.update(webPass,'')
+          .then(
+            () => {
               this.itemToBeSentNbr--;
-              if (this.itemToBeSentNbr === 0)
-              {
-                // Calculate the new access file for the db
-                this.configService.callChipher(this.old_chipher_password)
-                  .then((data) => {
-                    const key: string = GCrypto.hash(this.new_chipher_password);
-                    this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';
-                    this.serverAccess += '$Password = "' + key + '";\n';
-                    this.serverAccess += '$Server = "'   + GCrypto.cryptDBAccess(data['server']  , key) + '";\n';
-                    this.serverAccess += '$Username = "' + GCrypto.cryptDBAccess(data['username'], key) + '";\n';
-                    this.serverAccess += '$PW = "'       + GCrypto.cryptDBAccess(data['password'], key) + '";\n';
-                    this.serverAccess += '$DB = "'       + GCrypto.cryptDBAccess(data['database'], key) + '";\n';
-                })
-              }   
-                
-            }
-          );
+              if (this.itemToBeSentNbr === 0) {
+                resolve();
+              }
+            })
+          .catch( err => reject(err));
+      }, this);
+    });
+  }
 
-        }, this);
+  changeMasterKey() {
+    // Calculate the new access file for the db
+    this.configService.callChipher(this.loginService.userPassword)
+    .then((data) => {
+      const key: string = GCrypto.hash(this.new_password);
+      this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';
+      this.serverAccess += '$Password = "' + key + '";\n';
+      this.serverAccess += '$Server = "' + GCrypto.cryptDBAccess(data['server'], key) + '";\n';
+      this.serverAccess += '$Username = "' + GCrypto.cryptDBAccess(data['username'], key) + '";\n';
+      this.serverAccess += '$PW = "' + GCrypto.cryptDBAccess(data['password'], key) + '";\n';
+      this.serverAccess += '$DB = "' + GCrypto.cryptDBAccess(data['database'], key) + '";\n';
+    })
+  }
 
-      },
-      err => {
-        this.sendMessage('The <mark><i>old master password is not correct</i></mark>', 3000);
-      }
-    );
-
-
-
+  onChangePass() {
+    this.changeUserPass(this.new_password)
+    .catch( err => {
+        console.log(err);
+        this.sendMessage('The <mark><i>password is not correct</i></mark>', 3000);
+      });
   }
 
   validate() {
     /* Valid condition */
-    if ((this.old_chipher_password       !=='') && 
-        (this.new_chipher_password       !=='') &&
-        (this.repeat_new_chipher_password!=='') &&
-        (this.new_chipher_password === this.repeat_new_chipher_password) &&
-        (this.new_chipher_password !== this.old_chipher_password)
-       ) {
+    if ((this.new_password       !=='') &&
+        (this.repeat_new_password!=='') &&
+        (this.new_password === this.repeat_new_password)) {
       this.valid = true;
       setTimeout(() => {
         this.buttonChange.nativeElement.focus();
@@ -112,31 +129,17 @@ export class ChangePassComponent implements OnInit, Refreshable {
     let time = 0;
     const delta = 3000;
 
-    /* old no null */
-    if (this.old_chipher_password === '')
-    {
-      message += 'The <mark><i>"old master password"</mark></i> can\'t be empty\n';
-      time += delta;
-    }
-
     /* new no null */
-    if (this.new_chipher_password === '')
+    if (this.new_password === '')
     {
-      message += 'The <mark><i>"new master password"</mark></i> can\'t be empty\n';
+      message += 'The <mark><i>"new password"</mark></i> can\'t be empty\n';
       time += delta;
     }
 
     /* Repeat not equal to new */
-    if (this.repeat_new_chipher_password !== this.new_chipher_password)
+    if (this.repeat_new_password !== this.new_password)
     {
-      message += 'The <mark><i>"retyped new master pasmarkword"</mark></i> must be the same of the <mark><i>"new master password"</mark></i>\n';
-      time += delta;
-    }
-
-    /* New pass must be different from old */
-    if (this.new_chipher_password === this.old_chipher_password)
-    {
-      message += 'The <mark><i>"new master password"</mark></i> must be different from the <mark><i>"old master password"</mark></i>\n';
+      message += 'The <mark><i>"retyped new password"</mark></i> must be the same of the <mark><i>"new password"</mark></i>\n';
       time += delta;
     }
 

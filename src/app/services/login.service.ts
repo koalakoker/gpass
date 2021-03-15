@@ -109,8 +109,8 @@ export class LoginService {
     });
   }
 
-  checklogged() {
-    return new Promise((resolve, reject) => {
+  checklogged(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
       if ((this.chipher_password !='') &&
           (this.userName         != '') &&
           (this.userPassword     != '')) {
@@ -183,7 +183,7 @@ export class LoginService {
     return retVal;
   }
 
-  clearSession() {
+  clearSession() : void {
     this.logged = false;
     this.userName = '';
     this.userPassword = '';
@@ -193,7 +193,7 @@ export class LoginService {
     this.sessionService.setKey('UserPassword', '');
   }
 
-  clearLocal() {
+  clearLocal() : void {
     this.logged = false;
     this.userName = '';
     this.userPassword = '';
@@ -203,8 +203,16 @@ export class LoginService {
     this.localService.setKey('UserPassword', '');
   }
 
-  removeMasterKey() {
+  removeMasterKey() : void {
     this.sessionService.setKey('ChipherPassword', '');
     this.localService.setKey('ChipherPassword', '');
+  }
+
+  updateUserPassword(new_password: string) : void {
+    this.userPassword = new_password;
+    this.sessionService.setKey('UserPassword', this.userPassword);
+    if (this.keepMeLogged) {
+      this.localService.setKey('UserPassword', this.userPassword);
+    }
   }
 }

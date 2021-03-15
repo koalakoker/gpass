@@ -1,6 +1,7 @@
-<input (change)="validate()" [(ngModel)]="old_chipher_password"        class="form-control" type="password" placeholder="Insert old master password">
-<input (change)="validate()" [(ngModel)]="new_chipher_password"        class="form-control" type="password" placeholder="Insert new master password">
-<input (change)="validate()" [(ngModel)]="repeat_new_chipher_password" class="form-control" type="password" placeholder="Retype new master password">
-<button #buttonChange *ngIf="valid" (click)="onChangePass()" class="btn-dark" type="button">Change</button>
+<div class="container">
+  <input (change)="validate()" [(ngModel)]="new_password"        class="form-control" type="password" placeholder="Insert new password">
+  <input (change)="validate()" [(ngModel)]="repeat_new_password" class="form-control" type="password" placeholder="Retype new password">
+  <button #buttonChange *ngIf="valid" (click)="onChangePass()" class="btn-dark" type="button">Change</button>
+</div>
 <div class="alert alert-danger mymessage" role="alert" *ngIf="(message!=='')" innerHTML={{message}}></div>
 <div class="alert alert-success mymessage" role="alert" *ngIf="(serverAccess!=='')" innerHTML={{serverAccess}}></div>

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 import { WebPass } from '../modules/webpass'
 import { WebService } from '../services/web.service';
-import { SessionService } from '../services/session.service';
+import { LoginService } from '../services/login.service';
 
 @Component({
   selector: 'combo-box',
@@ -24,7 +24,7 @@ export class ComboBoxComponent implements OnInit {
 
   constructor(
     private configService: WebService,
-    private sessionService: SessionService) {
+    private loginService: LoginService) {
     this.reset();
     window.onresize = () => {
       if (this.showDropDown) {
@@ -230,7 +230,7 @@ export class ComboBoxComponent implements OnInit {
         // Decode and create a new WebPass list
         var list: WebPass[] = data.map((x) => {
           const w = new WebPass(x);
-          w.decrypt(this.sessionService.getKey('ChipherPassword'));
+          w.decrypt(this.loginService.userPassword);
           return w;
         });
         // Sort WebPass list
