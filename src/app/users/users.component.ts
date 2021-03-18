@@ -96,7 +96,7 @@ export class UsersComponent implements OnInit, Refreshable {
 
   createNewUser(user: User) {
     user.updateHash("password");
-    this.webService.createUser(user, "")
+    this.webService.createUser(user)
       .then((json: JSON) => {
         user.id = +json;
         this.user.unshift(user);
@@ -117,7 +117,7 @@ export class UsersComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const usr = this.user[i];
-    this.webService.delete(usr.id, "", 'users')
+    this.webService.delete(usr.id, 'users')
       .then(() => {
         this.user.splice(i, 1);
       })

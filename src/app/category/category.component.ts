@@ -99,7 +99,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   onNewFunc() {
     const category = new Category();
     category.userid = this.loginService.userid;
-    this.configService.createCategory(category, "")
+    this.configService.createCategory(category)
       .then((json: JSON) => {
         category.id = +json;
         this.category.unshift(category);
@@ -109,7 +109,7 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const cat = this.category[i];
-    this.configService.delete(cat.id, "", 'category')
+    this.configService.delete(cat.id, 'category')
       .then(() => {
         this.category.splice(i, 1);
       })

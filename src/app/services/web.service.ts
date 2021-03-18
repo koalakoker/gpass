@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from '../modules/relwebcat';
@@ -14,8 +13,9 @@ export class WebService {
   getAddr         : string;
   chiperAddr      : string;
 
-  testing_chipher: string = "";
-  userid: number;
+  testing_chipher: string = null;
+  testing_userid : number = null;
+  testing_level  : number = null;
 
   constructor() {
     if (isConfigForTesting()) {
@@ -35,7 +35,7 @@ export class WebService {
   }
   
   defineConfigForProduction(): void {
-    var baseAddr: string = "https://www.koalakoker.com/gpass/php/";
+    var baseAddr: string = "php/";
     this.loginAddr       = baseAddr + 'login.php'
     this.emailAddr       = baseAddr + 'email.php'
     this.getAddr         = baseAddr + 'api.php';
@@ -43,14 +43,20 @@ export class WebService {
   }
 
   setTesting_chiper(encrypted: string): void {
-    if (isConfigForTesting) {
+    if (isConfigForTesting()) {
       this.testing_chipher = encrypted;
     }
   }
 
   setTesting_userid(userid: number): void {
-    if (isConfigForTesting) {
-      this.userid = userid;
+    if (isConfigForTesting()) {
+      this.testing_userid = userid;
+    }
+  }
+  
+  setTesting_level(level: number): void {
+    if (isConfigForTesting()) {
+      this.testing_level = level;
     }
   }
 
@@ -85,6 +91,20 @@ export class WebService {
   // **************************************************
   // **********           Common             **********
   // **************************************************
+  appendToParams(params, value, key) {
+    if (value != null) {
+      params[key] = value;
+    }
+    return params;
+  }
+
+  appendTestingsParams(params) {
+    params = this.appendToParams(params, this.testing_chipher, 'chipher_password');
+    params = this.appendToParams(params, this.testing_userid, 'userid');
+    params = this.appendToParams(params, this.testing_level, 'level');
+    return params;
+  }
+
   login(chipher_password: string, userName: string, userPassword: string) {
     var params = {
       'chipher_password': chipher_password,
@@ -106,36 +126,21 @@ export class WebService {
   }
 
   get(table: string): Promise<JSON> {
-    var chipher_password: string;
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var params = {
-      'chipher_password': chipher_password,
-    }
-    return this.api(this.getAddr + '/' + table, params);
-  }
-  
-  getFromUser(table: string): Promise<JSON> {
-    var chipher_password: string;
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var params = {
-      'chipher_password': chipher_password,
-      'fromuser': this.userid
-    }
+    var params = {};
+    params = this.appendTestingsParams(params);
     return this.api(this.getAddr + '/' + table, params);
   }
 
-  delete(id: number, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
+  getFromUser(table: string): Promise<JSON> {
+    var params = {'fromuser': true};
+    params = this.appendTestingsParams(params);
+    return this.api(this.getAddr + '/' + table, params);
+  }
+
+  delete(id: number, table: string): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
     var url = this.getAddr + '/' + table + "/" + id;
-    var params = {
-      'chipher_password': chipher_password,
-    }
     return this.api(url, params, 'DELETE');
   }
 
@@ -187,47 +192,32 @@ export class WebService {
     return this.api(url, params, 'PUT', user);
   }
 
-  create(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  createWebPass(webPass: WebPass): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/gpass';
     return this.api(url, params, 'POST', webPass);
   }
 
-  createCategory(category: Category, chipher_password: string, table: string = 'category'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  createCategory(category: Category): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/category';
     return this.api(url, params, 'POST', category);
   }
 
-  createRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  createRelWebCat(rel: RelWebCat): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/webcatrel';
     return this.api(url, params, 'POST', rel);
   }
 
-  createUser(user: User, chipher_password: string, table: string = 'users'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  /* Admin */
+  createUser(user: User): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/users';
     return this.api(url, params, 'POST', user);
   }
 

@@ -193,7 +193,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
     const webPass = new WebPass();
     webPass.crypt(this.loginService.userPassword);
     webPass.userid = this.loginService.userid;
-    this.webService.create(webPass, "")
+    this.webService.createWebPass(webPass)
       .then((json: JSON) => {
         webPass.id = +json;
         webPass.decrypt(this.loginService.userPassword);
@@ -222,7 +222,7 @@ export class WebPassListComponent implements OnInit, Refreshable {
 
   onButtonRemove(i: number) {
     const webPass = this.list[i];
-    this.webService.delete(webPass.id, "")
+    this.webService.delete(webPass.id, 'gpass')
       .then(() => {
       this.list.splice(i, 1);
     }, err => console.log(err));

@@ -124,7 +124,7 @@ export class WebPassEditModalComponent {
   }
 
   newRel(rel: RelWebCat) {
-    this.webService.createRelWebCat(rel, "")
+    this.webService.createRelWebCat(rel)
       .then((json: JSON) => {
         var id: number;
         rel.id = id;

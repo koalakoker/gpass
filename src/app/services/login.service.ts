@@ -3,7 +3,8 @@ import { GCrypto } from '../modules/gcrypto';
 import { SessionService } from './session.service';
 import { LocalService } from './local.service';
 import { WebService } from './web.service';
-import { HttpParams } from '@angular/common/http';
+
+var loginServiceGlobal = "LoginService";
 
 @Injectable({
   providedIn: 'root'
@@ -74,10 +75,10 @@ export class LoginService {
           this.userid = answer["userid"];
           this.level = answer["level"];
           
-          // answer["encrypted"] can be used if session variable is not available in the server
+          // answers can be used if session variable is not available in the server
           this.configService.setTesting_chiper(answer["encrypted"]);
-          // answer["userid"] can be used if session variable is not available in the server
           this.configService.setTesting_userid(this.userid);
+          this.configService.setTesting_level(this.level);
           
           if (this.logged) {
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
