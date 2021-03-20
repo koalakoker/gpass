@@ -11,10 +11,9 @@ import { User } from '../modules/user'
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as Modal from '../bootstrap/modal/modal'
-import { NewUserModalComponent } from '../bootstrap/modal/new-user-modal.component'
-import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component'
-import { UserEditModalComponent} from '../bootstrap/modal/user-edit-modal.component'
-import { UserInviteModalComponent} from '../bootstrap/modal/user-invite-modal.component'
+import { NewUserModalComponent } from '../bootstrap/modal/new-user-modal.component';
+import { ConfirmModalComponent } from '../bootstrap/modal/confirm-modal.component';
+import { UserEditModalComponent } from '../bootstrap/modal/user-edit-modal.component';
 
 @Component({
   selector: 'app-users-component',
@@ -126,7 +125,9 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   openConfirmUserInviteModal(i: number) {
-    const modalRef = this.modalService.open(UserInviteModalComponent);
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.title = "Send invitation email to " + this.user[i].username;
+    modalRef.componentInstance.message = "Are you sure you want to sent invitation to this user?";
     modalRef.result
       .then((result) => {
         this.onButtonInvite(i);
@@ -158,7 +159,9 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   confirmDeleteModal(i: number) {
-    const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.title = "Warning";
+    modalRef.componentInstance.message = "Are you sure to delete this?";
     modalRef.result
       .then((result) => {
         this.onButtonRemove(i);

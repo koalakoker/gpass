@@ -10,7 +10,7 @@ import { WebService } from '../services/web.service';
 import { LoginService } from '../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component';
+import { ConfirmModalComponent } from '../bootstrap/modal/confirm-modal.component';
 import { CategoryEditModalComponent } from '../bootstrap/modal/category-edit-modal.component';
 
 @Component({
@@ -144,7 +144,9 @@ export class CategoryComponent implements OnInit, Refreshable {
   }
 
   confirmDeleteModal(i: number) {
-    const modalRef = this.modalService.open(ConfirmDeleteModalComponent);
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.title = "Warning";
+    modalRef.componentInstance.message = "Are you sure to delete this?";
     modalRef.result
       .then((result) => {
         this.onButtonRemove(i);
