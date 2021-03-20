@@ -12,36 +12,16 @@
         </div>
         <div class="col">
           <button *ngIf="element.email != ''" type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
-                  border-color: rgb(204, 194, 194);" class="btn btn-success" data-bs-toggle="modal"
-            [attr.data-bs-target]="'#inviteModal' + i">Inv
+                  border-color: rgb(204, 194, 194);" class="btn btn-success"
+            (click)="openConfirmUserInviteModal(i)">Inv
           </button>
           <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
-        border-color: rgb(204, 194, 194);" class="btn btn-danger"
+                  border-color: rgb(204, 194, 194);" class="btn btn-danger"
             (click)="confirmDeleteModal(i)">Del
           </button>
         </div>
       </div>
 
-      <!-- Invite Modal -->
-      <div class="modal fade" id="inviteModal{{i}}" tabindex="-1" [attr.aria-labelledby]="'#inviteModalLabel' + i"
-        aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="inviteModalLabel{{i}}">Warning</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Are you sure you want to sent invitation to this user?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
-              <button type="button" class="btn btn-danger" (click)="onButtonInvite(i)"
-                data-bs-dismiss="modal">Yes</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>

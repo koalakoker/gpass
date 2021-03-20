@@ -22,7 +22,7 @@ export class CategoryEditModalComponent {
 
   save() {
     const category = new Category(this.category);
-    this.webService.updateCategory(category, "")
+    this.webService.updateCategory(category)
       .then(() => {
         console.log("Database updated");
       })

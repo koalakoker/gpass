@@ -147,48 +147,31 @@ export class WebService {
   // **************************************************
   // **********          Specific            **********
   // **************************************************
-  update(webPass: WebPass, chipher_password: string, table: string = 'gpass'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table + "/" + webPass.id;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  updateWebPass(webPass: WebPass): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/gpass/' + webPass.id;
     return this.api(url, params, 'PUT', webPass);
   }
 
-  updateCategory(category: Category, chipher_password: string, table: string = 'category'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table + "/" + category.id;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  updateCategory(category: Category): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/category/' + category.id;
     return this.api(url, params, 'PUT', category);
   }
 
-  updateRelWebCat(rel: RelWebCat, chipher_password: string, table: string = 'webcatrel'): Promise<JSON> {
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
-    var url = this.getAddr + '/' + table + "/" + rel.id;
-    var params = {
-      'chipher_password': chipher_password,
-    }
+  updateRelWebCat(rel: RelWebCat): Promise<JSON> {
+    var params = {};
+    params = this.appendTestingsParams(params);
+    var url = this.getAddr + '/webcatrel/' + rel.id;
     return this.api(url, params, 'PUT', rel);
   }
 
   updateUser(user: User): Promise<JSON> {
-    var chipher_password: string;
-    if (this.testing_chipher != "") {
-      chipher_password = this.testing_chipher;
-    }
+    var params = {};
+    params = this.appendTestingsParams(params);
     var url = this.getAddr + '/users/' + user.id;
-    var params = {
-      'chipher_password': chipher_password,
-    }
     return this.api(url, params, 'PUT', user);
   }
 

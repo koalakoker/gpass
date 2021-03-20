@@ -14,6 +14,7 @@ import * as Modal from '../bootstrap/modal/modal'
 import { NewUserModalComponent } from '../bootstrap/modal/new-user-modal.component'
 import { ConfirmDeleteModalComponent } from '../bootstrap/modal/confirm-delete-modal.component'
 import { UserEditModalComponent} from '../bootstrap/modal/user-edit-modal.component'
+import { UserInviteModalComponent} from '../bootstrap/modal/user-invite-modal.component'
 
 @Component({
   selector: 'app-users-component',
@@ -122,6 +123,14 @@ export class UsersComponent implements OnInit, Refreshable {
         this.user.splice(i, 1);
       })
       .catch(err => console.log(err));
+  }
+
+  openConfirmUserInviteModal(i: number) {
+    const modalRef = this.modalService.open(UserInviteModalComponent);
+    modalRef.result
+      .then((result) => {
+        this.onButtonInvite(i);
+      }, () => { });
   }
 
   returnUrl: string = 'http://localhost:4200/newuser';

@@ -36,7 +36,7 @@ export class WebPassEditModalComponent {
   save() {
     const webPass = new WebPass(this.webpass);
     webPass.crypt(this.loginService.userPassword);
-    this.webService.update(webPass, "")
+    this.webService.updateWebPass(webPass)
       .then(() => {
         //console.log("Database updated");
       }, err => console.log(err));
@@ -87,7 +87,7 @@ export class WebPassEditModalComponent {
   }
 
   saveRel(rel: RelWebCat) {
-    this.webService.updateRelWebCat(rel, "")
+    this.webService.updateRelWebCat(rel)
       .then(() => {
         //console.log("Database updated");
       })
