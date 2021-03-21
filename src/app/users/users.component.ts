@@ -142,10 +142,11 @@ export class UsersComponent implements OnInit, Refreshable {
 
     // Add the params that needs to be crypted in loginService.sendLink
     var params = {
-      "returnurl": this.returnUrl,
-      "user_name": usr.username,
-      "user_hash": usr.userhash,
-      "email": usr.email
+      // To be crypted
+      "return_url": this.returnUrl,
+      "user_password": "password",
+      // No encription
+      "invitedUserId": usr.id
     };
 
     this.loginService.sendLink(params)

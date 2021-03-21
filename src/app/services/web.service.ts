@@ -29,7 +29,7 @@ export class WebService {
     // For testing create a LAMP server and clone the DB use the following
     var baseAddr: string = "http://192.168.64.3/gpass/php/";
     this.loginAddr       = baseAddr + 'login.php'
-    this.emailAddr       = baseAddr + 'email.php'
+    this.emailAddr       = baseAddr + 'inviteUser.php'
     this.getAddr         = baseAddr + 'api.php';
     this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
   }
@@ -37,7 +37,7 @@ export class WebService {
   defineConfigForProduction(): void {
     var baseAddr: string = "php/";
     this.loginAddr       = baseAddr + 'login.php'
-    this.emailAddr       = baseAddr + 'email.php'
+    this.emailAddr       = baseAddr + 'inviteUser.php'
     this.getAddr         = baseAddr + 'api.php';
     this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
   }
@@ -115,6 +115,7 @@ export class WebService {
   }
 
   email(params: any) {
+    params = this.appendTestingsParams(params);
     return this.api(this.emailAddr,params);
   }
 
