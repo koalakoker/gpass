@@ -150,9 +150,11 @@ export class UsersComponent implements OnInit, Refreshable {
     };
 
     this.loginService.sendLink(params)
-      .then((logged) => {
-        if (logged) {
-          console.log("Done");
+      .then((done) => {
+        if (done) {
+          console.log("Invitation sent.");
+        } else {
+          console.log("Problem with operation. Invitation has not been sent.");
         }
       })
     

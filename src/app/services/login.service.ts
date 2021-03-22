@@ -43,8 +43,7 @@ export class LoginService {
     return new Promise<boolean>((resolve, reject) => {
       this.configService.email(params)
         .then((answer: JSON) => {
-          console.log(answer);
-          resolve(true);
+          resolve(answer["done"]);
         })
         .catch((err) => {
           console.log(err);
