@@ -157,8 +157,6 @@ export class UsersComponent implements OnInit, Refreshable {
           console.log("Problem with operation. Invitation has not been sent.");
         }
       })
-    
-    // window.location.href = this.emailServiceUrl + '?' + new URLSearchParams(params).toString();
   }
 
   confirmDeleteModal(i: number) {
