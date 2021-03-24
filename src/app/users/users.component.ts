@@ -88,14 +88,15 @@ export class UsersComponent implements OnInit, Refreshable {
     modalRef.result
       .then((result) => {
         if (result === Modal.MODAL_YES_BUTTON) {
-          this.createNewUser(modalRef.componentInstance.user);
+          this.createNewUser(modalRef.componentInstance.user,
+                             modalRef.componentInstance.tempPassword);
         }
       }, (reason) => {
       });
   }
 
-  createNewUser(user: User) {
-    user.updateHash("password");
+  createNewUser(user: User, tempPassword: string) {
+    user.updateHash(tempPassword);
     this.webService.createUser(user)
       .then((json: JSON) => {
         user.id = +json;

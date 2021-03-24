@@ -12,6 +12,7 @@ import * as Modal from '../modal/modal'
 export class NewUserModalComponent {
   @Input() user: User;
   returnValue: string;
+  tempPassword: string = "password";
 
   constructor(
     public activeModal: NgbActiveModal) {

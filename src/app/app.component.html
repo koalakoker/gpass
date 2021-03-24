@@ -52,51 +52,10 @@
                     </li>
                 </ng-container>
 
-                <!-- Master Password -->
-                <ng-container *ngIf="isMasterPasswordState()">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm">
-                                <input (keyup.enter)="materPasswordEntered()" (change)="materPasswordEntered()"
-                                    [(ngModel)]="loginService.chipher_password" class="form-control" type="password"
-                                    placeholder="Insert master password">
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-                                
-                <!-- Username -->
-                <ng-container *ngIf="isUserNameState()">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm">
-                                <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()"
-                                    [(ngModel)]="loginService.userName" class="form-control" type="text"
-                                    placeholder="Insert username">
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
-                
-                <!-- Password -->
-                <ng-container *ngIf="isPasswordState()">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm">
-                                <input (keyup.enter)="passwordEntered()" (change)="passwordEntered()"
-                                    [(ngModel)]="loginService.userPassword" class="form-control" type="password"
-                                    placeholder="Insert password">
-                            </div>
-                            <div class="col-sm align-self-center">
-                                <input class="form-check-input" type="checkbox" id="keepMe"
-                                    [(ngModel)]="loginService.keepMeLogged">
-                                <label class="form-check-label" for="keepMe" style="color: white; margin-left:10px "
-                                    for="vehicle1"> Keep me
-                                    logged</label>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
+                <login 
+                    (userLogged)="userLogged()"
+                    (sendMessage)="printErrorMessage($event)">
+                </login>
 
             </ul>
 

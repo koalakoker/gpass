@@ -35,6 +35,7 @@ import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.
 import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-modal.component'
 import { NewUserModalComponent } from './bootstrap/modal/new-user-modal.component';
 import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.compon
     WebPassEditModalComponent,
     CategoryEditModalComponent,
     NewUserModalComponent,
-    UserEditModalComponent
+    UserEditModalComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
 import { WebService } from './services/web.service';
-import { LoginService } from './services/login.service'
+import { LoginService } from './services/login.service';
 
 import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
@@ -11,13 +11,13 @@ import * as ReturnCodes from './modules/refreshable/returnCodes';
 import * as InputCodes from './modules/refreshable/inputCodes';
 
 import { Category } from './modules/category';
-import { ComboBoxComponent } from './combo-box/combo-box.component'
+import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
+import { LoginComponent, LoginState } from './login/login.component';
+
 enum AppState {
-  userNameInsert,
-  passwordInsert,
-  masterPasswordInsert,
+  notLogged,
   logged
 }
 
@@ -29,6 +29,7 @@ enum AppState {
 export class AppComponent implements OnInit {
 
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
+  @ViewChild(LoginComponent) private loginComponent: LoginComponent;
 
   g: GCrypto;
 
@@ -47,7 +48,7 @@ export class AppComponent implements OnInit {
   
   searchString: string = "";
 
-  appState : AppState = AppState.masterPasswordInsert;
+  appState : AppState = AppState.notLogged;
 
   catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
   catData = [];
@@ -63,7 +64,7 @@ export class AppComponent implements OnInit {
   constructor(
     private configService: WebService,
     private router: Router,
-    public loginService: LoginService
+    private loginService: LoginService
   ) {
     this.g = new GCrypto(this.configService);
     router.events.subscribe(val => {
@@ -120,22 +121,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.loginService.getSession()) {
-      this.enter();
-    } else {
-      if (this.loginService.getLocal()) {
-        this.enter();
-      } else {
-        if (this.loginService.chipher_password == '') {
-          this.appState = AppState.masterPasswordInsert;
-        } else if (this.loginService.userName == '') {
-          this.appState = AppState.userNameInsert;
-        } else if (this.loginService.userPassword == '') {
-          this.appState = AppState.passwordInsert;
-        }
-      };
-    };
-    
   }
 
   tabChange(changeEvent: NgbNavChangeEvent) {
@@ -172,55 +157,21 @@ export class AppComponent implements OnInit {
     }, 2000);
   }
 
-  isUserNameState() {
-    return this.appState == AppState.userNameInsert;
-  }
-  isPasswordState() {
-    return this.appState == AppState.passwordInsert;
-  }
-  isMasterPasswordState() {
-    return this.appState == AppState.masterPasswordInsert;
-  }
-
-  materPasswordEntered() {
-    this.appState = AppState.userNameInsert;
-  }
-  usernameEntered() {
-    this.appState = AppState.passwordInsert;
-  }
-  passwordEntered() {
-    this.enter();
-  }
-
   isLoggedState() {
     return this.appState == AppState.logged;
   }
 
-  async enter() {
-    this.errorMessage = '';
-    this.loginService.checkLogin()
-    .then( (logged: boolean) => {
-      if (logged) {
-        this.appState = AppState.logged;
-        this.routedComponent.refresh(InputCodes.Refresh)
-          .then((returnData) => {
-            this.childInjected = returnData.childInject;
-            this.pageCode = returnData.pageCode;
-        })
-        .catch((err) => {
-          console.log("Promise error: " + err);
-        });
-        this.getCategory();
-      } else {
-        this.appState = AppState.userNameInsert;
-        this.printErrorMessage('Password not correct');
-      }
-    })
-    .catch((err) => {
-      this.appState = AppState.userNameInsert;
-      this.printErrorMessage('Login error');
-      console.log(err);
-    });
+  async userLogged() {
+    this.routedComponent.refresh(InputCodes.Refresh)
+      .then((returnData) => {
+        this.childInjected = returnData.childInject;
+        this.pageCode = returnData.pageCode;
+      })
+      .catch((err) => {
+        console.log("Promise error: " + err);
+      });
+    this.getCategory();
+    this.appState = AppState.logged;
   }
 
   logOut() {
@@ -229,7 +180,8 @@ export class AppComponent implements OnInit {
       (answer: JSON) => {
         this.loginService.clearSession();
         this.loginService.clearLocal();
-        this.appState = AppState.userNameInsert;
+        this.loginComponent.state = LoginState.userNameInsert;
+        this.appState = AppState.notLogged;
         this.routedComponent.refresh(InputCodes.Refresh);
         this.childInjected = "";
         this.pageCode = "";
