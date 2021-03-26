@@ -3,8 +3,7 @@ import { GCrypto } from '../modules/gcrypto';
 import { SessionService } from './session.service';
 import { LocalService } from './local.service';
 import { WebService } from './web.service';
-
-var loginServiceGlobal = "LoginService";
+import { User } from '../modules/user';
 
 @Injectable({
   providedIn: 'root'
@@ -57,14 +56,19 @@ export class LoginService {
     var strList: string[] = [];
     strList.push(this.chipher_password);
     strList.push(this.userName);
-    strList.push(this.userPassword);
+
+    var user: User = new User();
+    user.username = this.userName;
+    user.updateHash(this.userPassword);
+
+    strList.push(user.userhash);
     const strListCrypt = await this.g.promise_cryptText(strList);
     var chipher_password = strListCrypt[0];
     var userName = strListCrypt[1];
-    var userPassword = strListCrypt[2];
+    var userHash = strListCrypt[2];
     
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.login(chipher_password, userName, userPassword)
+      this.configService.login(chipher_password, userName, userHash)
         .then((answer: JSON) => {
           this.logged = answer["logged"];
           this.userid = answer["userid"];

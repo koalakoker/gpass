@@ -5,6 +5,7 @@ import * as ReturnCodes from '../modules/refreshable/returnCodes';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { WebPass } from '../modules/webpass';
+import { User } from '../modules/user';
 import { GCrypto } from '../modules/gcrypto';
 import { LoginService } from '../services/login.service';
 
@@ -25,7 +26,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
-  constructor(private configService: WebService,
+  constructor(private dbService: WebService,
               private loginService: LoginService) { }
 
   ngOnInit() {
@@ -42,7 +43,8 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   async changeUserPass(new_password: string) {
     var list: WebPass[] = await this.getWebPass();
-    this.cryptWebPass(list);
+    this.cryptWebPassAndUpdateDB(list);
+    this.updateUserHashInDB(new_password);
     this.updateUserPassword(new_password);
   }
 
@@ -50,10 +52,22 @@ export class ChangePassComponent implements OnInit, Refreshable {
     this.loginService.updateUserPassword(new_password);
   }
 
+  updateUserHashInDB(newPassword: string) {
+    console.log("Update user with new hash");
+    var user = new User();
+    user.username = this.loginService.userName;
+    user.updateHash(newPassword);
+    var paramsToBeUpdated = {
+      "id": this.loginService.userid,
+      "userhash": user.userhash
+    };
+    this.dbService.updateUser(paramsToBeUpdated);
+  }
+
   getWebPass(): Promise<WebPass[]> {
     // Get the DB values and decrypt with old pass
     return new Promise<WebPass[]>((resolve, reject) => {
-      this.configService.getFromUser('gpass')
+      this.dbService.getFromUser('gpass')
         .then((json: JSON) => {
           var data: Array<WebPass> = [];
           for (var i in json) {
@@ -72,14 +86,14 @@ export class ChangePassComponent implements OnInit, Refreshable {
       });
   }
 
-  cryptWebPass(list: WebPass[]): Promise<void> {
+  cryptWebPassAndUpdateDB(list: WebPass[]): Promise<void> {
     // Cript the values of the DB with the new pass
     return new Promise<void>((resolve, reject) => {
       this.itemToBeSentNbr = list.length;
       list.forEach(webPass => {
         const newWebPass = new WebPass(webPass);
         webPass.crypt(this.new_password);
-        this.configService.updateWebPass(webPass)
+        this.dbService.updateWebPass(webPass)
           .then(
             () => {
               this.itemToBeSentNbr--;
@@ -94,7 +108,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   changeMasterKey() {
     // Calculate the new access file for the db
-    this.configService.callChipher(this.loginService.userPassword)
+    this.dbService.callChipher(this.loginService.userPassword)
     .then((data) => {
       const key: string = GCrypto.hash(this.new_password);
       this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';

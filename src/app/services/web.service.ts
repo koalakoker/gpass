@@ -11,6 +11,7 @@ export class WebService {
   loginAddr       : string;
   emailAddr       : string;
   getAddr         : string;
+  updateAddr      : string;
   chiperAddr      : string;
 
   testing_chipher: string = null;
@@ -18,28 +19,25 @@ export class WebService {
   testing_level  : number = null;
 
   constructor() {
+    var baseAddr: string;
     if (isConfigForTesting()) {
-      this.defineConfigFortesting();
+      baseAddr = "http://192.168.64.3/gpass/php/";
     } else {
-      this.defineConfigForProduction();
+      baseAddr  = "php/";
     }
+    this.loginAddr = baseAddr + 'login.php'
+    this.emailAddr = baseAddr + 'inviteUser.php'
+    this.getAddr = baseAddr + 'api.php';
+    this.chiperAddr = baseAddr + 'getCriptDBAccess.php';
   }
 
   defineConfigFortesting(): void {
     // For testing create a LAMP server and clone the DB use the following
-    var baseAddr: string = "http://192.168.64.3/gpass/php/";
-    this.loginAddr       = baseAddr + 'login.php'
-    this.emailAddr       = baseAddr + 'inviteUser.php'
-    this.getAddr         = baseAddr + 'api.php';
-    this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
+    
   }
   
   defineConfigForProduction(): void {
-    var baseAddr: string = "php/";
-    this.loginAddr       = baseAddr + 'login.php'
-    this.emailAddr       = baseAddr + 'inviteUser.php'
-    this.getAddr         = baseAddr + 'api.php';
-    this.chiperAddr      = baseAddr + 'getCriptDBAccess.php';
+    
   }
 
   setTesting_chiper(encrypted: string): void {
@@ -105,11 +103,11 @@ export class WebService {
     return params;
   }
 
-  login(chipher_password: string, userName: string, userPassword: string) {
+  login(chipher_password: string, userName: string, userHash: string) {
     var params = {
       'chipher_password': chipher_password,
       'user_name': userName,
-      'user_password': userPassword
+      'user_hash': userHash
     }
     return this.api(this.loginAddr, params); 
   }
@@ -169,7 +167,7 @@ export class WebService {
     return this.api(url, params, 'PUT', rel);
   }
 
-  updateUser(user: User): Promise<JSON> {
+  updateUser(user: any): Promise<JSON> {
     var params = {};
     params = this.appendTestingsParams(params);
     var url = this.getAddr + '/users/' + user.id;
