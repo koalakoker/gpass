@@ -42,18 +42,19 @@ export class ChangePassComponent implements OnInit, Refreshable {
   }
 
   async changeUserPass(new_password: string) {
-    var list: WebPass[] = await this.getWebPass();
-    this.cryptWebPassAndUpdateDB(list);
-    this.updateUserHashInDB(new_password);
-    this.updateUserPassword(new_password);
+    var answer: JSON = await this.updateUserHashInDB(new_password);
+    if (answer["result"] != "fail") {
+      var list: WebPass[] = await this.getWebPass();
+      this.cryptWebPassAndUpdateDB(list);
+      this.updateUserPassword(new_password);
+    }
   }
 
   updateUserPassword(new_password: string) {
     this.loginService.updateUserPassword(new_password);
   }
 
-  updateUserHashInDB(newPassword: string) {
-    console.log("Update user with new hash");
+  updateUserHashInDB(newPassword: string): Promise<JSON> {
     var user = new User();
     user.username = this.loginService.userName;
     user.updateHash(newPassword);
@@ -61,7 +62,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
       "id": this.loginService.userid,
       "userhash": user.userhash
     };
-    this.dbService.updateUser(paramsToBeUpdated);
+    return this.dbService.updateUser(paramsToBeUpdated);
   }
 
   getWebPass(): Promise<WebPass[]> {
