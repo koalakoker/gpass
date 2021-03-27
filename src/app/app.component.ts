@@ -55,10 +55,10 @@ export class AppComponent implements OnInit {
 
   // Index for router data starts from 10
   routerData = [
-    { link: '/newPass'      , label: "New password"          , index: 10 },
-    { link: '/changePass'   , label: "Change password"       , index: 11 },
-    { link: '/dbCreateTable', label: "CreateBackupTable"     , index: 12 },
-    { link: '/dbBackup'     , label: "Backup"                , index: 13 }
+    { link: '/changePass'   , label: "Change password"          , index: 11, minLevel: 0 },
+    { link: '/newPass'      , label: "New password"             , index: 10, minLevel: 0 },
+    { link: '/dbCreateTable', label: "CreateBackupTable"        , index: 12, minLevel: 1 },
+    { link: '/dbBackup'     , label: "Backup"                   , index: 13, minLevel: 1 }
   ];
 
   constructor(
@@ -232,8 +232,8 @@ export class AppComponent implements OnInit {
     this.logOut();
   }
 
-  isAdmin() {
-    return this.loginService.level === 1 ? true : false;
+  checkRights(minLevel: number) {
+    return this.loginService.level >= minLevel ? true : false;
   }
 
 }
