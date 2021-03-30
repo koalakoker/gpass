@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
@@ -41,6 +41,8 @@ export class WebPassListComponent implements OnInit, Refreshable {
   
   needReenter: boolean = false;
   DebugTxt = "";
+
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private modalService: NgbModal,

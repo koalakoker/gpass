@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
 import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
 
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../services/login.service'
@@ -18,6 +17,7 @@ export class NewUserComponent implements OnInit, Refreshable {
   user_name: string;
   user_password: string;
   chipher_password: string;
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   loggedTxt: string = "Verify invitation details";
 

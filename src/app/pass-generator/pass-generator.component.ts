@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import  * as CryptoJS from '../../../node_modules/crypto-js'
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
 import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
-
 
 @Component({
   selector: 'app-pass-generator',
@@ -27,6 +25,8 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
 
   // 2^48 = 0x1000000000000 = (dec)281474976710656, max must be less than this.
   MAXMAX = 0x1000000000000;
+
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor() { }
 

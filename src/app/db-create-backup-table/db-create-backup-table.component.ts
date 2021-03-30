@@ -1,11 +1,10 @@
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
 import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
 
 import { PopupMessageComponent } from './../popup-message/popup-message.component';
 import { WebService } from '../services/web.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 
 export class dbCreateTableForm {
   chiper_key: string = '';
@@ -21,6 +20,7 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
   url: string = "php/db_create_table_backup.php";
   val: dbCreateTableForm = new dbCreateTableForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private httpService: WebService) { }
 

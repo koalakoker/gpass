@@ -16,6 +16,12 @@ import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent, LoginState } from './login/login.component';
 
+import { DropDown } from "./modules/menu/dropDown";
+import { Action } from "./modules/menu/action";
+import { Divider } from "./modules/menu/divider";
+import { RouterLink } from './modules/menu/routerLink';
+import { isConstructSignatureDeclaration } from 'typescript';
+
 enum AppState {
   notLogged,
   logged
@@ -50,9 +56,8 @@ export class AppComponent implements OnInit {
 
   appState : AppState = AppState.notLogged;
 
-  catDataAll = { link: '/list/0', label: "All", activated: "active" }; 
-  catData = [];
-
+  catDataAll: RouterLink = new RouterLink("/list/0", "All", true);
+  
   // Index for router data starts from 10
   routerData = [
     { link: '/changePass'   , label: "Change password"          , index: 11, minLevel: 0 },
@@ -60,6 +65,67 @@ export class AppComponent implements OnInit {
     { link: '/dbCreateTable', label: "CreateBackupTable"        , index: 12, minLevel: 1 },
     { link: '/dbBackup'     , label: "Backup"                   , index: 13, minLevel: 1 }
   ];
+
+  refreshableHasChanged(event) {
+    console.log("Warning this have to be done only for category update");
+    this.webPassDropDownUpdate();
+  }
+
+  webPassDropDownUpdate() {
+    // Get Category list
+    this.configService.getFromUser('category')
+      .then((json: JSON) => {
+        var data: Array<Category> = [];
+        for (var i in json) {
+          let elem: Category = Object.assign(new Category(), json[i]);
+          data.push(elem);
+        }
+        this.category = data;
+        this.webPassDropDown.items = [];
+        this.webPassDropDown.addItem(new Action("New", this.onNewFunc));
+        this.webPassDropDown.addItem(new Action("+1 Yr. all", this.plusOneYearAll));
+        this.webPassDropDown.addItem(new Action("Logout", this.logOut));
+        this.webPassDropDown.addItem(new Divider());
+        this.webPassDropDown.addItem(this.catDataAll);
+        if (this.category) {
+          this.category.forEach(cat => {
+            let newCatList = new RouterLink('/list/' + cat.id, cat.name, false);
+            this.webPassDropDown.items.push(newCatList);
+          });
+        }
+      })
+      .catch(err => {
+        this.printErrorMessage(JSON.stringify(err));
+      });
+  }
+
+  menuPopulate() {
+    let dropDown;
+
+    dropDown = new DropDown("webPassDropdown", "WebPass", 0);
+    this.menu.push(dropDown);
+    this.webPassDropDown = dropDown;
+
+    dropDown = new DropDown("categoryDropdown", "Category", 0);
+    dropDown.addItem(new Action("New", this.onNewFunc));
+    this.menu.push(dropDown);
+
+    dropDown = new DropDown("usersDropdown", "Users", 1);
+    dropDown.addItem(new Action("New", this.onNewFunc));
+    this.menu.push(dropDown);
+
+    dropDown = new DropDown("adminDropdown", "Admin", 1);
+    dropDown.addItem(new Action("Remove master key", this.removeMasterKey));
+    this.menu.push(dropDown);
+
+  }
+
+  menu : Array<DropDown> = [];
+  webPassDropDown: DropDown;
+
+  dropDownItemClick(item) {
+    item.onClick.call(this); // .call is used to pass the context
+  }
 
   constructor(
     private configService: WebService,
@@ -77,14 +143,15 @@ export class AppComponent implements OnInit {
 
           switch (returnData.pageCode) {
             case PageCodes.webPassPage:
-              this.catData.forEach((cat) => {
-                if ((cat.link === val.url) || ((val.url === '/') && (cat.label == "All"))) {
-                  cat.activated = "active";
+              for (let item of this.webPassDropDown.items) {
+                if (item instanceof RouterLink) {
+                  if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
+                    item.activated = true;
+                  } else {
+                    item.activated = false;
+                  }
                 }
-                else {
-                  cat.activated = "";
-                }
-              });
+              }
               this.activeId = 0;
               break;
             case PageCodes.categoryPage:
@@ -113,11 +180,12 @@ export class AppComponent implements OnInit {
         });
       }
     });
-    this.catData.push(this.catDataAll);
+    this.menuPopulate();
   }
 
   public setRoutedComponent(componentRef: Refreshable) {
     this.routedComponent = componentRef;
+    componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
   }
 
   ngOnInit() {
@@ -161,7 +229,7 @@ export class AppComponent implements OnInit {
     return this.appState == AppState.logged;
   }
 
-  async userLogged() {
+  userLogged() {
     this.routedComponent.refresh(InputCodes.Refresh)
       .then((returnData) => {
         this.childInjected = returnData.childInject;
@@ -170,11 +238,12 @@ export class AppComponent implements OnInit {
       .catch((err) => {
         console.log("Promise error: " + err);
       });
-    this.getCategory();
+    this.webPassDropDownUpdate();
     this.appState = AppState.logged;
   }
 
   logOut() {
+    console.log("logout()");
     this.configService.logout()
     .then(
       (answer: JSON) => {
@@ -185,36 +254,17 @@ export class AppComponent implements OnInit {
         this.routedComponent.refresh(InputCodes.Refresh);
         this.childInjected = "";
         this.pageCode = "";
-        this.catData = [];
-        this.catData.push(this.catDataAll);
+        // Logout
+        this.category = [];
+        this.webPassDropDownUpdate();
+        
       });
   }
 
   onNewFunc() {
     // Propagate to child
     this.routedComponent.refresh(InputCodes.BtnPress);
-  }
-
-  getCategory(encrypted = "") {
-    // Get Category list
-    this.configService.getFromUser('category')
-      .then((json: JSON) => {
-        var data: Array <Category> = [];
-        for (var i in json) {
-          let elem: Category = Object.assign(new Category(), json[i]);
-          data.push(elem);
-        }
-        this.category = data;
-        this.catData = [];
-        this.catData.push(this.catDataAll);
-        data.forEach(cat => {
-          var newCatList = { link: '/list/' + cat.id, label: cat.name, activated: "" };
-          this.catData.push(newCatList);
-        });
-      })
-      .catch(err => {
-        this.printErrorMessage(JSON.stringify(err));
-       });
+    this.webPassDropDownUpdate();
   }
 
   onSearch() {

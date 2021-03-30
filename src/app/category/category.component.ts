@@ -1,5 +1,5 @@
 import { Category } from './../modules/category';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
@@ -27,6 +27,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   errorMessage: string = '';
   message: string = '';
   interval;
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private configService: WebService,
               private loginService: LoginService,
@@ -103,6 +104,7 @@ export class CategoryComponent implements OnInit, Refreshable {
       .then((json: JSON) => {
         category.id = +json;
         this.category.unshift(category);
+        this.hasChanged.emit();
       })
       .catch(err => console.log(err));
   }
@@ -112,6 +114,7 @@ export class CategoryComponent implements OnInit, Refreshable {
     this.configService.delete(cat.id, 'category')
       .then(() => {
         this.category.splice(i, 1);
+        this.hasChanged.emit();
       })
       .catch(err => console.log(err));
   }
@@ -141,6 +144,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   }
 
   onCloseEdit() {
+    this.hasChanged.emit();
   }
 
   confirmDeleteModal(i: number) {

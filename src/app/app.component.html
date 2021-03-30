@@ -10,42 +10,23 @@
 
             <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto" (navChange)="tabChange($event)">
                 <ng-container *ngIf="isLoggedState()">
-                    <li ngbDropdown [ngbNavItem]="0">
-                        <a ngbNavLink tabindex="0" ngbDropdownToggle id="webPassDropdown" role="button">
-                            WebPass
-                        </a>
-                        <div ngbDropdownMenu aria-labelledby="webPassDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertWebPass'">New</a>
-                            <a ngbDropdownItem (click)="plusOneYearAll()">+1 Yr. all</a>
-                            <a ngbDropdownItem (click)="logOut()">Logout</a>
-                            <hr ngbDropdownDivider>
-                            <a *ngFor="let cat of catData" ngbDropdownItem [routerLink]="cat.link" class="dropdown-item {{cat.activated}}">{{cat.label}}</a>
-                        </div>
-                    </li>
-                    <li ngbDropdown [ngbNavItem]="1">
-                        <a ngbNavLink tabindex="1" ngbDropdownToggle id="categoryDropdown" role="button">
-                            Category
-                        </a>
-                        <div ngbDropdownMenu aria-labelledby="categoryDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertCategory'">New</a>
-                        </div>
-                    </li>
-                    <li ngbDropdown [ngbNavItem]="2" *ngIf="checkRights(1)">
-                        <a ngbNavLink tabindex="2" ngbDropdownToggle id="usersDropdown" role="button">
-                            Users
-                        </a>
-                        <div ngbDropdownMenu aria-labelledby="usersDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem (click)="onNewFunc()" *ngIf="childInjected=='btnInsertUsers'">New</a>
-                        </div>
-                    </li>
-                    <li ngbDropdown [ngbNavItem]="3" *ngIf="checkRights(1)">
-                        <a ngbNavLink tabindex="3" ngbDropdownToggle id="adminDropdown" role="button">
-                            Admin
-                        </a>
-                        <div ngbDropdownMenu aria-labelledby="adminDropdown" class="dropdown-menu">
-                            <a ngbDropdownItem (click)="removeMasterKey()">Remove master key</a>
-                        </div>
-                    </li>
+
+                    <ng-container *ngFor="let dropDown of menu; let i = index">
+                        <li *ngIf="checkRights(dropDown.minLevel)" ngbDropdown [ngbNavItem]="i">
+                            <a ngbNavLink tabindex="i" ngbDropdownToggle id="dropDown.id" role="button">
+                                {{dropDown.name}}
+                            </a>
+                            <div ngbDropdownMenu aria-labelledby="dropDown.id" class="dropdown-menu">
+                                <ng-container *ngFor="let item of dropDown.items; let j = index">
+                                    <a  *ngIf="item.isAction() "    ngbDropdownItem      (click)="dropDownItemClick(item)">{{item.name}}</a>
+                                    <hr *ngIf="item.isDivider()"    ngbDropdownDivider >
+                                    <a  *ngIf="item.isRouterLink()" ngbDropdownItem [routerLink]="item.link"
+                                        class="dropdown-item {{item.getActivatedStyle()}}">{{item.label}}</a>
+                                </ng-container>
+                            </div>
+                        </li>
+                    </ng-container>
+                    
                     <!-- I used index 10 to separate dropbox index from router data index -->
                     <li *ngFor="let link of routerData; let i = index" [ngbNavItem]="10+i">
                         <a *ngIf="checkRights(link.minLevel)" ngbNavLink tabindex="10+i" [routerLink]="link.link">{{link.label}}</a>

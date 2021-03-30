@@ -2,7 +2,7 @@ import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshab
 import * as PageCodes from '../modules/refreshable/pagesCodes'
 import * as ReturnCodes from '../modules/refreshable/returnCodes';
 
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { WebService } from '../services/web.service';
 import { WebPass } from '../modules/webpass';
 import { User } from '../modules/user';
@@ -23,6 +23,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
   interval;
   itemToBeSentNbr: number = 0;
   serverAccess: string = '';
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('buttonChange') buttonChange: ElementRef;
 

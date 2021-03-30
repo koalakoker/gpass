@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
@@ -24,6 +24,7 @@ export class UsersComponent implements OnInit, Refreshable {
   show: boolean = false;
   user: User[];
   selectedUser: User;
+  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(
     private loginService: LoginService,
