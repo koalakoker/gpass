@@ -68,6 +68,7 @@ export class UsersComponent implements OnInit, Refreshable {
             resolve(ret);
           })
           .catch((err) => {
+            this.user = [];
             reject("Not logged");
           });
       }

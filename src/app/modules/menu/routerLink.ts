@@ -5,8 +5,8 @@ export class RouterLink extends MenuItem  {
   public label: string;
   public activated: boolean;
 
-  constructor(link: string, label: string, activated: boolean = false) {
-    super(ItemType.routerLink);
+  constructor(link: string, label: string, minLevel : number = 0, activated: boolean = false) {
+    super(ItemType.routerLink, minLevel);
     this.link = link;
     this.label = label;
     this.activated = activated;

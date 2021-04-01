@@ -83,6 +83,7 @@ export class CategoryComponent implements OnInit, Refreshable {
           resolve(ret);
         })
         .catch((err) => {
+          this.category = [];
           reject("Not logged");
         });
       }

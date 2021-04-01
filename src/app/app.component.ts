@@ -16,11 +16,11 @@ import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent, LoginState } from './login/login.component';
 
+import { MenuItem } from "./modules/menu/menuItem";
 import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
-import { isConstructSignatureDeclaration } from 'typescript';
 
 enum AppState {
   notLogged,
@@ -56,16 +56,8 @@ export class AppComponent implements OnInit {
 
   appState : AppState = AppState.notLogged;
 
-  catDataAll: RouterLink = new RouterLink("/list/0", "All", true);
+  catDataAll: RouterLink = new RouterLink("/list/0", "All", 0, true);
   
-  // Index for router data starts from 10
-  routerData = [
-    { link: '/changePass'   , label: "Change password"          , index: 11, minLevel: 0 },
-    { link: '/newPass'      , label: "New password"             , index: 10, minLevel: 0 },
-    { link: '/dbCreateTable', label: "CreateBackupTable"        , index: 12, minLevel: 1 },
-    { link: '/dbBackup'     , label: "Backup"                   , index: 13, minLevel: 1 }
-  ];
-
   refreshableHasChanged(event) {
     console.log("Warning this have to be done only for category update");
     this.webPassDropDownUpdate();
@@ -89,7 +81,7 @@ export class AppComponent implements OnInit {
         this.webPassDropDown.addItem(this.catDataAll);
         if (this.category) {
           this.category.forEach(cat => {
-            let newCatList = new RouterLink('/list/' + cat.id, cat.name, false);
+            let newCatList = new RouterLink('/list/' + cat.id, cat.name, 0, false);
             this.webPassDropDown.items.push(newCatList);
           });
         }
@@ -100,28 +92,45 @@ export class AppComponent implements OnInit {
   }
 
   menuPopulate() {
-    let dropDown;
+    let dropDown: DropDown;
 
-    dropDown = new DropDown("webPassDropdown", "WebPass", 0);
+    dropDown = new DropDown("webPassDropdown", "WebPass");
     this.menu.push(dropDown);
     this.webPassDropDown = dropDown;
 
-    dropDown = new DropDown("categoryDropdown", "Category", 0);
+    dropDown = new DropDown("categoryDropdown", "Category");
     dropDown.addItem(new Action("New", this.onNewFunc));
     this.menu.push(dropDown);
+    this.categoryDropDown = dropDown;
 
     dropDown = new DropDown("usersDropdown", "Users", 1);
     dropDown.addItem(new Action("New", this.onNewFunc));
     this.menu.push(dropDown);
+    this.userDropDown = dropDown;
 
     dropDown = new DropDown("adminDropdown", "Admin", 1);
     dropDown.addItem(new Action("Remove master key", this.removeMasterKey));
     this.menu.push(dropDown);
 
+    let routerLink: RouterLink;
+
+    routerLink = new RouterLink('/changePass', "Change password");
+    this.menu.push(routerLink);
+
+    routerLink = new RouterLink('/newPass', "New password");
+    this.menu.push(routerLink);
+    
+    routerLink = new RouterLink('/dbCreateTable', "CreateBackupTable", 1);
+    this.menu.push(routerLink);
+
+    routerLink = new RouterLink('/dbBackup', "Backup", 1);
+    this.menu.push(routerLink);
   }
 
-  menu : Array<DropDown> = [];
+  menu : Array<MenuItem> = [];
   webPassDropDown: DropDown;
+  categoryDropDown: DropDown;
+  userDropDown: DropDown;
 
   dropDownItemClick(item) {
     item.onClick.call(this); // .call is used to pass the context
@@ -152,13 +161,10 @@ export class AppComponent implements OnInit {
                   }
                 }
               }
-              this.activeId = 0;
               break;
             case PageCodes.categoryPage:
-              this.activeId = 1;
               break;
             case PageCodes.usersPage:
-              this.activeId = 2;
               break;
             case PageCodes.newUserPage:
               if (returnData.childInject == ReturnCodes.LoginValid) {
@@ -167,11 +173,7 @@ export class AppComponent implements OnInit {
               break;
           
             default:
-              this.routerData.forEach((link) => {
-                if (link.link === val.url) {
-                  this.activeId = link.index;
-                }
-              });
+              
               break;
           }
         })
@@ -192,27 +194,20 @@ export class AppComponent implements OnInit {
   }
 
   tabChange(changeEvent: NgbNavChangeEvent) {
-    switch (changeEvent.nextId) {
-      case 0:
-        if (!(this.pageCode == PageCodes.webPassPage)) {
-          this.router.navigateByUrl('/list/0');
-        }
-        break;
-      
-      case 1:
-        if (!(this.pageCode == PageCodes.categoryPage)) {
-          this.router.navigateByUrl("/category");
-        }
-        break;
-
-      case 2:
-        if (!(this.pageCode == PageCodes.usersPage)) {
-          this.router.navigateByUrl("/users");
-        }
-        break;
-    
-      default:
-        break;
+    if (changeEvent.nextId === this.webPassDropDown.index) {
+      if (!(this.pageCode == PageCodes.webPassPage)) {
+        this.router.navigateByUrl('/list/0');
+      }
+    }
+    if (changeEvent.nextId === this.categoryDropDown.index) {
+      if (!(this.pageCode == PageCodes.categoryPage)) {
+        this.router.navigateByUrl("/category");
+      }
+    }
+    if (changeEvent.nextId === this.userDropDown.index) {
+      if (!(this.pageCode == PageCodes.usersPage)) {
+        this.router.navigateByUrl("/users");
+      }
     }
   }
 
@@ -243,22 +238,26 @@ export class AppComponent implements OnInit {
   }
 
   logOut() {
-    console.log("logout()");
     this.configService.logout()
     .then(
       (answer: JSON) => {
-        this.loginService.clearSession();
-        this.loginService.clearLocal();
-        this.loginComponent.state = LoginState.userNameInsert;
-        this.appState = AppState.notLogged;
-        this.routedComponent.refresh(InputCodes.Refresh);
-        this.childInjected = "";
-        this.pageCode = "";
-        // Logout
-        this.category = [];
-        this.webPassDropDownUpdate();
+        if (answer["error"] === "Session destroyed") {
+          this.loginService.clearSession();
+          this.loginService.clearLocal();
+          this.loginComponent.state = LoginState.userNameInsert;
+          this.appState = AppState.notLogged;
+          this.routedComponent.refresh(InputCodes.Refresh)
+          .catch(err => console.log(err));
+          this.childInjected = "";
+          this.pageCode = "";
+          // Logout
+          this.category = [];
+        } else {
+          ((err) => console.log("Bad answer from server"));
+        }
         
-      });
+      })
+    .catch((err) => console.log(err));
   }
 
   onNewFunc() {
