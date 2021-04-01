@@ -10,16 +10,14 @@
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Name</label>
     <div class="col-sm-10">
-      <input class="form-control" type="text" placeholder="Name" [(ngModel)]="webpass.name" (change)="save()" autofocus="autofocus" (keyup.enter)="onCloseEdit()"
-        aria-label="default input example">
+      <input class="form-control" type="text" placeholder="Name" [(ngModel)]="webpass.name" (change)="save()" autofocus="autofocus" (keyup.enter)="onCloseEdit()">
     </div>
   </div>
   <!-- Url -->
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Url</label>
     <div class="col-sm-10">
-      <input class="form-control" type="text" placeholder="Url" [(ngModel)]="webpass.url" (change)="save()"
-        aria-label="default input example">
+      <input class="form-control" type="text" placeholder="Url" [(ngModel)]="webpass.url" (change)="save()">
     </div>
   </div>
   <!-- Category -->
@@ -35,7 +33,7 @@
     <label class="col-sm-3 col-form-label">User Name</label>
     <div class="col-sm-6">
       <input class="form-control" type="text" placeholder="User Name" [(ngModel)]="webpass.username"
-        (change)="save()" aria-label="default input example">
+        (change)="save()">
     </div>
     <div class="col-sm-3">
       <button type="button" class="btn btn-success" (click)="onButtonCategory()">Category</button>
@@ -46,7 +44,7 @@
     <label class="col-sm-3 col-form-label">Password</label>
     <div class="col-sm-6">
       <input class="form-control" type="{{passwordType}}" placeholder="Password" [(ngModel)]="webpass.pass"
-        (change)="save()" aria-label="default input example">
+        (change)="save()">
     </div>
     <div class="col-sm-3">
       <button type="button" class="btn btn-success" (click)="showPass()">Show</button>
@@ -57,7 +55,7 @@
     <label class="col-sm-3 col-form-label">Registration</label>
     <div class="col-sm-6">
       <input class="form-control" type="text" placeholder="Registration Date"
-        [(ngModel)]="webpass.registrationDate" (change)="save()" aria-label="default input example">
+        [(ngModel)]="webpass.registrationDate" (change)="save()" >
     </div>
     <div class="col-sm-3">
       <button type="button" class="btn btn-success" (click)="onTodayButton()">Today</button>
@@ -68,7 +66,7 @@
     <label class="col-sm-3 col-form-label">Expiration</label>
     <div class="col-sm-6">
       <input class="form-control" type="text" placeholder="Expiration Date" [(ngModel)]="webpass.expirationDate"
-        (change)="save()" aria-label="default input example">
+        (change)="save()">
     </div>
     <div class="col-sm-3">
       <button type="button" class="btn btn-success" (click)="onPlusOneYear()">+1 Yr.</button>

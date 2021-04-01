@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
 
 export enum LoginState {
@@ -17,6 +17,8 @@ export class LoginComponent implements OnInit {
   @Input() state: LoginState = LoginState.masterPasswordInsert;
   @Output() userLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
+  @ViewChild('passwordInput') passwordInput: ElementRef;
+  @ViewChild('userNameInput') userNameInput: ElementRef;
 
   constructor(private loginService: LoginService) { }
 
@@ -50,9 +52,15 @@ export class LoginComponent implements OnInit {
 
   materPasswordEntered() {
     this.state = LoginState.userNameInsert;
+    setTimeout(() => {
+      this.userNameInput.nativeElement.focus();
+    }, 100);
   }
   usernameEntered() {
     this.state = LoginState.passwordInsert;
+    setTimeout(() => {
+      this.passwordInput.nativeElement.focus();
+    }, 100);
   }
   passwordEntered() {
     this.enter();
