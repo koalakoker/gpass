@@ -1,2 +1,4 @@
 #!/bin/zsh
+cp src/app/modules/config._forProduction.ts src/app/modules/config.ts
 ng build --base-href=/gpass/ --prod
+cp src/app/modules/config._forTesting.ts src/app/modules/config.ts
