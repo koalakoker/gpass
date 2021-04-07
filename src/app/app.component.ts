@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
 
-  g: GCrypto;
+  gCrypto: GCrypto;
 
   errorMessage: string = '';
   message: string = '';
@@ -110,6 +110,7 @@ export class AppComponent implements OnInit {
 
     dropDown = new DropDown("adminDropdown", "Admin", 1);
     dropDown.addItem(new Action("Remove master key", this.removeMasterKey));
+    dropDown.addItem(new Action("Test crypt", this.testCrypt));
     this.menu.push(dropDown);
 
     let routerLink: RouterLink;
@@ -141,7 +142,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private loginService: LoginService
   ) {
-    this.g = new GCrypto(this.configService);
+    this.gCrypto = new GCrypto(this.configService);
     router.events.subscribe(val => {
       if (val instanceof NavigationEnd)
       {
@@ -168,7 +169,9 @@ export class AppComponent implements OnInit {
               break;
             case PageCodes.newUserPage:
               if (returnData.childInject == ReturnCodes.LoginValid) {
-                this.router.navigateByUrl("/");
+                this.userLogged();
+                this.loginComponent.state = LoginState.logged;
+                this.router.navigateByUrl('/list/0');
               }
               break;
           
@@ -190,9 +193,8 @@ export class AppComponent implements OnInit {
     componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
   }
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
+  
   tabChange(changeEvent: NgbNavChangeEvent) {
     if (changeEvent.nextId === this.webPassDropDown.index) {
       if (!(this.pageCode == PageCodes.webPassPage)) {
@@ -244,7 +246,14 @@ export class AppComponent implements OnInit {
         if (answer["error"] === "Session destroyed") {
           this.loginService.clearSession();
           this.loginService.clearLocal();
-          this.loginComponent.state = LoginState.userNameInsert;
+          
+          // If master key is not present state becomes insert master key
+          if (this.loginService.isMasterKeyEmpty()) {
+            this.loginComponent.state = LoginState.masterPasswordInsert;
+          } else {
+            this.loginComponent.state = LoginState.userNameInsert;
+          }
+          
           this.appState = AppState.notLogged;
           this.routedComponent.refresh(InputCodes.Refresh)
           .catch(err => console.log(err));
@@ -283,6 +292,27 @@ export class AppComponent implements OnInit {
 
   checkRights(minLevel: number) {
     return this.loginService.level >= minLevel ? true : false;
+  }
+
+  testCrypt() {
+    // console.log("Test crypt");
+    // let key = "mia nonnina";
+    // let cry = GCrypto.crypt("Testo da criptare",key);
+    // console.log(cry);
+    // let decry = GCrypto.decrypt(cry, key);
+    // console.log(decry);
+    let strList: string[] = [];
+    strList.push("Testo da criptare");
+    this.gCrypto.promise_cryptText(strList)
+      .then( strListCryp => {
+        console.log(strListCryp);
+        this.gCrypto.promise_deCryptText(strListCryp)
+          .then( strListDecript => {
+            console.log(strListDecript);
+          })
+          .catch(err => console.log(err));
+      })
+      .catch(err => console.log(err));
   }
 
 }

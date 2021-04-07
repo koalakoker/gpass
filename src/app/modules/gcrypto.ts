@@ -92,7 +92,7 @@ export class GCrypto {
         return crypted.ciphertext.toString().toUpperCase();
     }
 
-    decode(strList: string[], dateStr: string): string[] {
+    private encode(strList: string[], dateStr: string): string[] {
         const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
         var hash = CryptoJS.HmacSHA256(dateStr, secret);
         const iv_str = "8DCB7300E8BCA8E5";
@@ -108,7 +108,51 @@ export class GCrypto {
         return encrypted;
     }
 
+    private decode(strList: string[], dateStr: string): string[] {
+        const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
+        var hash = CryptoJS.HmacSHA256(dateStr, secret);
+        const iv_str = "8DCB7300E8BCA8E5";
+        const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
+
+        var encrypted: string[] = [];
+        strList.forEach(str => {
+            var cipherParams = CryptoJS.lib.CipherParams.create({
+                ciphertext: CryptoJS.enc.Hex.parse(str)
+            });
+            var decrypted = CryptoJS.AES.decrypt(cipherParams, (hash), {
+                iv: iv
+            });
+            encrypted.push(decrypted.toString(CryptoJS.enc.Latin1));
+        });
+        return encrypted;
+    }
+
     promise_cryptText(strList: string[], duration: string = '') {
+        var charIndex = 16;
+        if (duration == 'Month') {
+            charIndex = 7;
+        }
+        return new Promise<string[]>((resolve, reject) => {
+            if (isLocal()) {
+                const dateStr = "14 12 1972";
+                var encrypted: string[] = this.encode(strList, dateStr);
+                resolve(encrypted);
+            } else {
+                const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
+                this.configService.api(url)
+                    .then((data: JSON) => {
+                        const dateStr: string = data['datetime'].slice(0, charIndex);
+                        var encrypted: string[] = this.encode(strList, dateStr);
+                        resolve(encrypted);
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    });
+            }
+        }) 
+    }
+
+    promise_deCryptText(strList: string[], duration: string = '') {
         var charIndex = 16;
         if (duration == 'Month') {
             charIndex = 7;
@@ -118,50 +162,18 @@ export class GCrypto {
                 const dateStr = "14 12 1972";
                 var encrypted: string[] = this.decode(strList, dateStr);
                 resolve(encrypted);
-            }
-            const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-            this.configService.api(url)
-                .then((data: JSON) => {
-                    const dateStr: string = data['datetime'].slice(0, charIndex);
-                    var encrypted: string[] = this.decode(strList, dateStr);
-                    resolve(encrypted);
-                })
-                .catch((err) => {
-                    reject(err)
-                });
-
-        }) 
-    }
-
-    promise_deCryptText(strList: string[], duration: string = '') {
-        var charIndex = 16;
-        if (duration == 'Month') {
-            charIndex = 7;
-        }
-        const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-        return new Promise<string[]>((resolve, reject) => {
-            this.configService.api(url)
-                .then((data: JSON) => {
-                    const dateStr: string = data['datetime'].slice(0, charIndex);
-                    console.log(dateStr);
-                    const secret = 'f775aaf9cfab2cd30fd0d0ad28c5c460';
-                    var hash = CryptoJS.HmacSHA256(dateStr, secret);
-                    const iv_str = "8DCB7300E8BCA8E5";
-                    const iv = CryptoJS.enc.Hex.parse(ascii_to_hexa(iv_str));
-
-                    var deCryptedList: string[] = [];
-                    strList.forEach(str => {
-                        var deCrypted = CryptoJS.AES.decrypt(chipherString(str), hash, { iv: iv }).toString(CryptoJS.enc.Utf8);
-                        console.log(str);
-                        console.log("Finally got this:",deCrypted);
-                        deCryptedList.push(deCrypted);
+            } else {
+                const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
+                this.configService.api(url)
+                    .then((data: JSON) => {
+                        const dateStr: string = data['datetime'].slice(0, charIndex);
+                        var decrypted: string[] = this.decode(strList, dateStr);
+                        resolve(decrypted);
+                    })
+                    .catch((err) => {
+                        reject(err)
                     });
-                    resolve(deCryptedList);
-                })
-                .catch((err) => {
-                    reject(err)
-                });
-
+            }
         })
     }
 }

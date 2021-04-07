@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { isConfigForTesting } from '../modules/config'
 
 import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
 import * as PageCodes from '../modules/refreshable/pagesCodes'
@@ -26,10 +27,20 @@ export class UsersComponent implements OnInit, Refreshable {
   selectedUser: User;
   @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
+  returnUrl: string = '';
+  
   constructor(
     private loginService: LoginService,
     private webService: WebService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal) {
+      let baseAddr = '';
+      if (isConfigForTesting()) {
+        baseAddr = 'http://localhost:4200/';
+      } else {
+        baseAddr = 'https://www.koalakoker.com/gpass/';
+      }
+      this.returnUrl = baseAddr + '#/newuser'
+    }
 
   ngOnInit(): void {
     this.loginService.checklogged()
@@ -137,17 +148,15 @@ export class UsersComponent implements OnInit, Refreshable {
       }, () => { });
   }
 
-  returnUrl: string = 'http://localhost:4200/newuser';
-
   onButtonInvite(i: number) {
     const usr = this.user[i];
-    console.log("Send invitation to user: " + usr.username + " Email:" + usr.email);
+    console.log("Send invitation to user: " + usr.username + " Email:" + usr.email + " Hash: " + usr.userhash);
 
     // Add the params that needs to be crypted in loginService.sendLink
     var params = {
       // To be crypted
       "return_url": this.returnUrl,
-      "user_password": "password",
+      "userhash": usr.userhash,
       // No encription
       "invitedUserId": usr.id
     };

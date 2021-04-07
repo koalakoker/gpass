@@ -14,9 +14,9 @@ import { LoginService } from '../services/login.service'
 })
 export class NewUserComponent implements OnInit, Refreshable {
 
-  user_name: string;
-  user_password: string;
-  chipher_password: string;
+  username: string;
+  userhash: string;
+  masterhash: string;
   @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   loggedTxt: string = "Verify invitation details";
@@ -33,22 +33,24 @@ export class NewUserComponent implements OnInit, Refreshable {
     return new Promise<RefreshReturnData>((resolve, reject) => {
       var ret: RefreshReturnData = new RefreshReturnData;
       ret.pageCode = PageCodes.newUserPage;
-      this.user_name = this.route.snapshot.paramMap.get('user_name');
-      this.user_password = this.route.snapshot.paramMap.get('user_password');
-      this.chipher_password = this.route.snapshot.paramMap.get('chipher_password');
-      var strList = [];
-      strList.push(this.user_name);
-      strList.push(this.user_password);
-      strList.push(this.chipher_password);
-      this.loginService.decryptList(strList)
-        .then((strListCrypt) => {
-          this.loginService.userName = strListCrypt[0];
-          this.loginService.userPassword = strListCrypt[1];
-          this.loginService.chipher_password = strListCrypt[2];
+      this.username = this.route.snapshot.paramMap.get('username');
+      this.userhash = this.route.snapshot.paramMap.get('userhash');
+      this.masterhash = this.route.snapshot.paramMap.get('masterpassword');
+      var strListCrypt = [];
+      strListCrypt.push(this.username);
+      strListCrypt.push(this.userhash);
+      strListCrypt.push(this.masterhash);
+      this.loginService.decryptList(strListCrypt)
+        .then( strListDeCrypt => {
+          this.loginService.userName = strListDeCrypt[0];
+          this.loginService.userHash = strListDeCrypt[1];
+          this.loginService.chipher_hash = strListDeCrypt[2];
+          this.loginService.chipher_password = "";
           this.loginService.keepMeLogged = true;
+          this.loginService.userPassword = '';
           this.loginService.checkLogin()
-            .then((logged: boolean) => {
-              if (logged) {
+            .then((errorCode: number) => {
+              if (errorCode == 0) {
                 this.loggedTxt = "Invitation detail valid.";
                 ret.childInject = ReturnCodes.LoginValid;
                 resolve(ret);
@@ -62,8 +64,8 @@ export class NewUserComponent implements OnInit, Refreshable {
               this.loggedTxt = "Error validating login detail. Please check the internet connection.";
               console.log(err);
             });
-
-      })
+        })
+        .catch( err => console.log(err));
     });
   }
 }

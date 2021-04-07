@@ -19,11 +19,11 @@ const routes: Routes = [
   { path: 'dbCreateTable', component: DbCreateBackupTableComponent },
   { path: 'dbBackup', component: DbBackupComponent },
   { path: 'search/:str', component: WebPassListComponent},
-  { path: 'newuser/:user_name/:user_password/:chipher_password', component: NewUserComponent}
+  { path: 'newuser/:username/:userhash/:masterpassword', component: NewUserComponent}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {

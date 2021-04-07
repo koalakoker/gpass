@@ -103,9 +103,10 @@ export class WebService {
     return params;
   }
 
-  login(chipher_password: string, userName: string, userHash: string) {
+  login(chipher_password: string, chipher_hash: string, userName: string, userHash: string) {
     var params = {
       'chipher_password': chipher_password,
+      'chipher_hash': chipher_hash,
       'user_name': userName,
       'user_hash': userHash
     }

@@ -20,22 +20,25 @@ export class LoginComponent implements OnInit {
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('userNameInput') userNameInput: ElementRef;
 
+  errorCodeNoError           : number = 0;
+  errorCodeMissingParams     : number = 1;
+  errorCodeWrongMasterKey    : number = 2;
+  errorCodeWrongUsername     : number = 3;
+  errorCodeWrongUserPassword : number = 4;
+  errorCodeSessionDestroyed  : number = 5;
+
   constructor(private loginService: LoginService) { }
 
   ngOnInit(): void {
-    if (this.loginService.getSession()) {
+    this.loginService.getSession();
+    if (this.loginService.check()) {
       this.enter();
     } else {
-      if (this.loginService.getLocal()) {
+      this.loginService.getLocal();
+      if (this.loginService.check()) {
         this.enter();
       } else {
-        if (this.loginService.chipher_password == '') {
-          this.state = LoginState.masterPasswordInsert;
-        } else if (this.loginService.userName == '') {
-          this.state = LoginState.userNameInsert;
-        } else if (this.loginService.userPassword == '') {
-          this.state = LoginState.passwordInsert;
-        }
+        this.stateReset();
       };
     };
   }
@@ -43,45 +46,67 @@ export class LoginComponent implements OnInit {
   isUserNameState() {
     return this.state == LoginState.userNameInsert;
   }
+
   isPasswordState() {
     return this.state == LoginState.passwordInsert;
   }
+
   isMasterPasswordState() {
     return this.state == LoginState.masterPasswordInsert;
   }
 
-  materPasswordEntered() {
+  masterPasswordEntered() {
     this.state = LoginState.userNameInsert;
     setTimeout(() => {
       this.userNameInput.nativeElement.focus();
     }, 100);
   }
+
   usernameEntered() {
     this.state = LoginState.passwordInsert;
     setTimeout(() => {
       this.passwordInput.nativeElement.focus();
     }, 100);
   }
+
   passwordEntered() {
     this.enter();
   }
 
+  stateReset() {
+    if ((this.loginService.chipher_password == '') && 
+        (this.loginService.chipher_hash     == '')) {
+      this.state = LoginState.masterPasswordInsert;
+    } else if (this.loginService.userName == '') {
+      this.state = LoginState.userNameInsert;
+    } else if (this.loginService.userPassword == '') {
+      this.state = LoginState.passwordInsert;
+    }
+  }
+
   async enter() {
-    this.loginService.checkLogin()
-      .then((logged: boolean) => {
-        if (logged) {
-          this.state = LoginState.logged;
-          this.userLogged.emit();
-        } else {
-          this.state = LoginState.userNameInsert;
-          this.sendMessage.emit('Password not correct');
+    try {
+      let errorCode: number = await this.loginService.checkLogin();
+      if (errorCode == this.errorCodeNoError) {
+        this.state = LoginState.logged;
+        this.userLogged.emit();
+      } else {
+        this.sendMessage.emit('Password not correct');
+        if (errorCode == this.errorCodeWrongMasterKey) {
+          this.loginService.chipher_password = '';
         }
-      })
-      .catch((err) => {
-        this.state = LoginState.userNameInsert;
-        this.sendMessage.emit('Login error');
-        console.log(err);
-      });
+        if ((errorCode == this.errorCodeWrongUsername) || 
+            (errorCode == this.errorCodeWrongUserPassword)) {
+          this.loginService.userName = '';
+        }
+        this.stateReset();
+      }
+      
+    } catch (error) {
+      console.log(error);
+      this.sendMessage.emit('Login error');
+      this.stateReset();
+    }
   }
 
 }

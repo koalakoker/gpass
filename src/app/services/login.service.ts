@@ -10,33 +10,35 @@ import { User } from '../modules/user';
 })
 export class LoginService {
 
-  g: GCrypto;
+  gCrypto: GCrypto;
   keepMeLogged = false;
   logged = false;
   chipher_password: string = "";
+  chipher_hash: string = "";
   userName: string = ""
   userid: number;
   userPassword: string = "";
+  userHash: string = "";
   level: number = 0;
 
   constructor(private sessionService: SessionService,
               private localService: LocalService,
               private configService: WebService) {
-    this.g = new GCrypto(this.configService);
+    this.gCrypto = new GCrypto(this.configService);
   }
 
   async decryptList(strList: string[]) {
-    const strListCrypt = await this.g.promise_deCryptText(strList, 'Month');
-    return strListCrypt;
+    const strListDeCrypt = await this.gCrypto.promise_deCryptText(strList, 'Month');
+    return strListDeCrypt;
   }
 
   async sendLink(params: any): Promise<boolean> {
     
     var strList: string[] = [];
-    strList.push(params["user_password"]);
+    strList.push(params["userhash"]);
     strList.push(params["return_url"]);
-    const strListCrypt = await this.g.promise_cryptText(strList, 'Month');
-    params["user_password"] = strListCrypt[0];
+    const strListCrypt = await this.gCrypto.promise_cryptText(strList, 'Month');
+    params["userhash"]   = strListCrypt[0];
     params["return_url"] = strListCrypt[1];
     
     return new Promise<boolean>((resolve, reject) => {
@@ -51,54 +53,69 @@ export class LoginService {
       })
   }
 
-  async checkLogin(): Promise<boolean> {
+  async checkLogin(): Promise<number> {
 
     var strList: string[] = [];
     strList.push(this.chipher_password);
+    strList.push(this.chipher_hash);
     strList.push(this.userName);
 
-    var user: User = new User();
-    user.username = this.userName;
-    user.updateHash(this.userPassword);
+    if (this.userPassword !== '') {
+      var user: User = new User();
+      user.username = this.userName;
+      user.updateHash(this.userPassword);
+      this.userHash = user.userhash;
+    }
+    if (this.userHash === '') {
+      return new Promise<number>((resolve, reject) => {reject(-1)});
+    }
+    strList.push(this.userHash);
 
-    strList.push(user.userhash);
-    const strListCrypt = await this.g.promise_cryptText(strList);
+    const strListCrypt = await this.gCrypto.promise_cryptText(strList);
     var chipher_password = strListCrypt[0];
-    var userName = strListCrypt[1];
-    var userHash = strListCrypt[2];
+    var chipher_hash     = strListCrypt[1];
+    var userName         = strListCrypt[2];
+    var userHash         = strListCrypt[3];
     
-    return new Promise<boolean>((resolve, reject) => {
-      this.configService.login(chipher_password, userName, userHash)
+    return new Promise<number>((resolve, reject) => {
+      this.configService.login(chipher_password, chipher_hash, userName, userHash)
         .then((answer: JSON) => {
           this.logged = answer["logged"];
-          this.userid = answer["userid"];
-          this.level = answer["level"];
-          
-          // answers can be used if session variable is not available in the server
-          this.configService.setTesting_chiper(answer["encrypted"]);
-          this.configService.setTesting_userid(this.userid);
-          this.configService.setTesting_level(this.level);
           
           if (this.logged) {
+            this.userid = answer["userid"];
+            this.level = answer["level"];
+            
+            // answers can be used if session variable is not available in the server
+            this.configService.setTesting_chiper(answer["encrypted"]);
+            this.configService.setTesting_userid(this.userid);
+            this.configService.setTesting_level(this.level);
+
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
-            this.sessionService.setKey('EncryptedPassword', chipher_password);
+            this.sessionService.setKey('ChipherHash'    , this.chipher_hash);
+            this.sessionService.setKey('EncryptedPassword', answer["encrypted"]);
             this.sessionService.setKey('SessionToken', answer["sessionToken"]);
             this.sessionService.setKey('UserName', this.userName);
             this.sessionService.setKey('UserPassword', this.userPassword);
   
             if (this.keepMeLogged) {
               this.localService.setKey('ChipherPassword', this.chipher_password);
-              this.localService.setKey('EncryptedPassword', chipher_password);
+              this.localService.setKey('ChipherHash'    , this.chipher_hash);
+              this.localService.setKey('EncryptedPassword', answer["encrypted"]);
               this.localService.setKey('SessionToken', answer["sessionToken"]);
               this.localService.setKey('UserName', this.userName);
               this.localService.setKey('UserPassword', this.userPassword);
             }
-            resolve(true);
-          }
-          else {
+            resolve(0);
+          } else {
+            let errorCode = answer["errorCode"];
+            console.log("Check login fails");
+            console.log("Error:"+answer["error"]);
+            console.log("ErrorCode:" + errorCode);
+            
             this.clearSession();
             this.clearLocal();
-            resolve(false);
+            resolve(errorCode);
           }
         })
         .catch((err) => {
@@ -111,9 +128,7 @@ export class LoginService {
 
   checklogged(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      if ((this.chipher_password !='') &&
-          (this.userName         != '') &&
-          (this.userPassword     != '')) {
+      if (this.check()) {
         this.logged = true;
         resolve(true);
       } else {
@@ -123,64 +138,72 @@ export class LoginService {
     })
   }
 
-  getLocal(): boolean {
-    var retVal: boolean = true;
-
+  getLocal(): void {
     this.chipher_password = '';
     const localPass = this.localService.getKey('ChipherPassword');
     if ((localPass != undefined) && (localPass != '')) {
       this.chipher_password = localPass;
-    } else {
-      retVal = false;
     }
 
+    this.chipher_hash = '';
+    const localHash = this.localService.getKey('ChipherHash');
+    if ((localHash != undefined) && (localHash != '')) {
+      this.chipher_hash = localHash;
+    }
+    
     this.userName = '';
     const localUserName = this.localService.getKey('UserName');
     if ((localUserName != undefined) && (localUserName != ''))
     {
       this.userName = localUserName;
-    } else {
-      retVal = false;
     }
 
     this.userPassword = '';
     const localUserPassword = this.localService.getKey('UserPassword');
     if ((localUserPassword != undefined) && (localUserPassword != '')) {
       this.userPassword = localUserPassword;
+    } 
+  }
+
+  check(): boolean {
+    var retVal: boolean = true;
+
+    if (((this.chipher_password != '') || (this.chipher_hash != '')) &&
+         (this.userName != '') &&
+        ((this.userPassword != '') || (this.userHash != '')))
+    {
+      retVal = true;
     } else {
       retVal = false;
     }
-    
+
     return retVal;
   }
 
-  getSession(): boolean {
-    var retVal: boolean = true;
-
+  getSession(): void {
     this.userName = '';
     const storedUserName = this.sessionService.getKey('UserName');
     if ((storedUserName != undefined) && (storedUserName != '')) {
       this.userName = storedUserName;
-    } else {
-      retVal = false;
     }
 
     this.userPassword = '';
     const storedUserPassword = this.sessionService.getKey('UserPassword');
     if ((storedUserPassword != undefined) && (storedUserPassword != '')) {
       this.userPassword = storedUserPassword;
-    } else {
-      retVal = false;
     }
 
     this.chipher_password = '';
     const storedPass = this.sessionService.getKey('ChipherPassword');
     if ((storedPass != undefined) && (storedPass != '')) {
       this.chipher_password = storedPass;
-    } else {
-      retVal = false;
     }
-    return retVal;
+
+    this.chipher_hash = '';
+    const storedHash = this.sessionService.getKey('ChipherHash');
+    if ((storedHash != undefined) && (storedHash != '')) {
+      this.chipher_hash = storedHash;
+    }
   }
 
   clearSession() : void {
@@ -204,8 +227,13 @@ export class LoginService {
   }
 
   removeMasterKey() : void {
+    this.chipher_password = "";
     this.sessionService.setKey('ChipherPassword', '');
     this.localService.setKey('ChipherPassword', '');
+  }
+
+  isMasterKeyEmpty() : boolean {
+    return (this.localService.getKey('ChipherPassword') == '');
   }
 
   updateUserPassword(new_password: string) : void {
