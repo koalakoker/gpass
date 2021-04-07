@@ -97,6 +97,7 @@ export class LoginService {
             this.sessionService.setKey('SessionToken', answer["sessionToken"]);
             this.sessionService.setKey('UserName', this.userName);
             this.sessionService.setKey('UserPassword', this.userPassword);
+            this.sessionService.setKey('UserHash', this.userHash);
   
             if (this.keepMeLogged) {
               this.localService.setKey('ChipherPassword', this.chipher_password);
@@ -105,6 +106,7 @@ export class LoginService {
               this.localService.setKey('SessionToken', answer["sessionToken"]);
               this.localService.setKey('UserName', this.userName);
               this.localService.setKey('UserPassword', this.userPassword);
+              this.localService.setKey('UserHash', this.userHash);
             }
             resolve(0);
           } else {
@@ -162,6 +164,12 @@ export class LoginService {
     const localUserPassword = this.localService.getKey('UserPassword');
     if ((localUserPassword != undefined) && (localUserPassword != '')) {
       this.userPassword = localUserPassword;
+    }
+
+    this.userHash = '';
+    const localUserHash = this.localService.getKey('UserHash');
+    if ((localUserHash != undefined) && (localUserHash != '')) {
+      this.userHash = localUserHash;
     } 
   }
 
@@ -191,6 +199,12 @@ export class LoginService {
     const storedUserPassword = this.sessionService.getKey('UserPassword');
     if ((storedUserPassword != undefined) && (storedUserPassword != '')) {
       this.userPassword = storedUserPassword;
+    }
+
+    this.userHash = '';
+    const storedUserHash = this.sessionService.getKey('UserHash');
+    if ((storedUserHash != undefined) && (storedUserHash != '')) {
+      this.userHash = storedUserHash;
     }
 
     this.chipher_password = '';
@@ -233,7 +247,9 @@ export class LoginService {
   }
 
   isMasterKeyEmpty() : boolean {
-    return (this.localService.getKey('ChipherPassword') == '');
+    let retVal: boolean = ((this.localService.getKey('ChipherPassword') == '') &&
+                           (this.localService.getKey('ChipherHash') == ''))
+    return retVal;
   }
 
   updateUserPassword(new_password: string) : void {

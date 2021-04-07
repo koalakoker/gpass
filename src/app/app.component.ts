@@ -53,11 +53,78 @@ export class AppComponent implements OnInit {
   collapsed = true;
   
   searchString: string = "";
-
+  
   appState : AppState = AppState.notLogged;
-
+  
   catDataAll: RouterLink = new RouterLink("/list/0", "All", 0, true);
   
+  menu : Array<MenuItem> = [];
+  webPassDropDown: DropDown;
+  categoryDropDown: DropDown;
+  userDropDown: DropDown;
+
+  checkIfForcedToChangePass(): boolean { return true };
+  forceToChangePass(): void {
+    console.log("Moved to change pass component");
+  }
+  
+  constructor(
+    private configService: WebService,
+    private router: Router,
+    private loginService: LoginService
+  ) {
+    this.gCrypto = new GCrypto(this.configService);
+    router.events.subscribe(val => {
+      if (val instanceof NavigationEnd)
+      {
+        if (this.checkIfForcedToChangePass()) {
+          this.forceToChangePass();
+        }
+
+        this.routedComponent.refresh(InputCodes.Refresh)
+        .then ((returnData) => {
+          this.childInjected = returnData.childInject;
+          this.pageCode = returnData.pageCode;
+
+          switch (returnData.pageCode) {
+            case PageCodes.webPassPage:
+              for (let item of this.webPassDropDown.items) {
+                if (item instanceof RouterLink) {
+                  if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
+                    item.activated = true;
+                  } else {
+                    item.activated = false;
+                  }
+                }
+              }
+              break;
+            case PageCodes.categoryPage:
+              break;
+            case PageCodes.usersPage:
+              break;
+            case PageCodes.newUserPage:
+              if (returnData.childInject == ReturnCodes.LoginValid) {
+                this.userLogged();
+                this.loginComponent.state = LoginState.logged;
+                this.router.navigateByUrl('/list/0');
+              }
+              break;
+          
+            default:
+              
+              break;
+          }
+        })
+        .catch((err) => {
+          console.log("Promise error: " + err);
+        });
+      }
+    });
+    this.menuPopulate();
+  }
+
+  ngOnInit() {}
+
   refreshableHasChanged(event) {
     console.log("Warning this have to be done only for category update");
     this.webPassDropDownUpdate();
@@ -120,7 +187,7 @@ export class AppComponent implements OnInit {
 
     routerLink = new RouterLink('/newPass', "New password");
     this.menu.push(routerLink);
-    
+
     routerLink = new RouterLink('/dbCreateTable', "CreateBackupTable", 1);
     this.menu.push(routerLink);
 
@@ -128,64 +195,9 @@ export class AppComponent implements OnInit {
     this.menu.push(routerLink);
   }
 
-  menu : Array<MenuItem> = [];
-  webPassDropDown: DropDown;
-  categoryDropDown: DropDown;
-  userDropDown: DropDown;
 
   dropDownItemClick(item) {
     item.onClick.call(this); // .call is used to pass the context
-  }
-
-  constructor(
-    private configService: WebService,
-    private router: Router,
-    private loginService: LoginService
-  ) {
-    this.gCrypto = new GCrypto(this.configService);
-    router.events.subscribe(val => {
-      if (val instanceof NavigationEnd)
-      {
-        this.routedComponent.refresh(InputCodes.Refresh)
-        .then ((returnData) => {
-          this.childInjected = returnData.childInject;
-          this.pageCode = returnData.pageCode;
-
-          switch (returnData.pageCode) {
-            case PageCodes.webPassPage:
-              for (let item of this.webPassDropDown.items) {
-                if (item instanceof RouterLink) {
-                  if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
-                    item.activated = true;
-                  } else {
-                    item.activated = false;
-                  }
-                }
-              }
-              break;
-            case PageCodes.categoryPage:
-              break;
-            case PageCodes.usersPage:
-              break;
-            case PageCodes.newUserPage:
-              if (returnData.childInject == ReturnCodes.LoginValid) {
-                this.userLogged();
-                this.loginComponent.state = LoginState.logged;
-                this.router.navigateByUrl('/list/0');
-              }
-              break;
-          
-            default:
-              
-              break;
-          }
-        })
-        .catch((err) => {
-          console.log("Promise error: " + err);
-        });
-      }
-    });
-    this.menuPopulate();
   }
 
   public setRoutedComponent(componentRef: Refreshable) {
@@ -193,8 +205,6 @@ export class AppComponent implements OnInit {
     componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
   }
 
-  ngOnInit() {}
-  
   tabChange(changeEvent: NgbNavChangeEvent) {
     if (changeEvent.nextId === this.webPassDropDown.index) {
       if (!(this.pageCode == PageCodes.webPassPage)) {
