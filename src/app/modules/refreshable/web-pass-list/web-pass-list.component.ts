@@ -1,30 +1,31 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
-import { WebPass } from '../modules/webpass';
-import { Category } from '../modules/category';
-import { RelWebCat } from './../modules/relwebcat';
+import { WebPass } from '../../webpass';
+import { Category } from '../../category';
+import { RelWebCat } from '../../relwebcat';
 
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
+import * as InputCodes from '../inputCodes';
 
 import { ActivatedRoute } from '@angular/router';
 
-import { GCrypto } from '../modules/gcrypto';
-import { WebService } from '../services/web.service';
-import { LoginService } from '../services/login.service';
+import { GCrypto } from '../../gcrypto';
+import { WebService } from '../../../services/web.service';
+import { LoginService } from '../../../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../bootstrap/modal/confirm-modal.component';
-import { WebPassEditModalComponent } from '../bootstrap/modal/webpass-edit-modal.component';
+import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
+import { WebPassEditModalComponent } from '../../../bootstrap/modal/webpass-edit-modal.component';
+import { Observer } from '../../observer';
 
 @Component({
   selector: 'app-web-pass-list',
   templateUrl: './web-pass-list.component.html',
   styleUrls: ['./web-pass-list.component.css']
 })
-export class WebPassListComponent implements OnInit, Refreshable {
+export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   catID: number;
   searchStr: string = "";
@@ -49,11 +50,9 @@ export class WebPassListComponent implements OnInit, Refreshable {
     private route: ActivatedRoute,
     private webService: WebService,
     private loginService: LoginService) {
-
-    this.g = new GCrypto(this.webService);
-
+      this.g = new GCrypto(this.webService);
   }
-
+  
   ngOnInit() {
     this.catID = +this.route.snapshot.paramMap.get('cat');
     this.searchStr = this.route.snapshot.paramMap.get('str');
@@ -78,8 +77,8 @@ export class WebPassListComponent implements OnInit, Refreshable {
           this.list = [];
           reject(err);
         })
-      } else if (cmd == InputCodes.BtnPress) {
-        this.onNewFunc();
+      } else if (cmd == InputCodes.NewBtnPress) {
+        this.onNew();
         ret.childInject = ReturnCodes.None;
         resolve(ret);
       } else if (cmd == InputCodes.SrcPress) {
@@ -191,20 +190,40 @@ export class WebPassListComponent implements OnInit, Refreshable {
       this.afterLoad();
   }
 
-  onNewFunc() {
-    const webPass = new WebPass();
-    webPass.crypt(this.loginService.userPassword);
-    webPass.userid = this.loginService.userid;
-    this.webService.createWebPass(webPass)
+  getUserPassword(): string {
+    let userPassword: string = this.loginService.userPassword;
+    return userPassword;
+  }
+
+  queryForAction(action: string): boolean {
+    if (action === InputCodes.NewBtnPress) {
+      return (this.isNewPosible())
+    }
+  }
+
+  update(): void {
+    console.log("Notyfy the parente webpasslist->app");
+  }
+
+  isNewPosible() : boolean {
+    return (this.getUserPassword() !== "");
+  }
+
+  onNew() {
+    let userPassword: string = this.getUserPassword();
+    if (this.isNewPosible()) {
+      const webPass = new WebPass();
+      webPass.crypt(userPassword);
+      webPass.userid = this.loginService.userid;
+      this.webService.createWebPass(webPass)
       .then((json: JSON) => {
         webPass.id = +json;
-        webPass.decrypt(this.loginService.userPassword);
+        webPass.decrypt(userPassword);
         this.list.unshift(webPass);
       }, (err) => {
         console.log(err);
-      }
-    );
-    
+      });
+    }
   }
 
   onSelect(webPass: WebPass) {

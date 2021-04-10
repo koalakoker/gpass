@@ -1,13 +1,13 @@
-import { DbCreateBackupTableComponent } from './db-create-backup-table/db-create-backup-table.component';
+import { DbCreateBackupTableComponent } from './modules/refreshable/db-create-backup-table/db-create-backup-table.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
-import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
-import { ChangePassComponent } from './change-pass/change-pass.component';
-import { DbBackupComponent } from './db-backup/db-backup.component';
-import { CategoryComponent } from './category/category.component';
-import { UsersComponent } from './users/users.component';
-import { NewUserComponent } from './new-user/new-user.component'
+import { WebPassListComponent } from './modules/refreshable/web-pass-list/web-pass-list.component';
+import { PassGeneratorComponent } from './modules/refreshable/pass-generator/pass-generator.component';
+import { ChangePassComponent } from './modules/refreshable/change-pass/change-pass.component';
+import { DbBackupComponent } from './modules/refreshable/db-backup/db-backup.component';
+import { CategoryComponent } from './modules/refreshable/category/category.component';
+import { UsersComponent } from './modules/refreshable/users/users.component';
+import { NewUserComponent } from './modules/refreshable/new-user/new-user.component'
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },

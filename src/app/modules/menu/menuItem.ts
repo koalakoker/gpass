@@ -5,11 +5,17 @@ export enum ItemType {
   dropDown
 }
 
+export enum ItemState {
+  enabled,
+  disabled
+}
+
 export class MenuItem {
   
   public type: ItemType;
   public minLevel: number;
   public index: number;
+  public state: ItemState = ItemState.enabled; 
   private static newIndex: number = 0;
 
   constructor(type: ItemType, minLevel: number = 0) {
@@ -33,5 +39,13 @@ export class MenuItem {
 
   isDropDown() {
     return (this.type === ItemType.dropDown);
+  }
+
+  isEnabled() {
+    return (this.state === ItemState.enabled);
+  }
+
+  isDisabled() {
+    return (this.state === ItemState.disabled);
   }
 }

@@ -2,7 +2,8 @@ import { EventEmitter } from '@angular/core';
 
 export interface Refreshable {
     refresh: (string) => Promise<RefreshReturnData>;
-    hasChanged: EventEmitter < void>;
+    queryForAction(string): boolean;
+    hasChanged: EventEmitter <void>;
 }
 
 export class RefreshReturnData {

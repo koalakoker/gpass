@@ -19,7 +19,7 @@
                                 </a>
                                 <div ngbDropdownMenu aria-labelledby="menuItem.id" class="dropdown-menu">
                                     <ng-container *ngFor="let subItem of menuItem.items; let j = index">
-                                        <a  *ngIf="subItem.isAction() "    ngbDropdownItem      (click)="dropDownItemClick(subItem)">{{subItem.name}}</a>
+                                        <a  *ngIf="subItem.isAction() "    ngbDropdownItem      (click)="dropDownItemClick(subItem)" [disabled]="subItem.isDisabled()">{{subItem.name}}</a>
                                         <hr *ngIf="subItem.isDivider()"    ngbDropdownDivider >
                                         <a  *ngIf="subItem.isRouterLink()" ngbDropdownItem [routerLink]="subItem.link"
                                         class="dropdown-item {{subItem.getActivatedStyle()}}">{{subItem.label}}</a>

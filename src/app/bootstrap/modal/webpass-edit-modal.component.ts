@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { WebPass } from '../../modules/webpass';
-import { WebPassListComponent } from '../../web-pass-list/web-pass-list.component'
+import { WebPassListComponent } from '../../modules/refreshable/web-pass-list/web-pass-list.component'
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
 

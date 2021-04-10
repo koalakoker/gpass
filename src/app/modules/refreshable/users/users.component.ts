@@ -1,20 +1,20 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { isConfigForTesting } from '../modules/config'
+import { isConfigForTesting } from '../../config'
 
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
+import * as InputCodes from '../inputCodes';
 
-import { LoginService } from '../services/login.service'
-import { WebService } from '../services/web.service'
-import { User } from '../modules/user'
+import { LoginService } from '../../../services/login.service'
+import { WebService } from '../../../services/web.service'
+import { User } from '../../user'
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import * as Modal from '../bootstrap/modal/modal'
-import { NewUserModalComponent } from '../bootstrap/modal/new-user-modal.component';
-import { ConfirmModalComponent } from '../bootstrap/modal/confirm-modal.component';
-import { UserEditModalComponent } from '../bootstrap/modal/user-edit-modal.component';
+import * as Modal from '../../../bootstrap/modal/modal'
+import { NewUserModalComponent } from '../../../bootstrap/modal/new-user-modal.component';
+import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
+import { UserEditModalComponent } from '../../../bootstrap/modal/user-edit-modal.component';
 
 @Component({
   selector: 'app-users-component',
@@ -41,6 +41,10 @@ export class UsersComponent implements OnInit, Refreshable {
       }
       this.returnUrl = baseAddr + '#/newuser'
     }
+  
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
+  }
 
   ngOnInit(): void {
     this.loginService.checklogged()
@@ -83,7 +87,7 @@ export class UsersComponent implements OnInit, Refreshable {
             reject("Not logged");
           });
       }
-      else if (cmd == InputCodes.BtnPress) {
+      else if (cmd == InputCodes.NewBtnPress) {
         this.onNewFunc();
         ret.childInject = ReturnCodes.None;
         resolve(ret);

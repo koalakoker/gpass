@@ -4,22 +4,22 @@ import { HttpClientModule } from '@angular/common/http'
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { WebPassListComponent } from './web-pass-list/web-pass-list.component';
+import { WebPassListComponent } from './modules/refreshable/web-pass-list/web-pass-list.component';
 import { WebService } from './services/web.service';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
-import { PassGeneratorComponent } from './pass-generator/pass-generator.component';
+import { PassGeneratorComponent } from './modules/refreshable/pass-generator/pass-generator.component';
 
 import { ClipboardModule } from 'ngx-clipboard'
 import { StorageServiceModule } from 'ngx-webstorage-service';
-import { ChangePassComponent } from './change-pass/change-pass.component';
-import { DbCreateBackupTableComponent } from './db-create-backup-table/db-create-backup-table.component';
-import { DbBackupComponent } from './db-backup/db-backup.component';
+import { ChangePassComponent } from './modules/refreshable/change-pass/change-pass.component';
+import { DbCreateBackupTableComponent } from './modules/refreshable/db-create-backup-table/db-create-backup-table.component';
+import { DbBackupComponent } from './modules/refreshable/db-backup/db-backup.component';
 import { PopupMessageComponent } from './popup-message/popup-message.component';
-import { CategoryComponent } from './category/category.component';
+import { CategoryComponent } from './modules/refreshable/category/category.component';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
-import { UsersComponent } from './users/users.component';
-import { NewUserComponent } from './new-user/new-user.component';
+import { UsersComponent } from './modules/refreshable/users/users.component';
+import { NewUserComponent } from './modules/refreshable/new-user/new-user.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MainNavbarComponent} from './bootstrap/navbar/main-navbar';
 import { BasicModalComponent } from './bootstrap/basic/basic-modal/basic-modal.component';

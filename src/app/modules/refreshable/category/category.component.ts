@@ -1,17 +1,17 @@
-import { Category } from './../modules/category';
+import { Category } from '../../category';
 import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
-import * as InputCodes from '../modules/refreshable/inputCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
+import * as InputCodes from '../inputCodes';
 
-import { WebService } from '../services/web.service';
-import { LoginService } from '../services/login.service';
+import { WebService } from '../../../services/web.service';
+import { LoginService } from '../../../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModalComponent } from '../bootstrap/modal/confirm-modal.component';
-import { CategoryEditModalComponent } from '../bootstrap/modal/category-edit-modal.component';
+import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
+import { CategoryEditModalComponent } from '../../../bootstrap/modal/category-edit-modal.component';
 
 @Component({
   selector: 'app-category',
@@ -32,8 +32,8 @@ export class CategoryComponent implements OnInit, Refreshable {
   constructor(private configService: WebService,
               private loginService: LoginService,
               private modalService: NgbModal) {
-  };
-
+  }
+  
   enter() {
     // User is logged show content
     this.configService.getFromUser('category')
@@ -57,6 +57,10 @@ export class CategoryComponent implements OnInit, Refreshable {
         })
       })
       .catch(err => console.log(err));
+  }
+
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
   }
 
   ngOnInit() {
@@ -87,7 +91,7 @@ export class CategoryComponent implements OnInit, Refreshable {
           reject("Not logged");
         });
       }
-      else if (cmd == "btnPress") {
+      else if (cmd == InputCodes.NewBtnPress) {
         this.onNewFunc();
         ret.childInject = ReturnCodes.None;
         resolve(ret);

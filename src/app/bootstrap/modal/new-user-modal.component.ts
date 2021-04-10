@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { usersPage } from 'src/app/modules/refreshable/pagesCodes';
 
 import { User } from '../../modules/user';
 import * as Modal from '../modal/modal'

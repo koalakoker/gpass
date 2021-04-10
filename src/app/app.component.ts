@@ -16,7 +16,7 @@ import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent, LoginState } from './login/login.component';
 
-import { MenuItem } from "./modules/menu/menuItem";
+import { ItemState, MenuItem } from "./modules/menu/menuItem";
 import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
@@ -122,7 +122,7 @@ export class AppComponent implements OnInit {
     });
     this.menuPopulate();
   }
-
+  
   ngOnInit() {}
 
   refreshableHasChanged(event) {
@@ -141,9 +141,9 @@ export class AppComponent implements OnInit {
         }
         this.category = data;
         this.webPassDropDown.items = [];
-        this.webPassDropDown.addItem(new Action("New", this.onNewFunc));
-        this.webPassDropDown.addItem(new Action("+1 Yr. all", this.plusOneYearAll));
-        this.webPassDropDown.addItem(new Action("Logout", this.logOut));
+        this.webPassDropDown.addItem(new Action({name: "New", onClick: this.onNew, state: this.getNewActionState()}));
+        this.webPassDropDown.addItem(new Action({name: "+1 Yr. all", onClick: this.plusOneYearAll}));
+        this.webPassDropDown.addItem(new Action({name: "Logout"    , onClick: this.logOut        }));
         this.webPassDropDown.addItem(new Divider());
         this.webPassDropDown.addItem(this.catDataAll);
         if (this.category) {
@@ -166,18 +166,18 @@ export class AppComponent implements OnInit {
     this.webPassDropDown = dropDown;
 
     dropDown = new DropDown("categoryDropdown", "Category");
-    dropDown.addItem(new Action("New", this.onNewFunc));
+    dropDown.addItem(new Action({name: "New", onClick: this.onNew }));
     this.menu.push(dropDown);
     this.categoryDropDown = dropDown;
 
     dropDown = new DropDown("usersDropdown", "Users", 1);
-    dropDown.addItem(new Action("New", this.onNewFunc));
+    dropDown.addItem(new Action({name: "New", onClick: this.onNew }));
     this.menu.push(dropDown);
     this.userDropDown = dropDown;
 
     dropDown = new DropDown("adminDropdown", "Admin", 1);
-    dropDown.addItem(new Action("Remove master key", this.removeMasterKey));
-    dropDown.addItem(new Action("Test crypt", this.testCrypt));
+    dropDown.addItem(new Action({name: "Remove master key", onClick: this.removeMasterKey}));
+    dropDown.addItem(new Action({name: "Test crypt"       , onClick: this.testCrypt      }));
     this.menu.push(dropDown);
 
     let routerLink: RouterLink;
@@ -194,7 +194,6 @@ export class AppComponent implements OnInit {
     routerLink = new RouterLink('/dbBackup', "Backup", 1);
     this.menu.push(routerLink);
   }
-
 
   dropDownItemClick(item) {
     item.onClick.call(this); // .call is used to pass the context
@@ -279,11 +278,15 @@ export class AppComponent implements OnInit {
     .catch((err) => console.log(err));
   }
 
-  onNewFunc() {
+  onNew(): void {
     // Propagate to child
-    this.routedComponent.refresh(InputCodes.BtnPress);
+    this.routedComponent.refresh(InputCodes.NewBtnPress);
     this.webPassDropDownUpdate();
   }
+
+  getNewActionState(): ItemState {
+    return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
+  } 
 
   onSearch() {
     this.searchString = this.comboInput.textToSort;

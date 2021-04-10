@@ -1,9 +1,9 @@
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
 
-import { PopupMessageComponent } from './../popup-message/popup-message.component';
-import { WebService } from '../services/web.service';
+import { PopupMessageComponent } from '../../../popup-message/popup-message.component';
+import { WebService } from '../../../services/web.service';
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 
 export class dbCreateTableForm {
@@ -23,6 +23,10 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
   @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private httpService: WebService) { }
+
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
+  }
 
   refresh(): Promise<RefreshReturnData> {
     return new Promise<RefreshReturnData>((resolve, reject) => {

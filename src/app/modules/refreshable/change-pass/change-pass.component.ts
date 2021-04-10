@@ -1,13 +1,13 @@
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
 
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { WebService } from '../services/web.service';
-import { WebPass } from '../modules/webpass';
-import { User } from '../modules/user';
-import { GCrypto } from '../modules/gcrypto';
-import { LoginService } from '../services/login.service';
+import { WebService } from '../../../services/web.service';
+import { WebPass } from '../../webpass';
+import { User } from '../../user';
+import { GCrypto } from '../../gcrypto';
+import { LoginService } from '../../../services/login.service';
 
 @Component({
   selector: 'app-change-pass',
@@ -24,11 +24,14 @@ export class ChangePassComponent implements OnInit, Refreshable {
   itemToBeSentNbr: number = 0;
   serverAccess: string = '';
   @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
-
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
   constructor(private dbService: WebService,
               private loginService: LoginService) { }
+
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
+  }
 
   ngOnInit() {
   }

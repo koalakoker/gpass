@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
-import { WebService } from '../services/web.service';
-import { PopupMessageComponent } from '../popup-message/popup-message.component';
+import { WebService } from '../../../services/web.service';
+import { PopupMessageComponent } from '../../../popup-message/popup-message.component';
 
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
 
 export class dbBackupForm {
   chiper_key  : string = '';
@@ -19,6 +19,10 @@ export class dbBackupForm {
 export class DbBackupComponent implements OnInit, Refreshable {
 
   constructor(private httpService: WebService) { }
+
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
+  }
 
   url: string = "php/db_backup.php";
   val: dbBackupForm = new dbBackupForm();

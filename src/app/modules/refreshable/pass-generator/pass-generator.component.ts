@@ -1,9 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import  * as CryptoJS from '../../../node_modules/crypto-js'
+import  * as CryptoJS from 'crypto-js'
 
-import { Refreshable, RefreshReturnData } from '../modules/refreshable/refreshable';
-import * as PageCodes from '../modules/refreshable/pagesCodes'
-import * as ReturnCodes from '../modules/refreshable/returnCodes';
+import { Refreshable, RefreshReturnData } from '../refreshable';
+import * as PageCodes from '../pagesCodes'
+import * as ReturnCodes from '../returnCodes';
 
 @Component({
   selector: 'app-pass-generator',
@@ -29,6 +29,10 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
   @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
 
   constructor() { }
+
+  queryForAction(string: any): boolean {
+    throw new Error('Method not implemented.');
+  }
 
   ngOnInit() {
   }
