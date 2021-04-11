@@ -59,8 +59,10 @@ export class CategoryComponent implements OnInit, Refreshable {
       .catch(err => console.log(err));
   }
 
-  queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+  queryForAction(action: any): boolean {
+    if (action === InputCodes.NewBtnPress) {
+      return (this.isNewPosible())
+    }
   }
 
   ngOnInit() {
@@ -100,6 +102,10 @@ export class CategoryComponent implements OnInit, Refreshable {
         reject("Wrong command");
       }
     })
+  }
+
+  isNewPosible(): boolean {
+    return (this.loginService.userPassword !== "");
   }
 
   onNewFunc() {

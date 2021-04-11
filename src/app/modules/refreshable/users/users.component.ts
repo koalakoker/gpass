@@ -43,7 +43,7 @@ export class UsersComponent implements OnInit, Refreshable {
     }
   
   queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
 
   ngOnInit(): void {

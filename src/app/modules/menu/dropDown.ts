@@ -2,9 +2,9 @@ import { ItemType, MenuItem } from "./menuItem";
 
 export class DropDown extends MenuItem {
 
+  private items: Array<MenuItem> = [];
   public id: string;
   public name: string;
-  public items: Array<MenuItem> = [];
 
   constructor(id: string, name: string, minLevel: number = 0) {
     super(ItemType.dropDown, minLevel);
@@ -13,8 +13,16 @@ export class DropDown extends MenuItem {
     this.minLevel = minLevel;
   }
 
-  public addItem(newItem: MenuItem) {
+  public getItems(): Array<MenuItem> {
+    return this.items;
+  }
+
+  public addItem(newItem: MenuItem): void {
     this.items.push(newItem);
+  }
+
+  public clear(): void {
+    this.items = [];
   }
 
 }

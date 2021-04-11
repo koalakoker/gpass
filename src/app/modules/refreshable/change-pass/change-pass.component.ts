@@ -30,7 +30,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
               private loginService: LoginService) { }
 
   queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
 
   ngOnInit() {

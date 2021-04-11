@@ -25,7 +25,7 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
   constructor(private httpService: WebService) { }
 
   queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
 
   refresh(): Promise<RefreshReturnData> {

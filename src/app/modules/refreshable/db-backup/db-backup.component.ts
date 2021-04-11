@@ -21,7 +21,7 @@ export class DbBackupComponent implements OnInit, Refreshable {
   constructor(private httpService: WebService) { }
 
   queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
 
   url: string = "php/db_backup.php";

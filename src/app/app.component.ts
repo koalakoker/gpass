@@ -21,7 +21,6 @@ import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
-import { emit } from 'process';
 
 enum AppState {
   notLogged,
@@ -35,30 +34,24 @@ enum AppState {
 })
 export class AppComponent implements OnInit {
 
+  private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
-
+  
   gCrypto: GCrypto;
-
   errorMessage: string = '';
   message: string = '';
   DebugTxt: string = "";
   interval;
-  private routedComponent: Refreshable;
   childInjected: string = "";
   pageCode: string = "";
   param = "";
   category: Category[];
-  
   activeId = 0;
   collapsed = true;
-  
   searchString: string = "";
-  
   appState : AppState = AppState.notLogged;
-  
   catDataAll: RouterLink = new RouterLink("/list/0", "All", 0, true);
-  
   menu : Array<MenuItem> = [];
   webPassDropDown: DropDown;
   categoryDropDown: DropDown;
@@ -91,7 +84,7 @@ export class AppComponent implements OnInit {
             case PageCodes.webPassPage:
               this.webPassDropDownUpdate()
                 .then(() => {
-                  for (let item of this.webPassDropDown.items) {
+                  for (let item of this.webPassDropDown.getItems()) {
                     if (item instanceof RouterLink) {
                       if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
                         item.activated = true;
@@ -103,6 +96,7 @@ export class AppComponent implements OnInit {
                 });
               break;
             case PageCodes.categoryPage:
+              this.categoryDropDownUpdate();
               break;
             case PageCodes.usersPage:
               break;
@@ -139,7 +133,7 @@ export class AppComponent implements OnInit {
             data.push(elem);
           }
           this.category = data;
-          this.webPassDropDown.items = [];
+          this.webPassDropDown.clear();
           this.webPassDropDown.addItem(new Action({name: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
           this.webPassDropDown.addItem(new Action({name: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
           this.webPassDropDown.addItem(new Action({name: "Logout"    , onClick: this.logOut         }));
@@ -148,7 +142,7 @@ export class AppComponent implements OnInit {
           if (this.category) {
             this.category.forEach(cat => {
               let newCatList = new RouterLink('/list/' + cat.id, cat.name, 0, false);
-              this.webPassDropDown.items.push(newCatList);
+              this.webPassDropDown.addItem(newCatList);
             });
           }
           resolve();
@@ -159,6 +153,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  categoryDropDownUpdate(): void {
+    this.categoryDropDown.clear();;
+    this.categoryDropDown.addItem(new Action({ name: "New", onClick: this.onNew, state: this.getNewActionState()}));
+  }
+
   menuPopulate() {
     let dropDown: DropDown;
 
@@ -167,7 +166,6 @@ export class AppComponent implements OnInit {
     this.webPassDropDown = dropDown;
 
     dropDown = new DropDown("categoryDropdown", "Category");
-    dropDown.addItem(new Action({name: "New", onClick: this.onNew }));
     this.menu.push(dropDown);
     this.categoryDropDown = dropDown;
 
@@ -290,7 +288,11 @@ export class AppComponent implements OnInit {
   }
 
   getNewActionState(): ItemState {
-    return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
+    try {
+      return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
   } 
 
   onSearch() {
@@ -299,7 +301,11 @@ export class AppComponent implements OnInit {
   }
 
   getPlustOneYearAllState() {
-    return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll)?ItemState.enabled:ItemState.disabled;
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll)?ItemState.enabled:ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
   }
   
   plusOneYearAll() {

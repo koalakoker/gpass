@@ -31,7 +31,7 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
   constructor() { }
 
   queryForAction(string: any): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
 
   ngOnInit() {
