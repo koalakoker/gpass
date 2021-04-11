@@ -21,6 +21,7 @@ import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
+import { emit } from 'process';
 
 enum AppState {
   notLogged,
@@ -88,15 +89,18 @@ export class AppComponent implements OnInit {
 
           switch (returnData.pageCode) {
             case PageCodes.webPassPage:
-              for (let item of this.webPassDropDown.items) {
-                if (item instanceof RouterLink) {
-                  if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
-                    item.activated = true;
-                  } else {
-                    item.activated = false;
+              this.webPassDropDownUpdate()
+                .then(() => {
+                  for (let item of this.webPassDropDown.items) {
+                    if (item instanceof RouterLink) {
+                      if ((item.link === val.url) || ((val.url === '/') && (item.label == "All"))) {
+                        item.activated = true;
+                      } else {
+                        item.activated = false;
+                      }
+                    }
                   }
-                }
-              }
+                });
               break;
             case PageCodes.categoryPage:
               break;
@@ -125,37 +129,34 @@ export class AppComponent implements OnInit {
   
   ngOnInit() {}
 
-  refreshableHasChanged(event) {
-    console.log("Warning this have to be done only for category update");
-    this.webPassDropDownUpdate();
-  }
-
-  webPassDropDownUpdate() {
-    // Get Category list
-    this.configService.getFromUser('category')
-      .then((json: JSON) => {
-        var data: Array<Category> = [];
-        for (var i in json) {
-          let elem: Category = Object.assign(new Category(), json[i]);
-          data.push(elem);
-        }
-        this.category = data;
-        this.webPassDropDown.items = [];
-        this.webPassDropDown.addItem(new Action({name: "New", onClick: this.onNew, state: this.getNewActionState()}));
-        this.webPassDropDown.addItem(new Action({name: "+1 Yr. all", onClick: this.plusOneYearAll}));
-        this.webPassDropDown.addItem(new Action({name: "Logout"    , onClick: this.logOut        }));
-        this.webPassDropDown.addItem(new Divider());
-        this.webPassDropDown.addItem(this.catDataAll);
-        if (this.category) {
-          this.category.forEach(cat => {
-            let newCatList = new RouterLink('/list/' + cat.id, cat.name, 0, false);
-            this.webPassDropDown.items.push(newCatList);
-          });
-        }
-      })
-      .catch(err => {
-        this.printErrorMessage(JSON.stringify(err));
-      });
+  webPassDropDownUpdate(): Promise<void> {
+    return new Promise<void> ((resolve,reject) => {
+      this.configService.getFromUser('category')
+        .then((json: JSON) => {
+          var data: Array<Category> = [];
+          for (var i in json) {
+            let elem: Category = Object.assign(new Category(), json[i]);
+            data.push(elem);
+          }
+          this.category = data;
+          this.webPassDropDown.items = [];
+          this.webPassDropDown.addItem(new Action({name: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
+          this.webPassDropDown.addItem(new Action({name: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
+          this.webPassDropDown.addItem(new Action({name: "Logout"    , onClick: this.logOut         }));
+          this.webPassDropDown.addItem(new Divider());
+          this.webPassDropDown.addItem(this.catDataAll);
+          if (this.category) {
+            this.category.forEach(cat => {
+              let newCatList = new RouterLink('/list/' + cat.id, cat.name, 0, false);
+              this.webPassDropDown.items.push(newCatList);
+            });
+          }
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   menuPopulate() {
@@ -202,6 +203,12 @@ export class AppComponent implements OnInit {
   public setRoutedComponent(componentRef: Refreshable) {
     this.routedComponent = componentRef;
     componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
+  }
+
+  refreshableHasChanged(event) {
+    if (event === PageCodes.webPassPage) {
+      this.webPassDropDownUpdate();
+    }
   }
 
   tabChange(changeEvent: NgbNavChangeEvent) {
@@ -279,9 +286,7 @@ export class AppComponent implements OnInit {
   }
 
   onNew(): void {
-    // Propagate to child
     this.routedComponent.refresh(InputCodes.NewBtnPress);
-    this.webPassDropDownUpdate();
   }
 
   getNewActionState(): ItemState {
@@ -293,6 +298,10 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('/search/' + this.searchString);
   }
 
+  getPlustOneYearAllState() {
+    return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll)?ItemState.enabled:ItemState.disabled;
+  }
+  
   plusOneYearAll() {
     // Propagate to child
     this.routedComponent.refresh(InputCodes.PlusOneYearAll);

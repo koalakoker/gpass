@@ -17,7 +17,7 @@ export class NewUserComponent implements OnInit, Refreshable {
   username: string;
   userhash: string;
   masterhash: string;
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   loggedTxt: string = "Verify invitation details";
 
   constructor(

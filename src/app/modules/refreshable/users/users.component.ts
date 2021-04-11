@@ -25,7 +25,7 @@ export class UsersComponent implements OnInit, Refreshable {
   show: boolean = false;
   user: User[];
   selectedUser: User;
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   returnUrl: string = '';
   

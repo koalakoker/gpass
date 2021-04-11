@@ -34,16 +34,13 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   list: WebPass[];
   category: Category[];
   relWebCat: RelWebCat[];
-  
   selectedWebPass: WebPass;
   errorMessage: string = '';
   message: string = '';
   interval;
-  
   needReenter: boolean = false;
-  DebugTxt = "";
-
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  DebugTxt: string = "";
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(
     private modalService: NgbModal,
@@ -69,9 +66,11 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then(() => {
-          this.getWebPassList();    
-          ret.childInject = ReturnCodes.ButtonInsertWebPass;  
-          resolve(ret);
+          this.getWebPassList()
+          .then(() => {
+            ret.childInject = ReturnCodes.ButtonInsertWebPass;  
+            resolve(ret);
+          });    
         })
         .catch((err) => {
           this.list = [];
@@ -199,14 +198,22 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     if (action === InputCodes.NewBtnPress) {
       return (this.isNewPosible())
     }
+    if (action === InputCodes.PlusOneYearAll) {
+
+      return (this.isPlusOneYearPossible());
+    }
   }
 
   update(): void {
     console.log("Notyfy the parente webpasslist->app");
   }
 
-  isNewPosible() : boolean {
+  isNewPosible(): boolean {
     return (this.getUserPassword() !== "");
+  }
+
+  isPlusOneYearPossible(): boolean {
+    return (this.list.length > 0);
   }
 
   onNew() {
@@ -220,6 +227,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         webPass.id = +json;
         webPass.decrypt(userPassword);
         this.list.unshift(webPass);
+        this.hasChanged.emit(PageCodes.webPassPage);
       }, (err) => {
         console.log(err);
       });
@@ -246,6 +254,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     this.webService.delete(webPass.id, 'gpass')
       .then(() => {
       this.list.splice(i, 1);
+        this.hasChanged.emit(PageCodes.webPassPage);
     }, err => console.log(err));
     
   }

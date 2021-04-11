@@ -27,7 +27,7 @@ export class DbBackupComponent implements OnInit, Refreshable {
   url: string = "php/db_backup.php";
   val: dbBackupForm = new dbBackupForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   ngOnInit() {
   }

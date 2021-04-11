@@ -26,7 +26,7 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
   // 2^48 = 0x1000000000000 = (dec)281474976710656, max must be less than this.
   MAXMAX = 0x1000000000000;
 
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() { }
 

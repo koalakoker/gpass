@@ -20,7 +20,7 @@ export class DbCreateBackupTableComponent implements OnInit, Refreshable {
   url: string = "php/db_create_table_backup.php";
   val: dbCreateTableForm = new dbCreateTableForm();
   @ViewChild('popupMessage') popupMessage: PopupMessageComponent;
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private httpService: WebService) { }
 

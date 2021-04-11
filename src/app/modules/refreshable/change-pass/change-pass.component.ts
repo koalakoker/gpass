@@ -18,12 +18,12 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   new_password        : string = '';
   repeat_new_password : string = '';
-  valid: boolean = false;
+  valid: boolean = true;
   message: string = '';
   interval;
   itemToBeSentNbr: number = 0;
   serverAccess: string = '';
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
   constructor(private dbService: WebService,

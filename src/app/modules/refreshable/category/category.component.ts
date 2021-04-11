@@ -27,7 +27,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   errorMessage: string = '';
   message: string = '';
   interval;
-  @Output() hasChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private configService: WebService,
               private loginService: LoginService,
