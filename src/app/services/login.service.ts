@@ -23,8 +23,8 @@ export class LoginService {
 
   constructor(private sessionService: SessionService,
               private localService: LocalService,
-              private configService: WebService) {
-    this.gCrypto = new GCrypto(this.configService);
+              private webService: WebService) {
+    this.gCrypto = new GCrypto(this.webService);
   }
 
   async decryptList(strList: string[]) {
@@ -42,7 +42,7 @@ export class LoginService {
     params["return_url"] = strListCrypt[1];
     
     return new Promise<boolean>((resolve, reject) => {
-      this.configService.email(params)
+      this.webService.email(params)
         .then((answer: JSON) => {
           resolve(answer["done"]);
         })
@@ -78,7 +78,7 @@ export class LoginService {
     var userHash         = strListCrypt[3];
     
     return new Promise<number>((resolve, reject) => {
-      this.configService.login(chipher_password, chipher_hash, userName, userHash)
+      this.webService.login(chipher_password, chipher_hash, userName, userHash)
         .then((answer: JSON) => {
           this.logged = answer["logged"];
           
@@ -87,9 +87,9 @@ export class LoginService {
             this.level = answer["level"];
             
             // answers can be used if session variable is not available in the server
-            this.configService.setTesting_chiper(answer["encrypted"]);
-            this.configService.setTesting_userid(this.userid);
-            this.configService.setTesting_level(this.level);
+            this.webService.setTesting_chiper(answer["encrypted"]);
+            this.webService.setTesting_userid(this.userid);
+            this.webService.setTesting_level(this.level);
 
             this.sessionService.setKey('ChipherPassword', this.chipher_password);
             this.sessionService.setKey('ChipherHash'    , this.chipher_hash);
@@ -128,6 +128,11 @@ export class LoginService {
     });
   }
 
+  async getResetPassState(): Promise<boolean> {
+    let user: JSON = await this.webService.get("users", this.userid);
+    return user["resetpass"] === "0" ? false : true;
+  }
+  
   checklogged(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (this.check()) {

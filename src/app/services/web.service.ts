@@ -125,10 +125,14 @@ export class WebService {
     return this.api(this.loginAddr, params);
   }
 
-  get(table: string): Promise<JSON> {
+  get(table: string, id?: number): Promise<JSON> {
     var params = {};
     params = this.appendTestingsParams(params);
-    return this.api(this.getAddr + '/' + table, params);
+    var url: string = this.getAddr + '/' + table;
+    if (id !== undefined) {
+      url +=  '/' + id;
+    } 
+    return this.api(url, params, 'GET');
   }
 
   getFromUser(table: string): Promise<JSON> {
