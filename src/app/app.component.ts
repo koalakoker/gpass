@@ -16,6 +16,7 @@ import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent, LoginState } from './login/login.component';
 
+import { Menu } from "./modules/menu/menu"
 import { ItemState, MenuItem } from "./modules/menu/menuItem";
 import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
@@ -25,6 +26,30 @@ import { RouterLink } from './modules/menu/routerLink';
 enum AppState {
   notLogged,
   logged
+}
+
+enum MenuItemTag {
+  webPass                  = "webPass",
+  webPass_all              = "webPass_all",
+  webPass_new              = "webPass_new",
+  webPass_plusOneYearAll   = "webPass_plusOneYearAll",
+  webPass_logOut           = "webPass_logOut",
+  webPass_divider1         = "webPass_divider1",
+
+  category                 = "category",
+  category_new             = "category_new",
+
+  users                    = "users",
+  users_new                = "users_new",
+
+  admin                    = "admin",
+  admin_removeMasterKey    = "removeMasterKey",
+  admin_test               = "test",
+
+  routerLink_changePass    = "routerLink_changePass",
+  routerLink_newPass       = "routerLink_newPass",
+  routerLink_dbCreateTable = "routerLink_dbCreateTable",
+  routerLink_dbBackup      = "routerLink_dbBackup"
 }
 
 @Component({
@@ -51,8 +76,8 @@ export class AppComponent implements OnInit {
   collapsed = true;
   searchString: string = "";
   appState : AppState = AppState.notLogged;
-  catDataAll: RouterLink = new RouterLink("/list/0", "All", 0, true);
-  menu : Array<MenuItem> = [];
+  catDataAll: RouterLink = new RouterLink(MenuItemTag.webPass_all, "/list/0", "All", 0, true);
+  menu: Menu = new Menu();
   webPassDropDown: DropDown;
   categoryDropDown: DropDown;
   userDropDown: DropDown;
@@ -73,14 +98,7 @@ export class AppComponent implements OnInit {
   }
 
   navigationEnd(event: NavigationEnd) {
-    this.loginService.getResetPassState()
-      .then((state) => {
-        if (state) {
-          this.router.navigateByUrl('/changePass');
-        } else {
-          this.componentRefresh(event);
-        }
-      })
+    this.componentRefresh(event);
   }
 
   componentRefresh(event: NavigationEnd): void {
@@ -109,14 +127,7 @@ export class AppComponent implements OnInit {
             break;
           case PageCodes.usersPage:
             break;
-          case PageCodes.newUserPage:
-            if (returnData.childInject == ReturnCodes.LoginValid) {
-              this.userLogged();
-              this.loginComponent.state = LoginState.logged;
-              this.router.navigateByUrl('/list/0');
-            }
-            break;
-
+          
           default:
 
             break;
@@ -140,14 +151,14 @@ export class AppComponent implements OnInit {
           }
           this.category = data;
           this.webPassDropDown.clear();
-          this.webPassDropDown.addItem(new Action({name: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
-          this.webPassDropDown.addItem(new Action({name: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
-          this.webPassDropDown.addItem(new Action({name: "Logout"    , onClick: this.logOut         }));
-          this.webPassDropDown.addItem(new Divider());
+          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
+          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_plusOneYearAll , label: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
+          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_logOut         , label: "Logout"    , onClick: this.logOut         }));
+          this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider1));
           this.webPassDropDown.addItem(this.catDataAll);
           if (this.category) {
             this.category.forEach(cat => {
-              let newCatList = new RouterLink('/list/' + cat.id, cat.name, 0, false);
+              let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat.id, cat.name, 0, false);
               this.webPassDropDown.addItem(newCatList);
             });
           }
@@ -161,43 +172,67 @@ export class AppComponent implements OnInit {
 
   categoryDropDownUpdate(): void {
     this.categoryDropDown.clear();;
-    this.categoryDropDown.addItem(new Action({ name: "New", onClick: this.onNew, state: this.getNewActionState()}));
+    this.categoryDropDown.addItem(new Action({ tag: MenuItemTag.category_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
   }
 
   menuPopulate() {
     let dropDown: DropDown;
 
-    dropDown = new DropDown("webPassDropdown", "WebPass");
+    dropDown = new DropDown(MenuItemTag.webPass, "WebPass");
     this.menu.push(dropDown);
     this.webPassDropDown = dropDown;
 
-    dropDown = new DropDown("categoryDropdown", "Category");
+    dropDown = new DropDown(MenuItemTag.category, "Category");
     this.menu.push(dropDown);
     this.categoryDropDown = dropDown;
 
-    dropDown = new DropDown("usersDropdown", "Users", 1);
-    dropDown.addItem(new Action({name: "New", onClick: this.onNew }));
+    dropDown = new DropDown(MenuItemTag.users, "Users", 1);
+    dropDown.addItem(new Action({tag: MenuItemTag.users_new, label: "New", onClick: this.onNew }));
     this.menu.push(dropDown);
     this.userDropDown = dropDown;
 
-    dropDown = new DropDown("adminDropdown", "Admin", 1);
-    dropDown.addItem(new Action({name: "Remove master key", onClick: this.removeMasterKey}));
-    dropDown.addItem(new Action({name: "Test crypt"       , onClick: this.testCrypt      }));
+    dropDown = new DropDown(MenuItemTag.admin, "Admin", 1);
+    dropDown.addItem(new Action({tag: MenuItemTag.admin_removeMasterKey , label: "Remove master key", onClick: this.removeMasterKey}));
+    dropDown.addItem(new Action({tag: MenuItemTag.admin_test            , label: "Test"             , onClick: this.test      }));
     this.menu.push(dropDown);
 
     let routerLink: RouterLink;
 
-    routerLink = new RouterLink('/changePass', "Change password");
+    routerLink = new RouterLink(MenuItemTag.routerLink_changePass, '/changePass', "Change password");
     this.menu.push(routerLink);
 
-    routerLink = new RouterLink('/newPass', "New password");
+    routerLink = new RouterLink(MenuItemTag.routerLink_newPass, '/newPass', "New password");
     this.menu.push(routerLink);
 
-    routerLink = new RouterLink('/dbCreateTable', "CreateBackupTable", 1);
+    routerLink = new RouterLink(MenuItemTag.routerLink_dbCreateTable, '/dbCreateTable', "CreateBackupTable", 1);
     this.menu.push(routerLink);
 
-    routerLink = new RouterLink('/dbBackup', "Backup", 1);
+    routerLink = new RouterLink(MenuItemTag.routerLink_dbBackup, '/dbBackup', "Backup", 1);
     this.menu.push(routerLink);
+  }
+
+  menuHideAllButLogout(): void {
+    this.webPassDropDown.getItems().forEach(item => {
+      if (item.tag !== MenuItemTag.webPass_logOut) {
+        item.visible = false;
+      }
+    });
+
+    this.menu.forEach(item => {
+      if (item.tag !== MenuItemTag.webPass) {
+        item.visible = false;
+      }
+    });
+  }
+
+  menuShowAll(): void {
+    this.webPassDropDown.getItems().forEach(item => {
+      item.visible = true;
+    });
+
+    this.menu.forEach(item => {
+      item.visible = true;
+    });
   }
 
   dropDownItemClick(item) {
@@ -214,6 +249,8 @@ export class AppComponent implements OnInit {
       this.webPassDropDownUpdate();
     }
     if (event === PageCodes.changePass) {
+      this.userLogged();
+      this.loginComponent.state = LoginState.logged;
       this.router.navigateByUrl("/list/0");
     }
   }
@@ -249,17 +286,23 @@ export class AppComponent implements OnInit {
     return this.appState == AppState.logged;
   }
 
-  userLogged() {
-    this.routedComponent.refresh(InputCodes.Refresh)
-      .then((returnData) => {
-        this.childInjected = returnData.childInject;
-        this.pageCode = returnData.pageCode;
-      })
-      .catch((err) => {
-        console.log("Promise error: " + err);
-      });
-    this.webPassDropDownUpdate();
-    this.appState = AppState.logged;
+  async userLogged() {
+    try {
+      let returnData = await this.routedComponent.refresh(InputCodes.Refresh);  
+      this.childInjected = returnData.childInject;
+      this.pageCode = returnData.pageCode;
+      this.webPassDropDownUpdate();
+      this.appState = AppState.logged;
+      let isPassInResetState = await this.loginService.isPassInResetState();
+      if (isPassInResetState) {
+        this.menuHideAllButLogout();
+        this.router.navigateByUrl('/changePass');
+      } else {
+        this.menuShowAll();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   logOut() {
@@ -267,8 +310,7 @@ export class AppComponent implements OnInit {
     .then(
       (answer: JSON) => {
         if (answer["error"] === "Session destroyed") {
-          this.loginService.clearSession();
-          this.loginService.clearLocal();
+          this.loginService.clear();
           
           // If master key is not present state becomes insert master key
           if (this.loginService.isMasterKeyEmpty()) {
@@ -327,29 +369,16 @@ export class AppComponent implements OnInit {
     this.logOut();
   }
 
-  checkRights(minLevel: number) {
-    return this.loginService.level >= minLevel ? true : false;
+  isItemVisible(menuItem: MenuItem): boolean {
+    return this.checkRights(menuItem.minLevel) && menuItem.visible;
   }
 
-  testCrypt() {
-    // console.log("Test crypt");
-    // let key = "mia nonnina";
-    // let cry = GCrypto.crypt("Testo da criptare",key);
-    // console.log(cry);
-    // let decry = GCrypto.decrypt(cry, key);
-    // console.log(decry);
-    let strList: string[] = [];
-    strList.push("Testo da criptare");
-    this.gCrypto.promise_cryptText(strList)
-      .then( strListCryp => {
-        console.log(strListCryp);
-        this.gCrypto.promise_deCryptText(strListCryp)
-          .then( strListDecript => {
-            console.log(strListDecript);
-          })
-          .catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
+  checkRights(minLevel: number) {
+    return this.loginService.checkRights(minLevel);
+  }
+
+  test() {
+    console.log("Admin test");
   }
 
 }

@@ -31,7 +31,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   searchStr: string = "";
   webPassIndexSelected: number;
   g: GCrypto;
-  list: WebPass[];
+  webPassList: WebPass[] = [];
   category: Category[];
   relWebCat: RelWebCat[];
   selectedWebPass: WebPass;
@@ -73,8 +73,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
           });    
         })
         .catch((err) => {
-          this.list = [];
-          reject(err);
+          this.webPassList = [];
+          reject("web-pass-list(refresh)->" + err);
         })
       } else if (cmd == InputCodes.NewBtnPress) {
         this.onNew();
@@ -90,11 +90,11 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
           resolve(ret);
         })
         .catch ((err) => {
-          this.list = [];
+          this.webPassList = [];
           reject(err);
         })
       } else if (cmd == InputCodes.PlusOneYearAll) {
-        this.list.forEach((web) => {
+        this.webPassList.forEach((web) => {
           web.plusOneYear();
         })
         ret.childInject = ReturnCodes.None;
@@ -113,13 +113,13 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.relWebCat.forEach((rel) => {
         filtWebId.push(rel.id_web);
       });
-      this.list = this.list.filter((web) => {
+      this.webPassList = this.webPassList.filter((web) => {
         return this.include(filtWebId, web.id);
       });
     } else {
       if (this.searchStr != null) {
         if (this.searchStr != "") {
-          this.list = this.list.filter((web) => {
+          this.webPassList = this.webPassList.filter((web) => {
             return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
           });
         }
@@ -137,12 +137,12 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
           data.push(elem);
         }
         // Decode and create a new WebPass list
-        this.list = data.map((x) => {
+        this.webPassList = data.map((x) => {
           const w = new WebPass(x);
           w.decrypt(this.loginService.userPassword);
           return w;
         }, this);
-        this.list.sort((a, b) => {
+        this.webPassList.sort((a, b) => {
           if (a.name < b.name) {
             return -1;
           } else {
@@ -213,7 +213,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   isPlusOneYearPossible(): boolean {
-    return (this.list.length > 0);
+    return (this.webPassList.length > 0);
   }
 
   onNew() {
@@ -226,7 +226,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       .then((json: JSON) => {
         webPass.id = +json;
         webPass.decrypt(userPassword);
-        this.list.unshift(webPass);
+        this.webPassList.unshift(webPass);
         this.hasChanged.emit(PageCodes.webPassPage);
       }, (err) => {
         console.log(err);
@@ -250,10 +250,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   onButtonRemove(i: number) {
-    const webPass = this.list[i];
+    const webPass = this.webPassList[i];
     this.webService.delete(webPass.id, 'gpass')
       .then(() => {
-      this.list.splice(i, 1);
+      this.webPassList.splice(i, 1);
         this.hasChanged.emit(PageCodes.webPassPage);
     }, err => console.log(err));
     
@@ -277,7 +277,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   isExpired(i: number): string {
-    let str = (this.list[i].isExpired()===true) ? '<expired>' : '';
+    let str = (this.webPassList[i].isExpired()===true) ? '<expired>' : '';
     return str;
   }
 
@@ -287,7 +287,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     let en: boolean;
     switch (name) {
       case 'id':
-        const id = this.list[index].id;
+        const id = this.webPassList[index].id;
         if (id) {
           str = id.toString();
         }
@@ -295,7 +295,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         str = str ? str : name;
         break;
       case 'name':
-        const n = this.list[index].name;
+        const n = this.webPassList[index].name;
         if (n) {
           str = n.toString();
         }
@@ -303,27 +303,27 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         str = str ? str : name;
         break;
       case 'url':
-        str = this.list[index].url;
+        str = this.webPassList[index].url;
         en = str ? true : false;
         str = str ? str : name;
         break;
       case 'username':
-        str = this.list[index].username;
+        str = this.webPassList[index].username;
         en = str ? true : false;
         str = str ? str : name;
         break;
       case 'pass':
-        str = this.list[index].pass;
+        str = this.webPassList[index].pass;
         en = str ? true : false;
         str = str ? str : name;
         break;
       case 'registrationDate':
-        str = this.list[index].registrationDate;
+        str = this.webPassList[index].registrationDate;
         en = str ? true : false;
         str = str ? str : name;
         break;
       case 'expirationDate':
-        str = this.list[index].expirationDate;
+        str = this.webPassList[index].expirationDate;
         en = str ? true : false;
         str = str ? str : name;
         break;
@@ -355,7 +355,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   openEditModal(i: number) {
     const modalRef = this.modalService.open(WebPassEditModalComponent);
-    modalRef.componentInstance.webpass = this.list[i];
+    modalRef.componentInstance.webpass = this.webPassList[i];
     modalRef.componentInstance.category = this.category;
     modalRef.componentInstance.webpassList = this;
     modalRef.componentInstance.title = this.getUrl('name', i).value;

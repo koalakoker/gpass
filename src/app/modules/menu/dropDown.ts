@@ -3,13 +3,12 @@ import { ItemType, MenuItem } from "./menuItem";
 export class DropDown extends MenuItem {
 
   private items: Array<MenuItem> = [];
-  public id: string;
-  public name: string;
+  public label: string;
 
-  constructor(id: string, name: string, minLevel: number = 0) {
-    super(ItemType.dropDown, minLevel);
-    this.id = id;
-    this.name = name;
+  constructor(tag: string, label: string, minLevel: number = 0) {
+    super(ItemType.dropDown, tag, minLevel);
+    this.tag = tag;
+    this.label = label;
     this.minLevel = minLevel;
   }
 

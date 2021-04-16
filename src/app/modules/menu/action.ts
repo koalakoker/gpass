@@ -1,7 +1,8 @@
 import { MenuItem, ItemType, ItemState } from "./menuItem";
 
 interface ActionParameters {
-  name     : string;
+  tag      : string;
+  label    : string;
   onClick  : any;
   minLevel?: number;
   state   ?: ItemState;
@@ -9,12 +10,12 @@ interface ActionParameters {
 
 export class Action extends MenuItem {
 
-  public name: string;
+  public label: string;
   public onClick: any;
 
-  constructor({name, onClick, minLevel = 0, state = ItemState.enabled}: ActionParameters) {
-    super(ItemType.action, minLevel);
-    this.name = name;
+  constructor({tag, label, onClick, minLevel = 0, state = ItemState.enabled}: ActionParameters) {
+    super(ItemType.action, tag, minLevel);
+    this.label = label;
     this.onClick = onClick;
     this.state = state;
   }

@@ -18,7 +18,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   new_password        : string = '';
   repeat_new_password : string = '';
-  valid: boolean = true;
+  valid: boolean = false;
   message: string = '';
   interval;
   itemToBeSentNbr: number = 0;
@@ -45,13 +45,30 @@ export class ChangePassComponent implements OnInit, Refreshable {
     })
   }
 
+  checkRights(minLevel: number) {
+    return this.loginService.checkRights(minLevel);
+  }
+
   async changeUserPass(new_password: string) {
-    var answer: JSON = await this.updateUserHashInDB(new_password);
-    if (answer["result"] != "fail") {
-      var list: WebPass[] = await this.getWebPass();
-      await this.cryptWebPassAndUpdateDB(list);
-      this.loginService.updateUserPassword(new_password);
-      this.hasChanged.emit(PageCodes.changePass);
+    try {
+      var answer: JSON = await this.updateUserHashInDB(new_password);
+      if (answer["result"] === "fail") {
+        throw new Error("change-pass.component(changeUserPass)->updateUserInDB fails");
+      } else {
+        var list: WebPass[] = await this.getWebPass();
+        await this.cryptWebPassAndUpdateDB(list);
+        this.loginService.updateUserPassword(new_password);
+        this.hasChanged.emit(PageCodes.changePass);
+        if (new_password !== "") {
+          this.sendMessage("Password has modified", 3000);
+        } else {
+          this.sendMessage("Password has been reset", 3000);
+        }
+      }
+      this.sendMessage("Error updating db", 3000);
+    } catch (error) {
+      console.log(error);
+      this.sendMessage("Error updating db", 3000);
     }
   }
 
@@ -62,7 +79,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
     var paramsToBeUpdated = {
       "id": this.loginService.userid,
       "userhash": user.userhash,
-      "resetpass": 0
+      "resetpass": newPassword === '' ? 1 : 0
     };
     return this.dbService.updateUser(paramsToBeUpdated);
   }
@@ -92,6 +109,9 @@ export class ChangePassComponent implements OnInit, Refreshable {
   cryptWebPassAndUpdateDB(list: WebPass[]): Promise<void> {
     // Cript the values of the DB with the new pass
     return new Promise<void>((resolve, reject) => {
+      if (list.length === 0) {
+        resolve();
+      }
       this.itemToBeSentNbr = list.length;
       list.forEach(webPass => {
         const newWebPass = new WebPass(webPass);
@@ -123,48 +143,64 @@ export class ChangePassComponent implements OnInit, Refreshable {
     })
   }
 
-  onChangePass() {
-    this.changeUserPass(this.new_password)
-    .catch( err => {
+  onChangePassButtonClick(): void {
+    if (this.insertedValuesAreValid()) {
+      this.changeUserPass(this.new_password)
+        .catch( err => {
+          console.log(err);
+        });
+    }
+  }
+
+  onResetPassButtonClick(): void {
+    this.changeUserPass("")
+      .catch(err => {
         console.log(err);
-        this.sendMessage('The <mark><i>password is not correct</i></mark>', 3000);
       });
   }
 
-  validate() {
-    /* Valid condition */
-    if ((this.new_password       !=='') &&
-        (this.repeat_new_password!=='') &&
-        (this.new_password === this.repeat_new_password)) {
+  onChangeValueEditBoxes(): void {
+    this.validate();
+  }
+
+  insertedValuesAreValid(): boolean {
+    return ((this.new_password !== '') &&
+            (this.repeat_new_password !== '') &&
+            (this.new_password === this.repeat_new_password));
+  }
+
+  validate(): void {
+    if (this.insertedValuesAreValid())  {
       this.valid = true;
       setTimeout(() => {
         this.buttonChange.nativeElement.focus();
       }, 100, this);
+    } else {
+      this.valid = false;
+      this.checkErrorMessage();
     }
-
-    let message = '';
-    let time = 0;
-    const delta = 3000;
-
-    /* new no null */
-    if (this.new_password === '')
-    {
-      message += 'The <mark><i>"new password"</mark></i> can\'t be empty\n';
-      time += delta;
-    }
-
-    /* Repeat not equal to new */
-    if (this.repeat_new_password !== this.new_password)
-    {
-      message += 'The <mark><i>"retyped new password"</mark></i> must be the same of the <mark><i>"new password"</mark></i>\n';
-      time += delta;
-    }
-
-    this.sendMessage(message, time);
-
   }
 
-  sendMessage(text: string, time: number) {
+  checkErrorMessage(): void {
+    const delta = 3000;
+
+    if (this.new_password === '') {
+      let message = 'The <mark><i>"new password"</mark></i> can\'t be empty\n';
+      this.sendMessage(message, delta);
+    }
+
+    if (this.repeat_new_password === '') {
+      let message = 'The <mark><i>"retyped new password"</mark></i> can\'t be empty\n';
+      this.sendMessage(message, delta);
+    }
+
+    if (this.repeat_new_password !== this.new_password) {
+      let message = 'The <mark><i>"retyped new password"</mark></i> must be the same of the <mark><i>"new password"</mark></i>\n';
+      this.sendMessage(message, delta);
+    }
+  }
+
+  sendMessage(text: string, time: number): void {
     clearInterval(this.interval);
     this.message = text;
     this.interval = setInterval(() => {
