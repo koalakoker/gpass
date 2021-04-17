@@ -291,7 +291,7 @@ export class AppComponent implements OnInit {
       let returnData = await this.routedComponent.refresh(InputCodes.Refresh);  
       this.childInjected = returnData.childInject;
       this.pageCode = returnData.pageCode;
-      this.webPassDropDownUpdate();
+      await this.webPassDropDownUpdate();
       this.appState = AppState.logged;
       let isPassInResetState = await this.loginService.isPassInResetState();
       if (isPassInResetState) {

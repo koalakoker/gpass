@@ -136,9 +136,8 @@ export class LoginService {
     let user: JSON = await this.webService.get("users", this.userid);
     if (user["result"] === "fail" ) {
       throw new Error("Error getting user details!");
-      
     }
-    return user["resetpass"] === "0" ? false : true;
+    return user[0]["resetpass"] === "0" ? false : true;
   }
   
   checklogged(): Promise<boolean> {
