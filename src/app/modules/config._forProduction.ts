@@ -5,5 +5,5 @@ export function isConfigForTesting(): boolean {
 
 // Skip the time token cript if true
 export function isLocal(): boolean {
-  return false;
+  return true;
 }
