@@ -41,21 +41,12 @@ export class WebService {
   }
 
   setTesting_chiper(encrypted: string): void {
-    if (isConfigForTesting()) {
-      this.testing_chipher = encrypted;
-    }
   }
 
   setTesting_userid(userid: number): void {
-    if (isConfigForTesting()) {
-      this.testing_userid = userid;
-    }
   }
   
   setTesting_level(level: number): void {
-    if (isConfigForTesting()) {
-      this.testing_level = level;
-    }
   }
 
   api(url: string, params?: any, method: string = 'GET', data: any = {} ): Promise<JSON> {
@@ -206,19 +197,6 @@ export class WebService {
     params = this.appendTestingsParams(params);
     var url = this.getAddr + '/users';
     return this.api(url, params, 'POST', user);
-  }
-
-  post(body, uri) {
-    console.log("Post to be implemented");
-    return this.api(uri);
-    // return this.http.post(uri, body.toString(), {
-    //   responseType: 'text',
-    //   observe: 'body',
-    //   headers: new HttpHeaders({
-    //     'Accept': 'text/html, application/xhtml+xml, */*',
-    //     'Content-Type': 'application/x-www-form-urlencoded'
-    //   })
-    // })
   }
 
   callChipher(chipher_password: string) {

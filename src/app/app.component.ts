@@ -47,9 +47,7 @@ enum MenuItemTag {
   admin_test               = "test",
 
   routerLink_changePass    = "routerLink_changePass",
-  routerLink_newPass       = "routerLink_newPass",
-  routerLink_dbCreateTable = "routerLink_dbCreateTable",
-  routerLink_dbBackup      = "routerLink_dbBackup"
+  routerLink_newPass       = "routerLink_newPass"
 }
 
 @Component({
@@ -203,12 +201,6 @@ export class AppComponent implements OnInit {
 
     routerLink = new RouterLink(MenuItemTag.routerLink_newPass, '/newPass', "New password");
     this.menu.push(routerLink);
-
-    routerLink = new RouterLink(MenuItemTag.routerLink_dbCreateTable, '/dbCreateTable', "CreateBackupTable", 1);
-    this.menu.push(routerLink);
-
-    routerLink = new RouterLink(MenuItemTag.routerLink_dbBackup, '/dbBackup', "Backup", 1);
-    this.menu.push(routerLink);
   }
 
   menuHideAllButLogout(): void {
@@ -233,10 +225,6 @@ export class AppComponent implements OnInit {
     this.menu.forEach(item => {
       item.visible = true;
     });
-  }
-
-  dropDownItemClick(item) {
-    item.onClick.call(this); // .call is used to pass the context
   }
 
   public setRoutedComponent(componentRef: Refreshable) {

@@ -13,8 +13,6 @@ import { PassGeneratorComponent } from './modules/refreshable/pass-generator/pas
 import { ClipboardModule } from 'ngx-clipboard'
 import { StorageServiceModule } from 'ngx-webstorage-service';
 import { ChangePassComponent } from './modules/refreshable/change-pass/change-pass.component';
-import { DbCreateBackupTableComponent } from './modules/refreshable/db-create-backup-table/db-create-backup-table.component';
-import { DbBackupComponent } from './modules/refreshable/db-backup/db-backup.component';
 import { PopupMessageComponent } from './popup-message/popup-message.component';
 import { CategoryComponent } from './modules/refreshable/category/category.component';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
@@ -36,15 +34,15 @@ import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-moda
 import { NewUserModalComponent } from './bootstrap/modal/new-user-modal.component';
 import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.component';
 import { LoginComponent } from './login/login.component';
-
+import { DropDownComponent } from './modules/menu/drop-down/drop-down.component';
+import { RouterLinkComponent } from './modules/menu/router-link/router-link.component';
+import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
 @NgModule({
   declarations: [
     AppComponent,
     WebPassListComponent,
     PassGeneratorComponent,
     ChangePassComponent,
-    DbCreateBackupTableComponent,
-    DbBackupComponent,
     PopupMessageComponent,
     CategoryComponent,
     ComboBoxComponent,
@@ -64,7 +62,10 @@ import { LoginComponent } from './login/login.component';
     CategoryEditModalComponent,
     NewUserModalComponent,
     UserEditModalComponent,
-    LoginComponent
+    LoginComponent,
+    DropDownComponent,
+    RouterLinkComponent,
+    SubItemComponent
   ],
   imports: [
     BrowserModule,

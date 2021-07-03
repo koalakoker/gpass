@@ -14,22 +14,10 @@
                     <ng-container *ngFor="let menuItem of menu">
                         <li *ngIf="isItemVisible(menuItem)" ngbDropdown [ngbNavItem]="menuItem.index">
                             <ng-container *ngIf="menuItem.isDropDown()">
-                                <a ngbNavLink tabindex="menuItem.index" ngbDropdownToggle id="menuItem.tag" role="button">
-                                    {{menuItem.label}}
-                                </a>
-                                <div ngbDropdownMenu aria-labelledby="menuItem.tag" class="dropdown-menu">
-                                    <ng-container *ngFor="let subItem of menuItem.items; let j = index">
-                                        <ng-container *ngIf="isItemVisible(subItem)">
-                                            <a  *ngIf="subItem.isAction() "    ngbDropdownItem      (click)="dropDownItemClick(subItem)" [disabled]="subItem.isDisabled()">{{subItem.label}}</a>
-                                            <hr *ngIf="subItem.isDivider()"    ngbDropdownDivider >
-                                            <a  *ngIf="subItem.isRouterLink()" ngbDropdownItem [routerLink]="subItem.link"
-                                            class="dropdown-item {{subItem.getActivatedStyle()}}">{{subItem.label}}</a>
-                                        </ng-container>
-                                    </ng-container>
-                                </div>
+                                <app-drop-down [menuItem]='menuItem'></app-drop-down>
                             </ng-container>
                             <ng-container *ngIf="menuItem.isRouterLink()">
-                                <a ngbNavLink tabindex="menuItem.index" [routerLink]="menuItem.link" ngbDropdownToggle role="button">{{menuItem.label}}</a>
+                                <app-router-link [menuItem]='menuItem'></app-router-link>
                             </ng-container>
                         </li>
                     </ng-container>

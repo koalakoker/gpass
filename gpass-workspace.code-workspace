@@ -2,12 +2,13 @@
 	"folders": [
 		{
 			"name": "gpass",
-			"path": "../../../../../../Users/koalakoker/.bitnami/stackman/machines/xampp/volumes/root/htdocs/gpass"
+			"path": "."
 		},
 		{
-			"name": "gpass",
-			"path": "."
+			"path": "../../node.js/playGround"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"angular.enable-strict-mode-prompt": false
+	}
 }

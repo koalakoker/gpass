@@ -1,0 +1,5 @@
+<a *ngIf="subItem.isAction() " ngbDropdownItem (click)="onAction()"
+  [disabled]="subItem.isDisabled()">{{actionLabel(subItem)}}</a>
+<hr *ngIf="subItem.isDivider()" ngbDropdownDivider>
+<a *ngIf="subItem.isRouterLink()" ngbDropdownItem [routerLink]="routerLink(subItem)"
+  class="dropdown-item {{routerLinkActivatedStyle(subItem)}}">{{routerLinkLabel(subItem)}}</a>
