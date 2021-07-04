@@ -11,11 +11,11 @@ import * as ReturnCodes from './modules/refreshable/returnCodes';
 import * as InputCodes from './modules/refreshable/inputCodes';
 
 import { Category } from './modules/category';
-import { ComboBoxComponent } from './combo-box/combo-box.component';
+import { ComboBoxComponent } from './components/combo-box/combo-box.component';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
-import { LoginComponent } from './login/login.component';
-import { LoginState } from './login/loginState';
+import { LoginComponent } from './components/login/login.component';
+import { LoginState } from './components/login/loginState';
 
 import { Menu } from "./modules/menu/menu"
 import { ItemState, MenuItem } from "./modules/menu/menuItem";

@@ -13,9 +13,9 @@ import { PassGeneratorComponent } from './modules/refreshable/pass-generator/pas
 import { ClipboardModule } from 'ngx-clipboard'
 import { StorageServiceModule } from 'ngx-webstorage-service';
 import { ChangePassComponent } from './modules/refreshable/change-pass/change-pass.component';
-import { PopupMessageComponent } from './popup-message/popup-message.component';
+import { PopupMessageComponent } from './components/popup-message/popup-message.component';
 import { CategoryComponent } from './modules/refreshable/category/category.component';
-import { ComboBoxComponent } from './combo-box/combo-box.component';
+import { ComboBoxComponent } from './components/combo-box/combo-box.component';
 import { UsersComponent } from './modules/refreshable/users/users.component';
 import { NewUserComponent } from './modules/refreshable/new-user/new-user.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -26,7 +26,7 @@ import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.
 import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-modal.component'
 import { NewUserModalComponent } from './bootstrap/modal/new-user-modal.component';
 import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
 import { DropDownComponent } from './modules/menu/drop-down/drop-down.component';
 import { RouterLinkComponent } from './modules/menu/router-link/router-link.component';
 import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
@@ -48,6 +48,7 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
     CategoryEditModalComponent,
     NewUserModalComponent,
     UserEditModalComponent,
+    
     LoginComponent,
     DropDownComponent,
     RouterLinkComponent,

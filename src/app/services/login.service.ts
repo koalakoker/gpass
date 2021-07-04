@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { GCrypto } from '../modules/gcrypto';
 import { LocalService } from './local.service';
 import { User } from '../services/user';
-import { Keys } from './keys';
-import { UsersApiService } from './users-api.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
+
+  private loginApiUrl: string = 'http://localhost:5000/api/auth/';
 
   gCrypto: GCrypto;
   keepMeLogged = false;
@@ -20,7 +21,7 @@ export class LoginService {
   level: number = 0;
 
   constructor(
-    private usersApi: UsersApiService, 
+    private http: HttpClient,
     private localService: LocalService) {
   }
 
@@ -64,7 +65,7 @@ export class LoginService {
     const user: User = {'email': userName, 'password': userPassword};
     
     try {
-      const response = await this.usersApi.userLogin(user);
+      const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
       const token = response.headers.get('x-auth-token');
       if (!token) {
         console.log('Database error\nToken not generated');
