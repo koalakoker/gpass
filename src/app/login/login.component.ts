@@ -1,19 +1,14 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { LoginService } from '../services/login.service';
-
-export enum LoginState {
-  userNameInsert,
-  passwordInsert,
-  logged
-}
+import { LoginState } from './loginState';
 
 @Component({
-  selector: 'login',
+  selector: 'app-login',
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
 
-  @Input() state: LoginState = LoginState.userNameInsert;
+  state: LoginState = LoginState.userNameInsert;
   @Output() userLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
@@ -33,9 +28,10 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.loginService.check()) {
       this.state = LoginState.logged;
+      this.loginService.updateUserLevel();
       this.userLogged.emit();
     } else {
-      this.stateReset();
+      this.clear();
     };
   }
 
@@ -58,8 +54,10 @@ export class LoginComponent implements OnInit {
     this.enter();
   }
 
-  stateReset() {
+  clear() {
     this.state = LoginState.userNameInsert;
+    this.userName = '';
+    this.userPassword = '';
   }
 
   async enter() {
@@ -74,13 +72,13 @@ export class LoginComponent implements OnInit {
             (errorCode == this.errorCodeWrongUserPassword)) {
           this.userName = '';
         }
-        this.stateReset();
+        this.clear();
       }
       
     } catch (error) {
       console.log(error);
       this.sendMessage.emit('Login error');
-      this.stateReset();
+      this.clear();
     }
   }
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { AppComponent } from 'src/app/app.component';
 import { LoginService } from 'src/app/services/login.service';
 import { DropDown } from '../dropDown';
 import { MenuItem } from '../menuItem';
@@ -9,6 +10,7 @@ import { MenuItem } from '../menuItem';
 })
 export class DropDownComponent implements OnInit {
   @Input() menuItem: MenuItem;
+  @Input() parent: AppComponent;
   dropDown: DropDown;
 
   constructor(private loginService: LoginService) { }
@@ -18,7 +20,7 @@ export class DropDownComponent implements OnInit {
   }
 
   dropDownItemClick(item) {
-    item.onClick.call(this); // .call is used to pass the context
+    item.onClick.call(this.parent); // .call is used to pass the context
   }
 
   isItemVisible(menuItem: MenuItem): boolean {

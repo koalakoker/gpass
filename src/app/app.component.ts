@@ -14,7 +14,8 @@ import { Category } from './modules/category';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
-import { LoginComponent, LoginState } from './login/login.component';
+import { LoginComponent } from './login/login.component';
+import { LoginState } from './login/loginState';
 
 import { Menu } from "./modules/menu/menu"
 import { ItemState, MenuItem } from "./modules/menu/menuItem";
@@ -58,6 +59,7 @@ enum MenuItemTag {
 export class AppComponent implements OnInit {
 
   private routedComponent: Refreshable;
+  pendingRouterComponentRefresh: boolean = false;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
   
@@ -138,7 +140,8 @@ export class AppComponent implements OnInit {
       });
   }
   
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   webPassDropDownUpdate(): Promise<void> {
     return new Promise<void> ((resolve,reject) => {
@@ -226,6 +229,9 @@ export class AppComponent implements OnInit {
   public setRoutedComponent(componentRef: Refreshable) {
     this.routedComponent = componentRef;
     componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
+    if (this.pendingRouterComponentRefresh) {
+      this.userLogged();
+    }
   }
 
   refreshableHasChanged(event) {
@@ -271,37 +277,42 @@ export class AppComponent implements OnInit {
   }
 
   async userLogged() {
-    if (this.routedComponent == undefined) return;
+    if (this.routedComponent == undefined) 
+    {
+      this.pendingRouterComponentRefresh = true;
+      return;
+    }
     try {
       let returnData = await this.routedComponent.refresh(InputCodes.Refresh);  
       this.childInjected = returnData.childInject;
       this.pageCode = returnData.pageCode;
       await this.webPassDropDownUpdate();
       this.appState = AppState.logged;
-      let isPassInResetState = await this.loginService.isPassInResetState();
-      if (isPassInResetState) {
-        this.menuHideAllButLogout();
-        this.router.navigateByUrl('/changePass');
-      } else {
-        this.menuShowAll();
-      }
+      
+      // let isPassInResetState = await this.loginService.isPassInResetState();
+      // if (isPassInResetState) {
+      //   this.menuHideAllButLogout();
+      //   this.router.navigateByUrl('/changePass');
+      // } else {
+      //   this.menuShowAll();
+      // }
     } catch (error) {
       console.log(error);
     }
   }
 
-  logOut() {
-    this.loginService.clear();
-    
-    // If master key is not present state becomes insert master key
-    this.loginComponent.state = LoginState.userNameInsert;
-    
+  clear() {
     this.appState = AppState.notLogged;
+  }
+
+  logOut() {
+    this.clear();
+    this.loginService.clear();
+    this.loginComponent.clear();
     this.routedComponent.refresh(InputCodes.Refresh)
     .catch(err => console.log(err));
     this.childInjected = "";
     this.pageCode = "";
-    // Logout
     this.category = [];
   }  
       

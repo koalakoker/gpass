@@ -14,7 +14,7 @@
                     <ng-container *ngFor="let menuItem of menu">
                         <li *ngIf="isItemVisible(menuItem)" ngbDropdown [ngbNavItem]="menuItem.index">
                             <ng-container *ngIf="menuItem.isDropDown()">
-                                <app-drop-down [menuItem]='menuItem'></app-drop-down>
+                                <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
                             </ng-container>
                             <ng-container *ngIf="menuItem.isRouterLink()">
                                 <app-router-link [menuItem]='menuItem'></app-router-link>
@@ -25,10 +25,10 @@
                     
                 </ng-container>
 
-                <login 
+                <app-login #loginComponent
                     (userLogged)="userLogged()"
                     (sendMessage)="printErrorMessage($event)">
-                </login>
+                </app-login>
 
             </ul>
 

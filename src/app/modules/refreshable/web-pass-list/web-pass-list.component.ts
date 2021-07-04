@@ -163,13 +163,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       });
 
     // Get RelWebCat
-    await this.webService.get('webcatrel')
-      .then((json: JSON) => {
-        var data: Array <RelWebCat> = [];
-        for (var i in json) {
-          let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
-          data.push(elem);
-        }
+    await this.webService.getWebCatRel()
+      .then((data: Array<RelWebCat>) => {
         this.relWebCat = data;
       })
       .catch((err) => {

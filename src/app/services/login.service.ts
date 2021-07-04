@@ -70,6 +70,7 @@ export class LoginService {
         console.log('Database error\nToken not generated');
       }
       this.localService.setKey('x-auth-token', token);
+      this.updateUserLevel();
       return 0;
     } catch (error) {
       console.log(error.error);
@@ -94,7 +95,7 @@ export class LoginService {
         resolve(true);
       } else {
         this.logged = false;
-        reject("login.service(checklogged)->Wrong password");
+        reject("login.service(checklogged)->User not logged");
       }
     })
   }
@@ -129,6 +130,11 @@ export class LoginService {
 
   clearLocal() : void {
     this.localService.setKey('x-auth-token', '');
+  }
+
+  updateUserLevel() {
+    // To be fixed
+    this.level = 1;
   }
 
   updateUserPassword(newPassword: string) : void {
