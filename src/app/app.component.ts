@@ -81,11 +81,11 @@ export class AppComponent implements OnInit {
   userDropDown: DropDown;
 
   constructor(
-    private configService: WebService,
+    private webService: WebService,
     private router: Router,
     private loginService: LoginService
   ) {
-    this.gCrypto = new GCrypto(this.configService);
+    this.gCrypto = new GCrypto(this.webService);
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd)
       {
@@ -96,7 +96,9 @@ export class AppComponent implements OnInit {
   }
 
   navigationEnd(event: NavigationEnd) {
-    this.componentRefresh(event);
+    if (this.isLoggedState()) {
+      this.componentRefresh(event);
+    }
   }
 
   componentRefresh(event: NavigationEnd): void {
@@ -140,13 +142,8 @@ export class AppComponent implements OnInit {
 
   webPassDropDownUpdate(): Promise<void> {
     return new Promise<void> ((resolve,reject) => {
-      this.configService.getFromUser('category')
-        .then((json: JSON) => {
-          var data: Array<Category> = [];
-          for (var i in json) {
-            let elem: Category = Object.assign(new Category(), json[i]);
-            data.push(elem);
-          }
+      this.webService.getFromUserCategory()
+        .then((data: Array<Category>) => {
           this.category = data;
           this.webPassDropDown.clear();
           this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
@@ -190,7 +187,6 @@ export class AppComponent implements OnInit {
     this.userDropDown = dropDown;
 
     dropDown = new DropDown(MenuItemTag.admin, "Admin", 1);
-    dropDown.addItem(new Action({tag: MenuItemTag.admin_removeMasterKey , label: "Remove master key", onClick: this.removeMasterKey}));
     dropDown.addItem(new Action({tag: MenuItemTag.admin_test            , label: "Test"             , onClick: this.test      }));
     this.menu.push(dropDown);
 
@@ -294,34 +290,20 @@ export class AppComponent implements OnInit {
   }
 
   logOut() {
-    this.configService.logout()
-    .then(
-      (answer: JSON) => {
-        if (answer["error"] === "Session destroyed") {
-          this.loginService.clear();
-          
-          // If master key is not present state becomes insert master key
-          if (this.loginService.isMasterKeyEmpty()) {
-            this.loginComponent.state = LoginState.masterPasswordInsert;
-          } else {
-            this.loginComponent.state = LoginState.userNameInsert;
-          }
-          
-          this.appState = AppState.notLogged;
-          this.routedComponent.refresh(InputCodes.Refresh)
-          .catch(err => console.log(err));
-          this.childInjected = "";
-          this.pageCode = "";
-          // Logout
-          this.category = [];
-        } else {
-          ((err) => console.log("Bad answer from server"));
-        }
-        
-      })
-    .catch((err) => console.log(err));
-  }
-
+    this.loginService.clear();
+    
+    // If master key is not present state becomes insert master key
+    this.loginComponent.state = LoginState.userNameInsert;
+    
+    this.appState = AppState.notLogged;
+    this.routedComponent.refresh(InputCodes.Refresh)
+    .catch(err => console.log(err));
+    this.childInjected = "";
+    this.pageCode = "";
+    // Logout
+    this.category = [];
+  }  
+      
   onNew(): void {
     this.routedComponent.refresh(InputCodes.NewBtnPress);
   }
@@ -350,11 +332,6 @@ export class AppComponent implements OnInit {
   plusOneYearAll() {
     // Propagate to child
     this.routedComponent.refresh(InputCodes.PlusOneYearAll);
-  }
-
-  removeMasterKey() {
-    this.loginService.removeMasterKey();
-    this.logOut();
   }
 
   isItemVisible(menuItem: MenuItem): boolean {

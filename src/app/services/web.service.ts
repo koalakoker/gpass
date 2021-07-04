@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { WebPass } from '../modules/webpass';
 import { Category } from '../modules/category';
 import { RelWebCat } from '../modules/relwebcat';
-import { User } from '../modules/user'
-import { isConfigForTesting } from '../modules/config'
+import { User } from '../modules/user';
+import { isConfigForTesting } from '../modules/config';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class WebService {
@@ -94,26 +95,9 @@ export class WebService {
     return params;
   }
 
-  login(chipher_password: string, chipher_hash: string, userName: string, userHash: string) {
-    var params = {
-      'chipher_password': chipher_password,
-      'chipher_hash': chipher_hash,
-      'user_name': userName,
-      'user_hash': userHash
-    }
-    return this.api(this.loginAddr, params); 
-  }
-
   email(params: any) {
     params = this.appendTestingsParams(params);
     return this.api(this.emailAddr,params);
-  }
-
-  logout() {
-    var params = {
-      'logout': true
-    };
-    return this.api(this.loginAddr, params);
   }
 
   get(table: string, id?: number): Promise<JSON> {
@@ -126,10 +110,26 @@ export class WebService {
     return this.api(url, params, 'GET');
   }
 
-  getFromUser(table: string): Promise<JSON> {
-    var params = {'fromuser': true};
-    params = this.appendTestingsParams(params);
-    return this.api(this.getAddr + '/' + table, params);
+  getWebCatRel(): Promise<Array<RelWebCat>> {
+    return new Promise<Array<RelWebCat>>((resolve, reject) => {
+      resolve([new RelWebCat()]);
+    });
+  }
+
+  getFromUserLinks(): Promise<Array<WebPass>> {
+    return new Promise<Array<WebPass>>((resolve, reject) => {
+      resolve([new WebPass()]);
+    });
+    // var params = {'fromuser': true};
+    // params = this.appendTestingsParams(params);
+    // return this.api(this.getAddr + '/' + table, params);
+  }
+
+  getFromUserCategory(): Promise<Array<Category>> {
+    return new Promise<Array<Category>>((resolve, reject) => {
+      resolve([new Category()]);
+    });
+    
   }
 
   delete(id: number, table: string): Promise<JSON> {

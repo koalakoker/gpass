@@ -87,13 +87,8 @@ export class ChangePassComponent implements OnInit, Refreshable {
   getWebPass(): Promise<WebPass[]> {
     // Get the DB values and decrypt with old pass
     return new Promise<WebPass[]>((resolve, reject) => {
-      this.dbService.getFromUser('gpass')
-        .then((json: JSON) => {
-          var data: Array<WebPass> = [];
-          for (var i in json) {
-            let elem: WebPass = Object.assign(new WebPass(), json[i]);
-            data.push(elem);
-          }
+      this.dbService.getFromUserLinks()
+        .then((data: Array<WebPass>) => {
           // Decode and create a new WebPass list
           const list: WebPass[] = data.map((x) => {
             const w = new WebPass(x);

@@ -129,17 +129,12 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   async getWebPassList() {    
     // Get Webpass list
-    await this.webService.getFromUser('gpass')
-      .then((json: JSON) => {
-        var data: Array<WebPass> = [];
-        for (var i in json) {
-          let elem: WebPass = Object.assign(new WebPass(), json[i]);
-          data.push(elem);
-        }
+    await this.webService.getFromUserLinks()
+      .then((data: Array<WebPass>) => {
         // Decode and create a new WebPass list
         this.webPassList = data.map((x) => {
           const w = new WebPass(x);
-          w.decrypt(this.loginService.userPassword);
+          //w.decrypt(this.loginService.userPassword);
           return w;
         }, this);
         this.webPassList.sort((a, b) => {
@@ -159,13 +154,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     });
     
     // Get Category list
-    await this.webService.getFromUser('category')
-      .then( (json: JSON) => {
-        var data: Array<Category> = [];
-        for (var i in json) {
-          let elem: Category = Object.assign(new Category(), json[i]);
-          data.push(elem);
-        }
+    await this.webService.getFromUserCategory()
+      .then((data: Array<Category>) => {
         this.category = data;
       })
       .catch((err) => {
@@ -205,7 +195,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   update(): void {
-    console.log("Notyfy the parente webpasslist->app");
+    console.log("Notyfy the parent webpasslist->app");
   }
 
   isNewPosible(): boolean {

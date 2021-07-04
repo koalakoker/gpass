@@ -36,13 +36,8 @@ export class CategoryComponent implements OnInit, Refreshable {
   
   enter() {
     // User is logged show content
-    this.configService.getFromUser('category')
-      .then((json: JSON) => {
-        var data: Array<Category> = [];
-        for (var i in json) {
-          let elem: Category = Object.assign(new Category(), json[i]);
-          data.push(elem);
-        }
+    this.configService.getFromUserCategory()
+      .then((data: Array<Category>) => {
         this.category = data;
         this.category.sort((a, b) => {
           if (a.name < b.name) {

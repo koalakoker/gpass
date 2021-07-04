@@ -1,16 +1,3 @@
-<!-- Master Password -->
-<ng-container *ngIf="isMasterPasswordState()">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm">
-        <input (keyup.enter)="materPasswordEntered()" (change)="masterPasswordEntered()"
-          [(ngModel)]="loginService.chipher_password" class="form-control" type="password"
-          placeholder="Insert master password">
-      </div>
-    </div>
-  </div>
-</ng-container>
-
 <!-- Username -->
 <ng-container *ngIf="isUserNameState()">
   <div class="container">
