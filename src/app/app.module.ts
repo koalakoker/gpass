@@ -19,14 +19,7 @@ import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { UsersComponent } from './modules/refreshable/users/users.component';
 import { NewUserComponent } from './modules/refreshable/new-user/new-user.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { MainNavbarComponent} from './bootstrap/navbar/main-navbar';
-import { BasicModalComponent } from './bootstrap/basic/basic-modal/basic-modal.component';
 
-import { BasicDropdownComponent } from './bootstrap/basic/basic-dropdown/basic-dropdown';
-import { WebPassDropdownComponent } from './bootstrap/dropdown/webpass-dropdown';
-import { CategoryDropdownComponent } from './bootstrap/dropdown/category-dropdown';
-import { UsersDropdownComponent } from './bootstrap/dropdown/users-dropdown';
-import { AdminDropdownComponent } from './bootstrap/dropdown/admin-dropdown';
 import { LevelDropdownComponent } from './bootstrap/dropdown/level-dropdown.component';
 
 import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.component'
@@ -48,14 +41,7 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
     ComboBoxComponent,
     UsersComponent,
     NewUserComponent,
-    MainNavbarComponent,
-    BasicModalComponent,
 
-    BasicDropdownComponent,
-    WebPassDropdownComponent,
-    CategoryDropdownComponent,
-    UsersDropdownComponent,
-    AdminDropdownComponent,
     LevelDropdownComponent,
 
     WebPassEditModalComponent,
