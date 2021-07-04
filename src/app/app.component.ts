@@ -271,6 +271,7 @@ export class AppComponent implements OnInit {
   }
 
   async userLogged() {
+    if (this.routedComponent == undefined) return;
     try {
       let returnData = await this.routedComponent.refresh(InputCodes.Refresh);  
       this.childInjected = returnData.childInject;

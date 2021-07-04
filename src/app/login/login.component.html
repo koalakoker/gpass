@@ -3,7 +3,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="loginService.userName"
+        <input (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="userName"
           class="form-control" type="text" placeholder="Insert username" #userNameInput>
       </div>
     </div>
@@ -15,7 +15,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <input (keyup.enter)="passwordEntered()" (change)="passwordEntered()" [(ngModel)]="loginService.userPassword"
+        <input (keyup.enter)="passwordEntered()" (change)="passwordEntered()" [(ngModel)]="userPassword"
           class="form-control" type="password" placeholder="Insert password" #passwordInput>
       </div>
       <div class="col-sm align-self-center">

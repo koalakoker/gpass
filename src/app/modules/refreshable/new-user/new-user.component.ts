@@ -45,11 +45,13 @@ export class NewUserComponent implements OnInit, Refreshable {
       strListCrypt.push(this.masterhash);
       this.loginService.decryptList(strListCrypt)
         .then( strListDeCrypt => {
-          this.loginService.userName = strListDeCrypt[0];
-          this.loginService.userHash = strListDeCrypt[1];
+          const userName     = strListDeCrypt[0];
+          const userPassword = strListDeCrypt[1];
+          this.loginService.userName = userName;
+          this.loginService.userHash = userPassword;
           this.loginService.keepMeLogged = true;
           this.loginService.userPassword = '';
-          this.loginService.checkLogin()
+          this.loginService.checkLogin(userName, userPassword)
             .then((errorCode: number) => {
               if (errorCode == 0) {
                 this.loggedTxt = "Invitation detail valid.";

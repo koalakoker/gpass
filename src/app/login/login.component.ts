@@ -19,6 +19,9 @@ export class LoginComponent implements OnInit {
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('userNameInput') userNameInput: ElementRef;
 
+  userName: string;
+  userPassword: string;
+
   errorCodeNoError           : number = 0;
   errorCodeMissingParams     : number = 1;
   errorCodeWrongUsername     : number = 3;
@@ -29,14 +32,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.loginService.check()) {
-      this.enter();
+      this.state = LoginState.logged;
+      this.userLogged.emit();
     } else {
-      this.loginService.getLocal();
-      if (this.loginService.check()) {
-        this.enter();
-      } else {
-        this.stateReset();
-      };
+      this.stateReset();
     };
   }
 
@@ -65,7 +64,7 @@ export class LoginComponent implements OnInit {
 
   async enter() {
     try {
-      let errorCode: number = await this.loginService.checkLogin();
+      let errorCode: number = await this.loginService.checkLogin(this.userName, this.userPassword);
       if (errorCode == this.errorCodeNoError) {
         this.state = LoginState.logged;
         this.userLogged.emit();
@@ -73,7 +72,7 @@ export class LoginComponent implements OnInit {
         this.sendMessage.emit('Password not correct');
         if ((errorCode == this.errorCodeWrongUsername) || 
             (errorCode == this.errorCodeWrongUserPassword)) {
-          this.loginService.userName = '';
+          this.userName = '';
         }
         this.stateReset();
       }

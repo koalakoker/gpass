@@ -13,10 +13,10 @@ export class LoginService {
   gCrypto: GCrypto;
   keepMeLogged = false;
   logged = false;
-  userName: string = ""
   userid: number;
-  userPassword: string = "";
-  userHash: string = "";
+  userName: string;
+  userPassword: string;
+  userHash: string;
   level: number = 0;
 
   constructor(
@@ -59,9 +59,9 @@ export class LoginService {
     return '';
   }
 
-  async checkLogin(): Promise<number> {
+  async checkLogin(userName: string, userPassword: string): Promise<number> {
 
-    const user: User = {'email': this.userName, 'password': this.userPassword};
+    const user: User = {'email': userName, 'password': userPassword};
     
     try {
       const response = await this.usersApi.userLogin(user);
@@ -109,13 +109,6 @@ export class LoginService {
     return retVal;
   }
 
-  getLocal(): void {
-    this.userName         = this.getDefined(this.localService.getKey(Keys.UserName));
-    this.userHash         = this.getDefined(this.localService.getKey(Keys.UserHash));
-    this.userPassword     = this.getDefined(this.localService.getKey(Keys.UserPassword)); 
-    this.keepMeLogged     = this.getDefined(this.localService.getKey(Keys.KeepMeLogged))==="true"; 
-  }
-
   check(): boolean {
     return this.localService.getKey('x-auth-token') != '';
   }
@@ -131,9 +124,6 @@ export class LoginService {
 
   clearUserVars(): void {
     this.logged = false;
-    this.userName = '';
-    this.userPassword = '';
-    this.userHash = '';
     this.keepMeLogged = false;
   }
 
@@ -142,17 +132,17 @@ export class LoginService {
   }
 
   updateUserPassword(newPassword: string) : void {
-    this.userPassword = newPassword;
-    this.userHash = this.calculateUserHash(this.userName, newPassword);
-    if (this.keepMeLogged) {
-      this.localService.setKey(Keys.UserPassword, this.userPassword);
-      this.localService.setKey(Keys.UserHash    , this.userHash);
-    }
+    // this.userPassword = newPassword;
+    // this.userHash = this.calculateUserHash(this.userName, newPassword);
+    // if (this.keepMeLogged) {
+    //   this.localService.setKey(Keys.UserPassword, this.userPassword);
+    //   this.localService.setKey(Keys.UserHash    , this.userHash);
+    // }
   }
 
   logStatus(): void {
-    console.log("userName        " + this.userName        );
-    console.log("userPassword    " + this.userPassword    );
-    console.log("userHash        " + this.userHash        );
+    const token = this.localService.getKey('x-auth-token');
+    console.log("Token" + token);
+    
   }
 }
