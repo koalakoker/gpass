@@ -6,8 +6,9 @@ import { WebPassListComponent } from '../../modules/refreshable/web-pass-list/we
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
 
-import { WebService } from '../../services/web.service';
 import { LoginService } from '../../services/login.service';
+import { WebLinkService } from 'src/app/services/web-link.service';
+import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
 
 @Component({
   selector:    'webpass-edit-modal',
@@ -25,7 +26,8 @@ export class WebPassEditModalComponent {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private webService: WebService,
+    private webLinkService: WebLinkService,
+    private relWebCatService: RelWebCatService,
     private loginService: LoginService) {
    }
 
@@ -33,42 +35,38 @@ export class WebPassEditModalComponent {
     this.activeModal.close("");
   }
 
-  save() {
+  async save() {
     const webPass = new WebPass(this.webpass);
     webPass.crypt(this.loginService.userPassword);
-    this.webService.updateWebPass(webPass)
-      .then(() => {
-        //console.log("Database updated");
-      }, err => console.log(err));
+    try {
+      await this.webLinkService.updateWebPass(webPass.id, webPass);
+      //console.log("Database updated");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  onButtonCategory() {
+  async onButtonCategory() {
     this.showCategory = !this.showCategory;
     if (this.showCategory) {
       this.selectedWebPassCatChecked = [];
       
-      this.webService.get('webcatrel')
-        .then((json: JSON) => {
-          var allRelWebCat: Array<RelWebCat> = [];
-          for (var i in json) {
-            let elem: RelWebCat = Object.assign(new RelWebCat(), json[i]);
-            allRelWebCat.push(elem);
-          }
-          this.webpassList.category.forEach((cat) => {
-            var found: boolean = false;
-            allRelWebCat.forEach((rel) => {
-              if ((rel.id_web == this.webpass.id) &&
-                (rel.id_cat == cat.id) &&
-                (rel.enabled == 1)) {
-                found = true;
-              }
-            });
-            this.selectedWebPassCatChecked.push(found);
+      try {
+        const allRelWebCat = await this.relWebCatService.getWebCatRel();  
+        this.webpassList.category.forEach((cat) => {
+          var found: boolean = false;
+          allRelWebCat.forEach((rel) => {
+            if ((rel.id_web == this.webpass.id) &&
+              (rel.id_cat == cat.id) &&
+              (rel.enabled == 1)) {
+              found = true;
+            }
           });
-        })
-        .catch((err) => {
-          console.log(err);
+          this.selectedWebPassCatChecked.push(found);
         });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -86,12 +84,13 @@ export class WebPassEditModalComponent {
     }
   }
 
-  saveRel(rel: RelWebCat) {
-    this.webService.updateRelWebCat(rel)
-      .then(() => {
-        //console.log("Database updated");
-      })
-      .catch(err => console.log(err));
+  async saveRel(rel: RelWebCat) {
+    try {
+      await this.relWebCatService.updateRelWebCat(rel.id, rel);  
+      //console.log("Database updated");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onCatCheckChange(catIndex: number) {
@@ -123,14 +122,14 @@ export class WebPassEditModalComponent {
     this.webpassList.needReenter = true;
   }
 
-  newRel(rel: RelWebCat) {
-    this.webService.createRelWebCat(rel)
-      .then((json: JSON) => {
-        var id: number;
-        rel.id = id;
-        //console.log("Database updated");
-      })
-      .catch(err => console.log(err));
+  async newRel(rel: RelWebCat) {
+    try {
+      const id = await this.relWebCatService.createRelWebCat(rel);  
+      rel.id = id;
+      //console.log("Database updated");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onPlusOneYear() {

@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
 import { Category } from '../../modules/category';
-import { WebService } from '../../services/web.service';
+import { CategoryService } from 'src/app/services/category.service';
 
 @Component({
   selector:    'category-edit-modal',
@@ -13,17 +12,19 @@ export class CategoryEditModalComponent {
   
   constructor(
     public activeModal: NgbActiveModal,
-    private webService: WebService) {
+    private categoryService: CategoryService) {
    }
 
   onCloseEdit(){
     this.activeModal.close("");
   }
 
-  save() {
+  async save() {
     const category = new Category(this.category);
-    this.webService.updateCategory(category)
-      .then(() => {})
-      .catch(err => console.log(err));
+    try {
+      await this.categoryService.updateCategory(category.id, category)
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

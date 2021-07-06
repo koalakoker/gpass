@@ -7,7 +7,6 @@ import * as ReturnCodes from '../returnCodes';
 import * as InputCodes from '../inputCodes';
 
 import { LoginService } from '../../../services/login.service'
-import { WebService } from '../../../services/web.service'
 import { User } from '../../user'
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +14,7 @@ import * as Modal from '../../../bootstrap/modal/modal'
 import { NewUserModalComponent } from '../../../bootstrap/modal/new-user-modal.component';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { UserEditModalComponent } from '../../../bootstrap/modal/user-edit-modal.component';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-users-component',
@@ -31,7 +31,7 @@ export class UsersComponent implements OnInit, Refreshable {
   
   constructor(
     private loginService: LoginService,
-    private webService: WebService,
+    private userService: UserService,
     private modalService: NgbModal) {
       let baseAddr = '';
       if (isConfigForTesting()) {
@@ -57,17 +57,22 @@ export class UsersComponent implements OnInit, Refreshable {
       }) 
   }
 
-  enter() {
-    this.webService.get('users')
-    .then((json: JSON) => {
+  async enter() {
+    try {
+      const iUsers = await this.userService.getUsers();
       var data: Array<User> = [];
-      for (var i in json) {
-        let elem: User = Object.assign(new User(), json[i]);
-        data.push(elem);
-      }
-
+      iUsers.forEach(iUser => {
+        const user = new User();
+        user.id = iUser.id;
+        user.email = iUser.email;
+        user.username = iUser.email;
+        user.updateHash(iUser.password);
+        data.push(user);
+      });
       this.user = data;
-    }, err => console.log(err));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   refresh(cmd: string): Promise<RefreshReturnData> {
@@ -112,13 +117,19 @@ export class UsersComponent implements OnInit, Refreshable {
       });
   }
 
-  createNewUser(user: User, tempPassword: string) {
+  async createNewUser(user: User, tempPassword: string) {
     user.updateHash(tempPassword);
-    this.webService.createUser(user)
-      .then((json: JSON) => {
-        user.id = +json;
-        this.user.unshift(user);
-      }, err => console.log(err));
+    try {
+      const id = await this.userService.createUser({
+        id: 0,
+        email: user.email,
+        password: tempPassword
+      });  
+      user.id = id;
+      this.user.unshift(user);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onSelect(usr: User) {
@@ -133,13 +144,14 @@ export class UsersComponent implements OnInit, Refreshable {
     return (this.isSelected(usr) ? "active" : "");
   }
 
-  onButtonRemove(i: number) {
+  async onButtonRemove(i: number) {
     const usr = this.user[i];
-    this.webService.delete(usr.id, 'users')
-      .then(() => {
-        this.user.splice(i, 1);
-      })
-      .catch(err => console.log(err));
+    try {
+      await this.userService.deleteUser(usr.id);  
+      this.user.splice(i, 1);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   openConfirmUserInviteModal(i: number) {

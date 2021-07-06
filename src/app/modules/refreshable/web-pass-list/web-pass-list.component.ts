@@ -12,13 +12,15 @@ import * as InputCodes from '../inputCodes';
 import { ActivatedRoute } from '@angular/router';
 
 import { GCrypto } from '../../gcrypto';
-import { WebService } from '../../../services/web.service';
+import { WebLinkService } from 'src/app/services/web-link.service';
 import { LoginService } from '../../../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { WebPassEditModalComponent } from '../../../bootstrap/modal/webpass-edit-modal.component';
 import { Observer } from '../../observer';
+import { CategoryService } from 'src/app/services/category.service';
+import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -45,9 +47,11 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   constructor(
     private modalService: NgbModal,
     private route: ActivatedRoute,
-    private webService: WebService,
+    private webLinkService: WebLinkService,
+    private categoryService: CategoryService,
+    private relWebCatService: RelWebCatService,
     private loginService: LoginService) {
-      this.g = new GCrypto(this.webService);
+      this.g = new GCrypto();
   }
   
   ngOnInit() {
@@ -128,55 +132,14 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   async getWebPassList() {    
-    // Get Webpass list
-    await this.webService.getFromUserLinks()
-      .then((data: Array<WebPass>) => {
-        // Decode and create a new WebPass list
-        this.webPassList = data.map((x) => {
-          const w = new WebPass(x);
-          //w.decrypt(this.loginService.userPassword);
-          return w;
-        }, this);
-        this.webPassList.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          } else {
-            if (a.name > b.name) {
-              return 1;
-            } else {
-              return 0;
-            }
-          }
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-    
-    // Get Category list
-    await this.webService.getFromUserCategory()
-      .then((data: Array<Category>) => {
-        this.category = data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    // Get RelWebCat
-    await this.webService.getWebCatRel()
-      .then((data: Array<RelWebCat>) => {
-        this.relWebCat = data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    
+    try {
+      this.webPassList = await this.webLinkService.getFromUserLinks();
+      this.category = await this.categoryService.getFromUserCategory();
+      this.relWebCat = await this.relWebCatService.getWebCatRel();
       this.afterLoad();
-  }
-
-  getUserPassword(): string {
-    let userPassword: string = this.loginService.userPassword;
-    return userPassword;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   queryForAction(action: string): boolean {
@@ -194,28 +157,27 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   isNewPosible(): boolean {
-    return (this.getUserPassword() !== "");
+    return (this.loginService.getUserKey() !== "");
   }
 
   isPlusOneYearPossible(): boolean {
     return (this.webPassList.length > 0);
   }
 
-  onNew() {
-    let userPassword: string = this.getUserPassword();
+  async onNew() {
+    let userPassword: string = this.loginService.getUserKey();
     if (this.isNewPosible()) {
       const webPass = new WebPass();
       webPass.crypt(userPassword);
       webPass.userid = this.loginService.userid;
-      this.webService.createWebPass(webPass)
-      .then((json: JSON) => {
-        webPass.id = +json;
+      try {
+        webPass.id = await this.webLinkService.createWebPass(webPass);
         webPass.decrypt(userPassword);
         this.webPassList.unshift(webPass);
         this.hasChanged.emit(PageCodes.webPassPage);
-      }, (err) => {
-        console.log(err);
-      });
+      } catch(error) {
+        console.log(error);
+      }
     }
   }
 
@@ -234,14 +196,15 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     }
   }
 
-  onButtonRemove(i: number) {
+  async onButtonRemove(i: number) {
     const webPass = this.webPassList[i];
-    this.webService.delete(webPass.id, 'gpass')
-      .then(() => {
+    try {
+      await this.webLinkService.deleteWebPass(webPass.id);
       this.webPassList.splice(i, 1);
-        this.hasChanged.emit(PageCodes.webPassPage);
-    }, err => console.log(err));
-    
+      this.hasChanged.emit(PageCodes.webPassPage);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   isSelected(webPass: WebPass): boolean {

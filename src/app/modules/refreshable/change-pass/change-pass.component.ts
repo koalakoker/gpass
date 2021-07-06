@@ -3,9 +3,10 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { WebService } from '../../../services/web.service';
+import { WebLinkService } from '../../../services/web-link.service';
+import { UserService } from 'src/app/services/user.service';
 import { WebPass } from '../../webpass';
-import { User } from '../../user';
+import { IUser } from '../../../services/user';
 import { GCrypto } from '../../gcrypto';
 import { LoginService } from '../../../services/login.service';
 
@@ -26,7 +27,8 @@ export class ChangePassComponent implements OnInit, Refreshable {
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('buttonChange') buttonChange: ElementRef;
 
-  constructor(private dbService: WebService,
+  constructor(private webLinkService: WebLinkService,
+              private userService: UserService,
               private loginService: LoginService) { }
 
   queryForAction(string: any): boolean {
@@ -51,19 +53,15 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   async changeUserPass(new_password: string) {
     try {
-      var answer: JSON = await this.updateUserHashInDB(new_password);
-      if (answer["result"] === "fail") {
-        throw new Error("change-pass.component(changeUserPass)->updateUserInDB fails");
+      await this.updateUserHashInDB(new_password);
+      var list: WebPass[] = await this.getWebPass();
+      await this.cryptWebPassAndUpdateDB(list);
+      this.loginService.updateUserPassword(new_password);
+      this.hasChanged.emit(PageCodes.changePass);
+      if (new_password !== "") {
+        this.sendMessage("Password has modified", 3000);
       } else {
-        var list: WebPass[] = await this.getWebPass();
-        await this.cryptWebPassAndUpdateDB(list);
-        this.loginService.updateUserPassword(new_password);
-        this.hasChanged.emit(PageCodes.changePass);
-        if (new_password !== "") {
-          this.sendMessage("Password has modified", 3000);
-        } else {
-          this.sendMessage("Password has been reset", 3000);
-        }
+        this.sendMessage("Password has been reset", 3000);
       }
       this.sendMessage("Error updating db", 3000);
     } catch (error) {
@@ -72,22 +70,19 @@ export class ChangePassComponent implements OnInit, Refreshable {
     }
   }
 
-  updateUserHashInDB(newPassword: string): Promise<JSON> {
-    var user = new User();
-    user.username = this.loginService.userName;
-    user.updateHash(newPassword);
-    var paramsToBeUpdated = {
-      "id": this.loginService.userid,
-      "userhash": user.userhash,
-      "resetpass": newPassword === '' ? 1 : 0
+  updateUserHashInDB(newPassword: string): Promise<IUser> {
+    const iUser: IUser = {
+      id: 0,
+      email: this.loginService.getUserId(),
+      password: newPassword
     };
-    return this.dbService.updateUser(paramsToBeUpdated);
+    return this.userService.updateUser(iUser);
   }
 
   getWebPass(): Promise<WebPass[]> {
     // Get the DB values and decrypt with old pass
     return new Promise<WebPass[]>((resolve, reject) => {
-      this.dbService.getFromUserLinks()
+      this.webLinkService.getFromUserLinks()
         .then((data: Array<WebPass>) => {
           // Decode and create a new WebPass list
           const list: WebPass[] = data.map((x) => {
@@ -111,7 +106,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
       list.forEach(webPass => {
         const newWebPass = new WebPass(webPass);
         webPass.crypt(this.new_password);
-        this.dbService.updateWebPass(webPass)
+        this.webLinkService.updateWebPass(webPass.id, webPass)
           .then(
             () => {
               this.itemToBeSentNbr--;
@@ -122,20 +117,6 @@ export class ChangePassComponent implements OnInit, Refreshable {
           .catch( err => reject(err));
       }, this);
     });
-  }
-
-  changeMasterKey() {
-    // Calculate the new access file for the db
-    this.dbService.callChipher(this.loginService.userPassword)
-    .then((data) => {
-      const key: string = GCrypto.hash(this.new_password);
-      this.serverAccess = 'New <mark><i>master password</i></mark> has been updated. Please update the <mark><i>passDB_cript.php</i></mark> file with the following values:\n\n';
-      this.serverAccess += '$Password = "' + key + '";\n';
-      this.serverAccess += '$Server = "' + GCrypto.cryptDBAccess(data['server'], key) + '";\n';
-      this.serverAccess += '$Username = "' + GCrypto.cryptDBAccess(data['username'], key) + '";\n';
-      this.serverAccess += '$PW = "' + GCrypto.cryptDBAccess(data['password'], key) + '";\n';
-      this.serverAccess += '$DB = "' + GCrypto.cryptDBAccess(data['database'], key) + '";\n';
-    })
   }
 
   onChangePassButtonClick(): void {

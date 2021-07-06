@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
-import { WebService } from './services/web.service';
+import { WebLinkService } from './services/web-link.service';
 import { LoginService } from './services/login.service';
 
 import { Router, NavigationEnd } from '@angular/router';
@@ -23,6 +23,7 @@ import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
+import { CategoryService } from './services/category.service';
 
 enum AppState {
   notLogged,
@@ -83,11 +84,12 @@ export class AppComponent implements OnInit {
   userDropDown: DropDown;
 
   constructor(
-    private webService: WebService,
+    private webLinkService: WebLinkService,
+    private categoryService: CategoryService,
     private router: Router,
     private loginService: LoginService
   ) {
-    this.gCrypto = new GCrypto(this.webService);
+    this.gCrypto = new GCrypto();
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd)
       {
@@ -145,7 +147,7 @@ export class AppComponent implements OnInit {
 
   webPassDropDownUpdate(): Promise<void> {
     return new Promise<void> ((resolve,reject) => {
-      this.webService.getFromUserCategory()
+      this.categoryService.getFromUserCategory()
         .then((data: Array<Category>) => {
           this.category = data;
           this.webPassDropDown.clear();

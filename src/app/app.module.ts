@@ -5,7 +5,6 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { WebPassListComponent } from './modules/refreshable/web-pass-list/web-pass-list.component';
-import { WebService } from './services/web.service';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
 import { PassGeneratorComponent } from './modules/refreshable/pass-generator/pass-generator.component';
@@ -64,7 +63,7 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
     RouterModule,
     NgbModule
   ],
-  providers: [WebService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

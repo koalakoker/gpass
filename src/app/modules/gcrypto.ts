@@ -1,6 +1,4 @@
 import  * as CryptoJS from '../../../node_modules/crypto-js'
-import { WebService } from '../services/web.service';
-import { isLocal } from '../modules/config'
 
 function ascii_to_hexa(str) {
     var arr1 = [];
@@ -48,9 +46,7 @@ function chipherString(text: string) {
 
 export class GCrypto {
     
-    constructor(
-        private configService: WebService
-    ) { }
+    constructor() { }
 
     static crypt(text: string, key: string): string {
         if (text === undefined)
@@ -132,23 +128,10 @@ export class GCrypto {
         if (duration == 'Month') {
             charIndex = 7;
         }
-        return new Promise<string[]>((resolve, reject) => {
-            if (isLocal()) {
-                const dateStr = "14 12 1972";
-                var encrypted: string[] = this.encode(strList, dateStr);
-                resolve(encrypted);
-            } else {
-                const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-                this.configService.api(url)
-                    .then((data: JSON) => {
-                        const dateStr: string = data['datetime'].slice(0, charIndex);
-                        var encrypted: string[] = this.encode(strList, dateStr);
-                        resolve(encrypted);
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    });
-            }
+        return new Promise<string[]>((resolve, reject) => {        
+            const dateStr = "14 12 1972";
+            var encrypted: string[] = this.encode(strList, dateStr);
+            resolve(encrypted);
         }) 
     }
 
@@ -158,22 +141,9 @@ export class GCrypto {
             charIndex = 7;
         }
         return new Promise<string[]>((resolve, reject) => {
-            if (isLocal()) {
-                const dateStr = "14 12 1972";
-                var encrypted: string[] = this.decode(strList, dateStr);
-                resolve(encrypted);
-            } else {
-                const url: string = 'https://worldtimeapi.org/api/timezone/Europe/Rome';
-                this.configService.api(url)
-                    .then((data: JSON) => {
-                        const dateStr: string = data['datetime'].slice(0, charIndex);
-                        var decrypted: string[] = this.decode(strList, dateStr);
-                        resolve(decrypted);
-                    })
-                    .catch((err) => {
-                        reject(err)
-                    });
-            }
+            const dateStr = "14 12 1972";
+            var encrypted: string[] = this.decode(strList, dateStr);
+            resolve(encrypted);
         })
     }
 }

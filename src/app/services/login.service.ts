@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GCrypto } from '../modules/gcrypto';
 import { LocalService } from './local.service';
-import { User } from '../services/user';
+import { IUser } from '../services/user';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -23,6 +23,14 @@ export class LoginService {
   constructor(
     private http: HttpClient,
     private localService: LocalService) {
+  }
+
+  getUserKey(): string {
+    return '1234'; // To be get from jwt
+  }
+
+  getUserId(): string {
+    return 'gianluigi.forte@st.com'; // To be get from jwt
   }
 
   async decryptList(strList: string[]) {
@@ -62,7 +70,7 @@ export class LoginService {
 
   async checkLogin(userName: string, userPassword: string): Promise<number> {
 
-    const user: User = {'email': userName, 'password': userPassword};
+    const user: IUser = {'id': 0, 'email': userName, 'password': userPassword};
     
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();

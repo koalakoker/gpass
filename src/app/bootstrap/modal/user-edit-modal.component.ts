@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { UserService } from 'src/app/services/user.service';
 
 import { User } from '../../modules/user';
-import { WebService } from '../../services/web.service';
 
 @Component({
   selector:    'user-edit-modal',
@@ -13,7 +13,7 @@ export class UserEditModalComponent {
   
   constructor(
     public activeModal: NgbActiveModal,
-    private webService: WebService) {
+    private userService: UserService) {
    }
 
   onCloseEdit(){
@@ -22,7 +22,7 @@ export class UserEditModalComponent {
 
   save() {
     const user = new User(this.user);
-    this.webService.updateUser(user)
+    this.userService.updateUser(user)
       .catch(err => console.log(err));
   }
 

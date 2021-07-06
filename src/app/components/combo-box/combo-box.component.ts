@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 import { WebPass } from '../../modules/webpass'
-import { WebService } from '../../services/web.service';
+import { WebLinkService } from '../../services/web-link.service';
 import { LoginService } from '../../services/login.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class ComboBoxComponent implements OnInit {
   maxElement: number = 0;
 
   constructor(
-    private configService: WebService,
+    private webLinkService: WebLinkService,
     private loginService: LoginService) {
     this.reset();
     window.onresize = () => {
@@ -220,7 +220,7 @@ export class ComboBoxComponent implements OnInit {
 
   getList(searchStr: string = "") {
     return new Promise((resolve,reject) => {
-      this.configService.getFromUserLinks()
+      this.webLinkService.getFromUserLinks()
         .then((data: Array<WebPass>) => {
         // Decode and create a new WebPass list
         var list: WebPass[] = data.map((x) => {

@@ -6,12 +6,12 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 import * as InputCodes from '../inputCodes';
 
-import { WebService } from '../../../services/web.service';
 import { LoginService } from '../../../services/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { CategoryEditModalComponent } from '../../../bootstrap/modal/category-edit-modal.component';
+import { CategoryService } from 'src/app/services/category.service';
 
 @Component({
   selector: 'app-category',
@@ -29,29 +29,18 @@ export class CategoryComponent implements OnInit, Refreshable {
   interval;
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
-  constructor(private configService: WebService,
+  constructor(private categoryService: CategoryService,
               private loginService: LoginService,
               private modalService: NgbModal) {
   }
   
-  enter() {
-    // User is logged show content
-    this.configService.getFromUserCategory()
-      .then((data: Array<Category>) => {
-        this.category = data;
-        this.category.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          } else {
-            if (a.name > b.name) {
-              return 1;
-            } else {
-              return 0;
-            }
-          }
-        })
-      })
-      .catch(err => console.log(err));
+  async enter() {
+    try {
+      const data = await this.categoryService.getFromUserCategory()  
+      this.category = data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   queryForAction(action: any): boolean {
@@ -103,26 +92,29 @@ export class CategoryComponent implements OnInit, Refreshable {
     return (this.loginService.userPassword !== "");
   }
 
-  onNewFunc() {
+  async onNewFunc() {
     const category = new Category();
     category.userid = this.loginService.userid;
-    this.configService.createCategory(category)
-      .then((json: JSON) => {
-        category.id = +json;
-        this.category.unshift(category);
-        this.hasChanged.emit();
-      })
-      .catch(err => console.log(err));
+    
+    try {
+      const id = await this.categoryService.createCategory(category);  
+      category.id = id;
+      this.category.unshift(category);
+      this.hasChanged.emit();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  onButtonRemove(i: number) {
+  async onButtonRemove(i: number) {
     const cat = this.category[i];
-    this.configService.delete(cat.id, 'category')
-      .then(() => {
-        this.category.splice(i, 1);
-        this.hasChanged.emit();
-      })
-      .catch(err => console.log(err));
+    try {
+      await this.categoryService.deleteCategory(cat.id);  
+      this.category.splice(i, 1);
+      this.hasChanged.emit();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   isSelected(cat: Category): boolean {
