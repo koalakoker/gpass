@@ -36,8 +36,11 @@ export class CategoryComponent implements OnInit, Refreshable {
   
   async enter() {
     try {
-      const data = await this.categoryService.getFromUserCategory()  
-      this.category = data;
+      const data = await this.categoryService.getFromUserCategory();
+      this.category = [];
+      data.forEach(category => {
+        this.category.push(category);
+      });
     } catch (error) {
       console.log(error);
     }
