@@ -1,6 +1,5 @@
+import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
-import { Category } from '../modules/category';
-import { RelWebCat } from '../modules/relwebcat';
 import { WebPass } from '../modules/webpass';
 import { LoginService } from './login.service';
 
@@ -13,12 +12,6 @@ export class WebLinkService {
   private mockupId: number = 0;
 
   constructor(private loginService: LoginService) {
-    for (let i = 0; i  < 5; i++) {
-      const webPass = new WebPass();
-      webPass.name = "Test-" + i;
-      webPass.crypt(this.loginService.getUserKey());
-      this.mockup.push(webPass);
-    }
   }
 
   async getFromUserLinks(): Promise<Array<WebPass>> {
@@ -43,15 +36,17 @@ export class WebLinkService {
           }
         }
       });
-      resolve(webPassList);
+      resolve(_.cloneDeep(webPassList));
     });
   }
 
   createWebPass(webPass: WebPass): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.mockup.push(webPass);
+      const newWebPass = _.cloneDeep(webPass);
+      newWebPass.id = this.mockupId;
+      this.mockup.push(_.cloneDeep(newWebPass));
       this.mockupId++;
-      resolve(this.mockupId);
+      resolve(newWebPass.id);
     });
   }
 
@@ -67,11 +62,10 @@ export class WebLinkService {
 
   updateWebPass(id: number, webPass: WebPass): Promise<WebPass> {
     return new Promise<WebPass>((resolve, reject) => {
-      const webPass = this.mockup.find((web) => {
+      const index = this.mockup.indexOf(this.mockup.find((web) => {
         return web.id === id;
-      });
-      const index = this.mockup.indexOf(webPass);
-      this.mockup[index] = webPass;
+      }));
+      this.mockup[index] = _.cloneDeep(webPass);
       resolve(webPass);
     });
   }

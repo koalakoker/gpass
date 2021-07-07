@@ -10,11 +10,6 @@ export class CategoryService {
   private mockupId: number = 0;
 
   constructor() {
-    for (let i = 0; i < 5; i++) {
-      const category = new Category();
-      category.name = "Cat-" + i;
-      this.mockup.push(category);
-    }
   }
 
   getFromUserCategory(): Promise<Array<Category>> {

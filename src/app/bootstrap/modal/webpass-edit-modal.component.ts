@@ -37,10 +37,10 @@ export class WebPassEditModalComponent {
 
   async save() {
     const webPass = new WebPass(this.webpass);
-    webPass.crypt(this.loginService.userPassword);
+    webPass.crypt(this.loginService.getUserKey());
     try {
       await this.webLinkService.updateWebPass(webPass.id, webPass);
-      //console.log("Database updated");
+      console.log("Database updated");
     } catch (error) {
       console.log(error);
     }

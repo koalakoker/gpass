@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { WebPass } from '../../webpass';
@@ -133,9 +134,9 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   async getWebPassList() {    
     try {
-      this.webPassList = await this.webLinkService.getFromUserLinks();
-      this.category = await this.categoryService.getFromUserCategory();
-      this.relWebCat = await this.relWebCatService.getWebCatRel();
+      this.webPassList = _.cloneDeep(await this.webLinkService.getFromUserLinks());
+      this.category = _.cloneDeep(await this.categoryService.getFromUserCategory());
+      this.relWebCat = _.cloneDeep(await this.relWebCatService.getWebCatRel());
       this.afterLoad();
     } catch (error) {
       console.log(error);

@@ -10,13 +10,6 @@ export class UserService {
   private mockupId: number = 0;
 
   constructor() {
-    for (let i = 0; i < 5; i++) {
-      this.mockup.push({
-        id: i,
-        email: "User" + i,
-        password: "1234"
-      });
-    }
   }
 
   getUsers(): Promise<Array<IUser>> {
