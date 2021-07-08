@@ -8,4 +8,8 @@ export class AppPage {
   async getTitleText(): Promise<string> {
     return element(by.css('app-root .content span')).getText();
   }
+
+  async getLoginName(): Promise<any> {
+    return element(by.id('loginInputName'));
+  }
 }

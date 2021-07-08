@@ -70,7 +70,7 @@ export class LoginService {
 
   async checkLogin(userName: string, userPassword: string): Promise<number> {
 
-    const user: IUser = {'id': 0, 'email': userName, 'password': userPassword};
+    const user: IUser = {'email': userName, 'password': userPassword};
     
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();

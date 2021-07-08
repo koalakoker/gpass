@@ -28,7 +28,7 @@ export class User {
     }
 
     updateHash(newPassword: string): void {
-        var hash: string = GCrypto.hash(newPassword);
+        var hash: string = GCrypto.hashUpperCase(newPassword);
         this.userhash = GCrypto.crypt(this.username, hash);
     }
 }

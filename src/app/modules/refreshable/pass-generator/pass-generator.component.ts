@@ -1,9 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import  * as CryptoJS from 'crypto-js'
 
 import { Refreshable, RefreshReturnData } from '../refreshable';
 import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
+import { GCrypto } from '../../gcrypto';
 
 @Component({
   selector: 'app-pass-generator',
@@ -58,7 +58,7 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
     // values. Their "unpredictability".
     var e = {"pageX": event.clientX, "pageY": event.clientY};
 
-    this.entropy_pool = CryptoJS.SHA256(this.entropy_pool + (new Date).getMilliseconds() +':'+ e.pageX +':'+ e.pageY).toString(CryptoJS.enc.Hex);
+    this.entropy_pool = GCrypto.hash(this.entropy_pool + (new Date).getMilliseconds() +':'+ e.pageX +':'+ e.pageY);
     this.entropy_bits += this.BITS_PER_SAMPLE;
     if(this.entropy_bits > 256) { this.entropy_bits = 256; } // Can't have more entropy than the pool will hold
     
@@ -112,7 +112,7 @@ export class PassGeneratorComponent implements OnInit, Refreshable {
 
     do {
       var result = parseInt("0x"+ this.entropy_pool.substr(0,12)) % max;
-      this.entropy_pool = CryptoJS.SHA256(this.entropy_pool + result).toString(CryptoJS.enc.Hex);
+      this.entropy_pool = GCrypto.hash(this.entropy_pool + result);
     } while(Math.floor(parseInt("0x"+ this.entropy_pool.substr(0,12)) / max) >= Math.floor(this.MAXMAX / max));
 
     return(result);

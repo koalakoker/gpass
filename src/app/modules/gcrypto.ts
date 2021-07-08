@@ -1,5 +1,3 @@
-import  * as CryptoJS from '../../../node_modules/crypto-js'
-
 function ascii_to_hexa(str) {
     var arr1 = [];
     for (var n = 0, l = str.length; n < l; n ++) 
@@ -74,8 +72,12 @@ export class GCrypto {
         return decrypted.toString(CryptoJS.enc.Latin1);
     }
 
-    static hash(key: string): string {
+    static hashUpperCase(key: string): string {
         return CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex).toUpperCase();
+    }
+
+    static hash(key: string): string {
+        return CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
     }
 
     static cryptDBAccess(text: string, key: string): string {

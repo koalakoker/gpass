@@ -8,9 +8,15 @@ describe('workspace-project App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', async () => {
+  it('should have login', async () => {
     await page.navigateTo();
-    expect(await page.getTitleText()).toEqual('GPass app is running!');
+    try {
+      const loginInput = await page.getLoginName();
+      console.log(loginInput.getText());
+      expect(loginInput.getText()).toEqual(jasmine.anything());
+    } catch (error) {
+      fail("Login element does not exist");
+    }
   });
 
   afterEach(async () => {
