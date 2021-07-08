@@ -1,3 +1,5 @@
+import * as CryptoJS from 'crypto-js';
+
 function ascii_to_hexa(str) {
     var arr1 = [];
     for (var n = 0, l = str.length; n < l; n ++) 
