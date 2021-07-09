@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
-import { WebLinkService } from './services/web-link.service';
 import { LoginService } from './services/login.service';
 
 import { Router, NavigationEnd } from '@angular/router';
@@ -82,9 +81,9 @@ export class AppComponent implements OnInit {
   webPassDropDown: DropDown;
   categoryDropDown: DropDown;
   userDropDown: DropDown;
+  lockDropDownOpen: boolean = true;
 
   constructor(
-    private webLinkService: WebLinkService,
     private categoryService: CategoryService,
     private router: Router,
     private loginService: LoginService
@@ -248,6 +247,7 @@ export class AppComponent implements OnInit {
   }
 
   tabChange(changeEvent: NgbNavChangeEvent) {
+    this.lockDropDownOpen = true;
     if (changeEvent.nextId === this.webPassDropDown.index) {
       if (!(this.pageCode == PageCodes.webPassPage)) {
         this.router.navigateByUrl('/list/0');

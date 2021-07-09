@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { NgbDropdown, NgbDropdownMenu } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from 'src/app/app.component';
 import { LoginService } from 'src/app/services/login.service';
 import { DropDown } from '../dropDown';
@@ -9,6 +10,7 @@ import { MenuItem } from '../menuItem';
   templateUrl: './drop-down.component.html'
 })
 export class DropDownComponent implements OnInit {
+  @ViewChild(NgbDropdownMenu) ngbDropdownMenu: NgbDropdownMenu;
   @Input() menuItem: MenuItem;
   @Input() parent: AppComponent;
   dropDown: DropDown;
@@ -29,6 +31,14 @@ export class DropDownComponent implements OnInit {
 
   checkRights(minLevel: number) {
     return this.loginService.checkRights(minLevel);
+  }
+
+  onClick() {
+    if (this.parent.lockDropDownOpen) {
+      const ngbDropdown: NgbDropdown  = this.ngbDropdownMenu.dropdown;
+      ngbDropdown.close();
+      this.parent.lockDropDownOpen = false;
+    }
   }
 
 }

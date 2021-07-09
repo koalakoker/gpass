@@ -1,4 +1,4 @@
-<a ngbNavLink tabindex="dropDown.index" ngbDropdownToggle id="dropDown.tag" role="button">
+<a (click)='onClick()' ngbNavLink tabindex="dropDown.index" ngbDropdownToggle id="dropDown.tag" role="button">
   {{dropDown.label}}
 </a>
 <div ngbDropdownMenu aria-labelledby="dropDown.tag" class="dropdown-menu">
