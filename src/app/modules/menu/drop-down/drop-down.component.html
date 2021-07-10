@@ -1,10 +1,12 @@
-<a (click)='onClick()' ngbNavLink tabindex="dropDown.index" ngbDropdownToggle id="dropDown.tag" role="button">
-  {{dropDown.label}}
-</a>
-<div ngbDropdownMenu aria-labelledby="dropDown.tag" class="dropdown-menu">
-  <ng-container *ngFor="let subItem of dropDown.getItems(); let j = index">
-    <ng-container *ngIf="isItemVisible(subItem)">
-      <app-sub-item [subItem]='subItem' (actionEvent)="dropDownItemClick(subItem)"></app-sub-item>
+<li *ngIf="isItemVisible(dropDown)" ngbDropdown [ngbNavItem]="dropDown.index">
+  <a (click)='onClick()' ngbNavLink tabindex="dropDown.index" ngbDropdownToggle id="dropDown.tag" role="button">
+    {{dropDown.label}}
+  </a>
+  <div ngbDropdownMenu aria-labelledby="dropDown.tag" class="dropdown-menu">
+    <ng-container *ngFor="let subItem of dropDown.getItems(); let j = index">
+      <ng-container *ngIf="isItemVisible(subItem)">
+        <app-sub-item [subItem]='subItem' (actionEvent)="dropDownItemClick(subItem)"></app-sub-item>
+      </ng-container>
     </ng-container>
-  </ng-container>
-</div>
+  </div> 
+</li>

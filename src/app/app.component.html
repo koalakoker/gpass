@@ -10,19 +10,14 @@
 
             <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto" (navChange)="tabChange($event)">
                 <ng-container *ngIf="isLoggedState()">
-
                     <ng-container *ngFor="let menuItem of menu">
-                        <li *ngIf="isItemVisible(menuItem)" ngbDropdown [ngbNavItem]="menuItem.index">
-                            <ng-container *ngIf="menuItem.isDropDown()">
-                                <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
-                            </ng-container>
-                            <ng-container *ngIf="menuItem.isRouterLink()">
-                                <app-router-link [menuItem]='menuItem'></app-router-link>
-                            </ng-container>
-                        </li>
+                        <ng-container *ngIf="menuItem.isDropDown()">    
+                            <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
+                        </ng-container>    
+                        <ng-container *ngIf="menuItem.isRouterLink()">
+                            <app-router-link [menuItem]='menuItem'></app-router-link>
+                        </ng-container>
                     </ng-container>
-                    
-                    
                 </ng-container>
 
                 <app-login #loginComponent

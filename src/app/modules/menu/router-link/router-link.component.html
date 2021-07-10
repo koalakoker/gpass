@@ -1,2 +1,5 @@
-<a ngbNavLink tabindex="menuItem.index" [routerLink]="routerLink.link" ngbDropdownToggle
-  role="button">{{routerLink.label}}</a>
+<li *ngIf="isItemVisible(routerLink)" [ngbNavItem]="routerLink.index">
+  <a ngbNavLink tabindex="menuItem.index" [routerLink]="routerLink.link">
+    {{routerLink.label}}
+  </a>
+</li>

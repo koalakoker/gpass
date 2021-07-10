@@ -348,16 +348,7 @@ export class AppComponent implements OnInit {
     this.routedComponent.refresh(InputCodes.PlusOneYearAll);
   }
 
-  isItemVisible(menuItem: MenuItem): boolean {
-    return this.checkRights(menuItem.minLevel) && menuItem.visible;
-  }
-
-  checkRights(minLevel: number) {
-    return this.loginService.checkRights(minLevel);
-  }
-
   test() {
     console.log("Admin test");
   }
-
 }
