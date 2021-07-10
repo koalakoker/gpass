@@ -2,22 +2,35 @@ import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
 import { WebPassClass } from '../modules/webpass';
 import { LoginService } from './login.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { LocalService } from './local.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebLinkService {
 
+  private apiUrl: string = 'http://localhost:5000/api/webpass/';
   private mockup: Array<WebPassClass> = [];
   private mockupId: number = 0;
 
-  constructor(private loginService: LoginService) {
+  constructor(
+    private localService: LocalService,
+    private loginService: LoginService,
+    private http: HttpClient,
+  ) {}
+
+  private httpOptions() {
+    return {
+      headers: new HttpHeaders({
+        'x-auth-token': this.localService.getKey('x-auth-token'),
+      })
+    };
   }
 
   async getFromUserLinks(): Promise<Array<WebPassClass>> {
-    // httpGet
-    return new Promise<Array<WebPassClass>>((resolve, reject) => {
-      const data: Array<WebPassClass> = this.mockup;
+    try {
+      const data = await this.http.get<Array<WebPassClass>>(this.apiUrl, this.httpOptions()).toPromise();
       let webPassList: WebPassClass[] = [];
       // Decode and create a new WebPass list
       webPassList = data.map((x) => {
@@ -36,11 +49,21 @@ export class WebLinkService {
           }
         }
       });
-      resolve(_.cloneDeep(webPassList));
-    });
+      return(_.cloneDeep(webPassList));
+    } catch (error) {
+      console.log(error.error);
+      return [];
+    }
   }
 
-  createWebPass(webPass: WebPassClass): Promise<number> {
+  async createWebPass(webPass: WebPassClass): Promise<number> {
+    try {
+      const body = _.omit(webPass, ['id']);
+      const id = await this.http.post(this.apiUrl, body, this.httpOptions()).toPromise();
+      console.log(id);
+    } catch (error) {
+      console.log(error.error);
+    }
     return new Promise<number>((resolve, reject) => {
       const newWebPass = _.cloneDeep(webPass);
       newWebPass.id = this.mockupId;
