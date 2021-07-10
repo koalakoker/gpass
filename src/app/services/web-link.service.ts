@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
-import { WebPass } from '../modules/webpass';
+import { WebPassClass } from '../modules/webpass';
 import { LoginService } from './login.service';
 
 @Injectable({
@@ -8,20 +8,20 @@ import { LoginService } from './login.service';
 })
 export class WebLinkService {
 
-  private mockup: Array<WebPass> = [];
+  private mockup: Array<WebPassClass> = [];
   private mockupId: number = 0;
 
   constructor(private loginService: LoginService) {
   }
 
-  async getFromUserLinks(): Promise<Array<WebPass>> {
+  async getFromUserLinks(): Promise<Array<WebPassClass>> {
     // httpGet
-    return new Promise<Array<WebPass>>((resolve, reject) => {
-      const data: Array<WebPass> = this.mockup;
-      let webPassList: WebPass[] = [];
+    return new Promise<Array<WebPassClass>>((resolve, reject) => {
+      const data: Array<WebPassClass> = this.mockup;
+      let webPassList: WebPassClass[] = [];
       // Decode and create a new WebPass list
       webPassList = data.map((x) => {
-        const w = new WebPass(x);
+        const w = new WebPassClass(x);
         w.decrypt(this.loginService.getUserKey());
         return w;
       }, this);
@@ -40,7 +40,7 @@ export class WebLinkService {
     });
   }
 
-  createWebPass(webPass: WebPass): Promise<number> {
+  createWebPass(webPass: WebPassClass): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       const newWebPass = _.cloneDeep(webPass);
       newWebPass.id = this.mockupId;
@@ -60,8 +60,8 @@ export class WebLinkService {
     });
   }
 
-  updateWebPass(id: number, webPass: WebPass): Promise<WebPass> {
-    return new Promise<WebPass>((resolve, reject) => {
+  updateWebPass(id: number, webPass: WebPassClass): Promise<WebPassClass> {
+    return new Promise<WebPassClass>((resolve, reject) => {
       const index = this.mockup.indexOf(this.mockup.find((web) => {
         return web.id === id;
       }));

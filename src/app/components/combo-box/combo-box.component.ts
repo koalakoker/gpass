@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
-import { WebPass } from '../../modules/webpass'
+import { WebPassClass } from '../../modules/webpass'
 import { WebLinkService } from '../../services/web-link.service';
 import { LoginService } from '../../services/login.service';
 
@@ -11,8 +11,8 @@ import { LoginService } from '../../services/login.service';
 export class ComboBoxComponent implements OnInit {
   @Output() selected = new EventEmitter<string>();
 
-  list: WebPass[];
-  retrievedList: WebPass[];
+  list: WebPassClass[];
+  retrievedList: WebPassClass[];
   showDropDown: boolean;
   counter: number;
   textToSort: string;
@@ -115,11 +115,11 @@ export class ComboBoxComponent implements OnInit {
     this.list = this.cutListBetweenBounds(this.retrievedList, this.firstElementShowed, this.maxElement);
   }
 
-  cutListBetweenBounds(list: WebPass[], firstElement: number, nElement: number): WebPass[] {
+  cutListBetweenBounds(list: WebPassClass[], firstElement: number, nElement: number): WebPassClass[] {
     var listLenght = list.length;
     if (listLenght === 0) return list;
     if (nElement < 3) {
-      var retList : WebPass[] = [];
+      var retList : WebPassClass[] = [];
       retList.push(list[this.firstElementShowed]);
       return retList;
     }
@@ -139,7 +139,7 @@ export class ComboBoxComponent implements OnInit {
 
     list = list.slice(firstElement, lastElement);
     
-    var element = new WebPass();
+    var element = new WebPassClass();
     element.name = "...";
 
     if (addTail) {
@@ -152,7 +152,7 @@ export class ComboBoxComponent implements OnInit {
     return list;
   }
 
-  updateList(list: WebPass[]) {
+  updateList(list: WebPassClass[]) {
     if (list) {
 
       // Manage here the length of the list to stay in the view
@@ -172,7 +172,7 @@ export class ComboBoxComponent implements OnInit {
   onKeyDownAction(event: KeyboardEvent): void {
     if (this.listToBeUpdated) {
       this.getList(this.textToSort)
-      .then((list: WebPass[]) => {
+      .then((list: WebPassClass[]) => {
         this.retrievedList = list;
         this.updateList(list);
         this.changeSelected(event);
@@ -203,7 +203,7 @@ export class ComboBoxComponent implements OnInit {
 
   textChange(value: string) {
     this.getList(value)
-    .then((list: WebPass[]) => {
+    .then((list: WebPassClass[]) => {
       this.retrievedList = list;
       this.updateList(list);
     })
@@ -221,10 +221,10 @@ export class ComboBoxComponent implements OnInit {
   getList(searchStr: string = "") {
     return new Promise((resolve,reject) => {
       this.webLinkService.getFromUserLinks()
-        .then((data: Array<WebPass>) => {
+        .then((data: Array<WebPassClass>) => {
         // Decode and create a new WebPass list
-        var list: WebPass[] = data.map((x) => {
-          const w = new WebPass(x);
+        var list: WebPassClass[] = data.map((x) => {
+          const w = new WebPassClass(x);
           w.decrypt(this.loginService.userPassword);
           return w;
         });
@@ -242,7 +242,7 @@ export class ComboBoxComponent implements OnInit {
         });
         // Filter
         if (searchStr != "") {
-          list = list.filter((web: WebPass) => {
+          list = list.filter((web: WebPassClass) => {
             return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
           });
         }

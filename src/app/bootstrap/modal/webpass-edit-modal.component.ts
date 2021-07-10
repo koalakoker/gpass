@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { WebPass } from '../../modules/webpass';
+import { WebPassClass } from '../../modules/webpass';
 import { WebPassListComponent } from '../../modules/refreshable/web-pass-list/web-pass-list.component'
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
@@ -15,7 +15,7 @@ import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
   templateUrl: './webpass-edit-modal.component.html'
 })
 export class WebPassEditModalComponent {
-  @Input() webpass: WebPass;
+  @Input() webpass: WebPassClass;
   @Input() category: Category[];
   @Input() webpassList: WebPassListComponent;
   @Input() title: string;
@@ -36,7 +36,7 @@ export class WebPassEditModalComponent {
   }
 
   async save() {
-    const webPass = new WebPass(this.webpass);
+    const webPass = new WebPassClass(this.webpass);
     webPass.crypt(this.loginService.getUserKey());
     try {
       await this.webLinkService.updateWebPass(webPass.id, webPass);
@@ -133,7 +133,7 @@ export class WebPassEditModalComponent {
   }
 
   onPlusOneYear() {
-    const w: WebPass = this.webpass;
+    const w: WebPassClass = this.webpass;
     const ed: string = w.expirationDate;
     w.plusOneYear();
     if (ed !== w.expirationDate) {
@@ -150,7 +150,7 @@ export class WebPassEditModalComponent {
   }
 
   onTodayButton() {
-    const w: WebPass = this.webpass;
+    const w: WebPassClass = this.webpass;
     const rd: string = w.registrationDate;
     const ed: string = w.expirationDate;
     w.setToday();

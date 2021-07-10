@@ -1,15 +1,18 @@
+import { extend } from "lodash";
 import { GCrypto } from "./gcrypto";
 
-export class WebPass {
-
+class WebPass {
     id: number;
     name: string;
     url: string;
     username: string;
-    userid : number;
+    userid: number;
     pass: string;
     registrationDate: string;
     expirationDate: string;
+}
+
+export class WebPassClass extends WebPass {
 
     format(date: Date): string {
         const dd: number = date.getDate();
@@ -34,7 +37,8 @@ export class WebPass {
         return days;
     }
 
-    constructor(webPass?: WebPass) {
+    constructor(webPass?: WebPassClass) {
+        super();
         if (webPass == null)
         {
             this.id          = 0;
