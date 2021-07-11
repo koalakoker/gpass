@@ -39,7 +39,7 @@ export class WebPassEditModalComponent {
     const webPass = new WebPassClass(this.webpass);
     webPass.crypt(this.loginService.getUserKey());
     try {
-      await this.webLinkService.updateWebPass(webPass.id, webPass);
+      await this.webLinkService.updateWebPass(webPass._id, webPass);
       console.log("Database updated");
     } catch (error) {
       console.log(error);
@@ -56,7 +56,7 @@ export class WebPassEditModalComponent {
         this.webpassList.category.forEach((cat) => {
           var found: boolean = false;
           allRelWebCat.forEach((rel) => {
-            if ((rel.id_web == this.webpass.id) &&
+            if ((rel.id_web == this.webpass._id) &&
               (rel.id_cat == cat.id) &&
               (rel.enabled == 1)) {
               found = true;
@@ -73,7 +73,7 @@ export class WebPassEditModalComponent {
   relExist(catIndex: number, foundCbk: (index: number) => void, notFoundCbk: () => void) {
     var found: Boolean = false;
     this.webpassList.relWebCat.forEach((rel, index) => {
-      if ((rel.id_web == this.webpass.id) &&
+      if ((rel.id_web == this.webpass._id) &&
         (rel.id_cat == this.webpassList.category[catIndex].id)) {
         found = true;
         foundCbk(index);
@@ -105,7 +105,7 @@ export class WebPassEditModalComponent {
         () => {
           // Create a relation between list[webPasIndex] and category[catIndex]
           var newRel: RelWebCat = new RelWebCat();
-          newRel.id_web = this.webpass.id;
+          newRel.id_web = this.webpass._id;
           newRel.id_cat = this.webpassList.category[catIndex].id;
           newRel.enabled = 1;
           this.webpassList.relWebCat.push(newRel);

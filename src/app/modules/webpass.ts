@@ -2,7 +2,7 @@ import { extend } from "lodash";
 import { GCrypto } from "./gcrypto";
 
 class WebPass {
-    id: number;
+    _id: string;
     name: string;
     url: string;
     username: string;
@@ -41,7 +41,7 @@ export class WebPassClass extends WebPass {
         super();
         if (webPass == null)
         {
-            this.id          = 0;
+            this._id          = '';
             this.name        = '';
             this.url         = '';
             this.username    = '';
@@ -50,7 +50,7 @@ export class WebPassClass extends WebPass {
         }
         else
         {
-            this.id =               webPass.id;
+            this._id =               webPass._id;
             this.name =             webPass.name;
             this.url =              webPass.url;
             this.username =         webPass.username;

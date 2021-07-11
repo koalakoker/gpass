@@ -33,60 +33,54 @@ export class WebLinkService {
       const data = await this.http.get<Array<WebPassClass>>(this.apiUrl, this.httpOptions()).toPromise();
       let webPassList: WebPassClass[] = [];
       // Decode and create a new WebPass list
-      webPassList = data.map((x) => {
+      webPassList = data.map((x: WebPassClass) => {
         const w = new WebPassClass(x);
         w.decrypt(this.loginService.getUserKey());
         return w;
       }, this);
-      webPassList.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        } else {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
-      });
-      return(_.cloneDeep(webPassList));
+      
+      // Different way to sort can be implemented by name is in server side
+      // webPassList.sort((a, b) => {
+      //   if (a.name < b.name) {
+      //     return -1;
+      //   } else {
+      //     if (a.name > b.name) {
+      //       return 1;
+      //     } else {
+      //       return 0;
+      //     }
+      //   }
+      // });
+      
+      return(webPassList);
     } catch (error) {
       console.log(error.error);
       return [];
     }
   }
 
-  async createWebPass(webPass: WebPassClass): Promise<number> {
+  async createWebPass(webPass: WebPassClass): Promise<string> {
     try {
-      const body = _.omit(webPass, ['id']);
-      const id = await this.http.post(this.apiUrl, body, this.httpOptions()).toPromise();
-      console.log(id);
+      const body = _.omit(webPass, ['_id']);
+      const newVebPass = await this.http.post<WebPassClass>(this.apiUrl, body, this.httpOptions()).toPromise();
+      return (newVebPass._id);
     } catch (error) {
       console.log(error.error);
     }
-    return new Promise<number>((resolve, reject) => {
-      const newWebPass = _.cloneDeep(webPass);
-      newWebPass.id = this.mockupId;
-      this.mockup.push(_.cloneDeep(newWebPass));
-      this.mockupId++;
-      resolve(newWebPass.id);
-    });
   }
 
-  deleteWebPass(id: number): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const webPass = this.mockup.find((web) => {
-        return web.id === id;
-      });
-      const index = this.mockup.indexOf(webPass);
-      this.mockup.splice(index, 1);
-    });
+  async deleteWebPass(id: string): Promise<void> {
+    try {
+      await this.http.delete<WebPassClass>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
+    } catch (error) {
+      console.log(error.error);
+    }
   }
 
-  updateWebPass(id: number, webPass: WebPassClass): Promise<WebPassClass> {
+  updateWebPass(id: string, webPass: WebPassClass): Promise<WebPassClass> {
     return new Promise<WebPassClass>((resolve, reject) => {
       const index = this.mockup.indexOf(this.mockup.find((web) => {
-        return web.id === id;
+        return web._id === id;
       }));
       this.mockup[index] = _.cloneDeep(webPass);
       resolve(webPass);

@@ -114,12 +114,12 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.relWebCat = this.relWebCat.filter((x) => {
         return ((x.id_cat == this.catID) && (x.enabled == 1));
       });
-      var filtWebId: number[] = [];
+      var filtWebId: string[] = [];
       this.relWebCat.forEach((rel) => {
         filtWebId.push(rel.id_web);
       });
       this.webPassList = this.webPassList.filter((web) => {
-        return this.include(filtWebId, web.id);
+        return this.include(filtWebId, web._id);
       });
     } else {
       if (this.searchStr != null) {
@@ -172,7 +172,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       webPass.crypt(userPassword);
       webPass.userid = this.loginService.userid;
       try {
-        webPass.id = await this.webLinkService.createWebPass(webPass);
+        webPass._id = await this.webLinkService.createWebPass(webPass);
         webPass.decrypt(userPassword);
         this.webPassList.unshift(webPass);
         this.hasChanged.emit(PageCodes.webPassPage);
@@ -200,7 +200,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   async onButtonRemove(i: number) {
     const webPass = this.webPassList[i];
     try {
-      await this.webLinkService.deleteWebPass(webPass.id);
+      await this.webLinkService.deleteWebPass(webPass._id);
       this.webPassList.splice(i, 1);
       this.hasChanged.emit(PageCodes.webPassPage);
     } catch (error) {
@@ -236,7 +236,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     let en: boolean;
     switch (name) {
       case 'id':
-        const id = this.webPassList[index].id;
+        const id = this.webPassList[index]._id;
         if (id) {
           str = id.toString();
         }

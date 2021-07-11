@@ -105,7 +105,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
       list.forEach(webPass => {
         const newWebPass = new WebPassClass(webPass);
         webPass.crypt(this.new_password);
-        this.webLinkService.updateWebPass(webPass.id, webPass)
+        this.webLinkService.updateWebPass(webPass._id, webPass)
           .then(
             () => {
               this.itemToBeSentNbr--;
