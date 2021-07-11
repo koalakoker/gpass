@@ -1,3 +1,4 @@
+//import jwt from 'jsonwebtoken';
 import { Injectable } from '@angular/core';
 import { GCrypto } from '../modules/gcrypto';
 import { LocalService } from './local.service';
@@ -14,7 +15,6 @@ export class LoginService {
   gCrypto: GCrypto;
   keepMeLogged = false;
   logged = false;
-  userid: number;
   userName: string;
   userPassword: string;
   userHash: string;
@@ -26,11 +26,7 @@ export class LoginService {
   }
 
   getUserKey(): string {
-    return '1234'; // To be get from jwt
-  }
-
-  getUserId(): string {
-    return 'gianluigi.forte@st.com'; // To be get from jwt
+    return '1234'; // To be linked to user password
   }
 
   async decryptList(strList: string[]) {
@@ -79,6 +75,9 @@ export class LoginService {
         console.log('Database error\nToken not generated');
       }
       this.localService.setKey('x-auth-token', token);
+
+      // Extract userid from jwt it is really needed?
+      
       this.updateUserLevel();
       return 0;
     } catch (error) {

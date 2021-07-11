@@ -97,8 +97,6 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   async onNewFunc() {
     const category = new Category();
-    category.userid = this.loginService.userid;
-    
     try {
       const id = await this.categoryService.createCategory(category);  
       category._id = id;

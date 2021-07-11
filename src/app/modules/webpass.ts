@@ -1,17 +1,17 @@
 import { GCrypto } from "./gcrypto";
 
-export class WebPassClass {
+export class WebPass {
 
     _id: string;
     name: string;
     url: string;
     username: string;
-    userid: number;
+    userid: string;
     pass: string;
     registrationDate: string;
     expirationDate: string;
 
-    constructor(webPass?: WebPassClass) {
+    constructor(webPass?: WebPass) {
         if (webPass == null) {
             this._id = '';
             this.name = '';

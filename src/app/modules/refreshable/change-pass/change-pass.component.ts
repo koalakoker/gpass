@@ -5,7 +5,7 @@ import * as ReturnCodes from '../returnCodes';
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { WebLinkService } from '../../../services/web-link.service';
 import { UserService } from 'src/app/services/user.service';
-import { WebPassClass } from '../../webpass';
+import { WebPass } from '../../webpass';
 import { IUser } from '../../../services/user';
 import { LoginService } from '../../../services/login.service';
 
@@ -53,7 +53,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
   async changeUserPass(new_password: string) {
     try {
       await this.updateUserHashInDB(new_password);
-      var list: WebPassClass[] = await this.getWebPass();
+      var list: WebPass[] = await this.getWebPass();
       await this.cryptWebPassAndUpdateDB(list);
       this.loginService.updateUserPassword(new_password);
       this.hasChanged.emit(PageCodes.changePass);
@@ -72,20 +72,20 @@ export class ChangePassComponent implements OnInit, Refreshable {
   updateUserHashInDB(newPassword: string): Promise<IUser> {
     const iUser: IUser = {
       id: 0,
-      email: this.loginService.getUserId(),
+      email: this.loginService.userName,
       password: newPassword
     };
     return this.userService.updateUser(iUser);
   }
 
-  getWebPass(): Promise<WebPassClass[]> {
+  getWebPass(): Promise<WebPass[]> {
     // Get the DB values and decrypt with old pass
-    return new Promise<WebPassClass[]>((resolve, reject) => {
+    return new Promise<WebPass[]>((resolve, reject) => {
       this.webLinkService.getFromUserLinks()
-        .then((data: Array<WebPassClass>) => {
+        .then((data: Array<WebPass>) => {
           // Decode and create a new WebPass list
-          const list: WebPassClass[] = data.map((x) => {
-            const w = new WebPassClass(x);
+          const list: WebPass[] = data.map((x) => {
+            const w = new WebPass(x);
             w.decrypt(this.loginService.userPassword);
             return w;
           }, this);
@@ -95,7 +95,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
       });
   }
 
-  cryptWebPassAndUpdateDB(list: WebPassClass[]): Promise<void> {
+  cryptWebPassAndUpdateDB(list: WebPass[]): Promise<void> {
     // Cript the values of the DB with the new pass
     return new Promise<void>((resolve, reject) => {
       if (list.length === 0) {
@@ -103,7 +103,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
       }
       this.itemToBeSentNbr = list.length;
       list.forEach(webPass => {
-        const newWebPass = new WebPassClass(webPass);
+        const newWebPass = new WebPass(webPass);
         webPass.crypt(this.new_password);
         this.webLinkService.updateWebPass(webPass._id, webPass)
           .then(

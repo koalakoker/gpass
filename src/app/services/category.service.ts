@@ -1,62 +1,80 @@
+import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
 import { Category } from '../modules/category';
+import { LocalService } from './local.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { LoginService } from './login.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
 
-  private mockup: Array<Category> = [];
-  private mockupId: string = '';
+  private apiUrl: string = 'http://localhost:5000/api/category/';
 
-  constructor() {
-  }
+  constructor(
+    private localService: LocalService,
+    private loginService: LoginService,
+    private http: HttpClient
+  ) {}
 
-  getFromUserCategory(): Promise<Array<Category>> {
-    return new Promise<Array<Category>>((resolve, reject) => {
-      const categories = this.mockup;
-      categories.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        } else {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
+  private httpOptions() {
+    return {
+      headers: new HttpHeaders({
+        'x-auth-token': this.localService.getKey('x-auth-token'),
       })
-      resolve(categories);
-    });
+    };
   }
 
-  createCategory(category: Category): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.mockup.push(category);
-      this.mockupId+='.';
-      resolve(this.mockupId);
-    })
+  async getFromUserCategory(): Promise<Array<Category>> {
+    try {
+      const categories = await this.http.get<Array<Category>>(this.apiUrl, this.httpOptions()).toPromise();
+      
+      // Different way to sort can be implemented by name is in server side
+      // categories.sort((a, b) => {
+      //   if (a.name < b.name) {
+      //     return -1;
+      //   } else {
+      //     if (a.name > b.name) {
+      //       return 1;
+      //     } else {
+      //       return 0;
+      //     }
+      //   }
+      // })
+  
+      return(categories);
+    } catch (error) {
+      console.log(error.error);
+      return [];
+    }
   }
 
-  deleteCategory(id: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const category = this.mockup.find((cat) => {
-        return cat._id === id;
-      });
-      const index = this.mockup.indexOf(category);
-      this.mockup.splice(index, 1);
-    });
+  async createCategory(category: Category): Promise<string> {
+    try {
+      const body = _.omit(category, ['_id']);
+      const newCategory = await this.http.post<Category>(this.apiUrl, body, this.httpOptions()).toPromise();
+      return (newCategory._id);
+    } catch (error) {
+      console.log(error.error);
+    }
   }
 
-  updateCategory(id: string, categoryUpdated: Category): Promise<Category> {
-    return new Promise<Category>((resolve, reject) => {
-      const category = this.mockup.find((cat) => {
-        return cat._id === id;
-      });
-      const index = this.mockup.indexOf(category);
-      this.mockup[index] = categoryUpdated;
-      resolve(categoryUpdated);
-    });
+  async deleteCategory(id: string): Promise<void> {
+    try {
+      await this.http.delete<Category>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
+    } catch (error) {
+      console.log(error.error);
+    }
+  }
+
+  async updateCategory(id: string, category: Category): Promise<Category> {
+    try {
+      const body = _.omit(category, ['_id']);
+      return await this.http.put<Category>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+    } catch (error) {
+      console.log(error.error);
+    }
   }
 
 }

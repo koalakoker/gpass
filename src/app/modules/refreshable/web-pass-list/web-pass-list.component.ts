@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
-import { WebPassClass } from '../../webpass';
+import { WebPass } from '../../webpass';
 import { Category } from '../../category';
 import { RelWebCat } from '../../relwebcat';
 
@@ -34,10 +34,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   searchStr: string = "";
   webPassIndexSelected: number;
   g: GCrypto;
-  webPassList: WebPassClass[] = [];
+  webPassList: WebPass[] = [];
   category: Category[];
   relWebCat: RelWebCat[];
-  selectedWebPass: WebPassClass;
+  selectedWebPass: WebPass;
   errorMessage: string = '';
   message: string = '';
   interval;
@@ -168,9 +168,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   async onNew() {
     let userPassword: string = this.loginService.getUserKey();
     if (this.isNewPosible()) {
-      const webPass = new WebPassClass();
+      const webPass = new WebPass();
       webPass.crypt(userPassword);
-      webPass.userid = this.loginService.userid;
       try {
         webPass._id = await this.webLinkService.createWebPass(webPass);
         webPass.decrypt(userPassword);
@@ -182,7 +181,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     }
   }
 
-  onSelect(webPass: WebPassClass) {
+  onSelect(webPass: WebPass) {
     if (this.selectedWebPass != webPass) {
     }
     this.selectedWebPass = webPass;
@@ -208,11 +207,11 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     }
   }
 
-  isSelected(webPass: WebPassClass): boolean {
+  isSelected(webPass: WebPass): boolean {
     return (webPass === this.selectedWebPass);
   }
 
-  isActive(webPass: WebPassClass): string {
+  isActive(webPass: WebPass): string {
     return (this.isSelected(webPass)?"active":"");
   }
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
-import { WebPassClass } from '../modules/webpass';
+import { WebPass } from '../modules/webpass';
 import { LoginService } from './login.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LocalService } from './local.service';
@@ -11,9 +11,7 @@ import { LocalService } from './local.service';
 export class WebLinkService {
 
   private apiUrl: string = 'http://localhost:5000/api/webpass/';
-  private mockup: Array<WebPassClass> = [];
-  private mockupId: number = 0;
-
+  
   constructor(
     private localService: LocalService,
     private loginService: LoginService,
@@ -28,13 +26,13 @@ export class WebLinkService {
     };
   }
 
-  async getFromUserLinks(): Promise<Array<WebPassClass>> {
+  async getFromUserLinks(): Promise<Array<WebPass>> {
     try {
-      const data = await this.http.get<Array<WebPassClass>>(this.apiUrl, this.httpOptions()).toPromise();
-      let webPassList: WebPassClass[] = [];
+      const data = await this.http.get<Array<WebPass>>(this.apiUrl, this.httpOptions()).toPromise();
+      let webPassList: WebPass[] = [];
       // Decode and create a new WebPass list
-      webPassList = data.map((x: WebPassClass) => {
-        const w = new WebPassClass(x);
+      webPassList = data.map((x: WebPass) => {
+        const w = new WebPass(x);
         w.decrypt(this.loginService.getUserKey());
         return w;
       }, this);
@@ -59,10 +57,10 @@ export class WebLinkService {
     }
   }
 
-  async createWebPass(webPass: WebPassClass): Promise<string> {
+  async createWebPass(webPass: WebPass): Promise<string> {
     try {
       const body = _.omit(webPass, ['_id']);
-      const newVebPass = await this.http.post<WebPassClass>(this.apiUrl, body, this.httpOptions()).toPromise();
+      const newVebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
       return (newVebPass._id);
     } catch (error) {
       console.log(error.error);
@@ -71,16 +69,16 @@ export class WebLinkService {
 
   async deleteWebPass(id: string): Promise<void> {
     try {
-      await this.http.delete<WebPassClass>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
+      await this.http.delete<WebPass>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
     } catch (error) {
       console.log(error.error);
     }
   }
 
-  async updateWebPass(id: string, webPass: WebPassClass): Promise<WebPassClass> {
+  async updateWebPass(id: string, webPass: WebPass): Promise<WebPass> {
     try {
       const body = _.omit(webPass, ['_id']);
-      return await this.http.put<WebPassClass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+      return await this.http.put<WebPass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
     } catch (error) {
       console.log(error.error);
     }
