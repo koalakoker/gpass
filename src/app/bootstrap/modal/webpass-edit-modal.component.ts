@@ -86,7 +86,7 @@ export class WebPassEditModalComponent {
 
   async saveRel(rel: RelWebCat) {
     try {
-      await this.relWebCatService.updateRelWebCat(rel.id, rel);  
+      await this.relWebCatService.updateRelWebCat(rel._id, rel);  
       console.log("Database updated");
     } catch (error) {
       console.log(error);
@@ -125,7 +125,7 @@ export class WebPassEditModalComponent {
   async newRel(rel: RelWebCat) {
     try {
       const id = await this.relWebCatService.createRelWebCat(rel);  
-      rel.id = id;
+      rel._id = id;
       console.log("Database updated");
     } catch (error) {
       console.log(error);
