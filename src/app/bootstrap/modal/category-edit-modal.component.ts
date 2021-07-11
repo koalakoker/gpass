@@ -22,7 +22,7 @@ export class CategoryEditModalComponent {
   async save() {
     const category = new Category(this.category);
     try {
-      await this.categoryService.updateCategory(category.id, category)
+      await this.categoryService.updateCategory(category._id, category)
     } catch (error) {
       console.log(error);
     }

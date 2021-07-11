@@ -30,7 +30,7 @@ import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
 })
 export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
-  catID: number;
+  catID: string;
   searchStr: string = "";
   webPassIndexSelected: number;
   g: GCrypto;
@@ -56,7 +56,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
   
   ngOnInit() {
-    this.catID = +this.route.snapshot.paramMap.get('cat');
+    this.catID = this.route.snapshot.paramMap.get('cat');
     this.searchStr = this.route.snapshot.paramMap.get('str');
   }
   
@@ -67,7 +67,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
 
       if (cmd == InputCodes.Refresh) {
-        this.catID = +this.route.snapshot.paramMap.get('cat');
+        this.catID = this.route.snapshot.paramMap.get('cat');
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then(() => {
@@ -86,7 +86,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         ret.childInject = ReturnCodes.None;
         resolve(ret);
       } else if (cmd == InputCodes.SrcPress) {
-        this.catID = 0;
+        this.catID = '0';
         this.searchStr = this.route.snapshot.paramMap.get('str');
         this.loginService.checklogged()
         .then (() => {
@@ -110,7 +110,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   afterLoad() {
     // Select only by cat (0 = all)
-    if (this.catID != 0) {
+    if (this.catID != '0') {
       this.relWebCat = this.relWebCat.filter((x) => {
         return ((x.id_cat == this.catID) && (x.enabled == 1));
       });
@@ -190,7 +190,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   onCloseEdit() {
     if (this.needReenter) {
-      if (this.catID != 0) {
+      if (this.catID != '0') {
         this.getWebPassList();
       }
       this.needReenter = false;

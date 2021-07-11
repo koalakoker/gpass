@@ -101,7 +101,7 @@ export class CategoryComponent implements OnInit, Refreshable {
     
     try {
       const id = await this.categoryService.createCategory(category);  
-      category.id = id;
+      category._id = id;
       this.category.unshift(category);
       this.hasChanged.emit();
     } catch (error) {
@@ -112,7 +112,7 @@ export class CategoryComponent implements OnInit, Refreshable {
   async onButtonRemove(i: number) {
     const cat = this.category[i];
     try {
-      await this.categoryService.deleteCategory(cat.id);  
+      await this.categoryService.deleteCategory(cat._id);  
       this.category.splice(i, 1);
       this.hasChanged.emit();
     } catch (error) {

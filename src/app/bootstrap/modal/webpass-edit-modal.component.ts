@@ -57,7 +57,7 @@ export class WebPassEditModalComponent {
           var found: boolean = false;
           allRelWebCat.forEach((rel) => {
             if ((rel.id_web == this.webpass._id) &&
-              (rel.id_cat == cat.id) &&
+              (rel.id_cat == cat._id) &&
               (rel.enabled == 1)) {
               found = true;
             }
@@ -74,7 +74,7 @@ export class WebPassEditModalComponent {
     var found: Boolean = false;
     this.webpassList.relWebCat.forEach((rel, index) => {
       if ((rel.id_web == this.webpass._id) &&
-        (rel.id_cat == this.webpassList.category[catIndex].id)) {
+        (rel.id_cat == this.webpassList.category[catIndex]._id)) {
         found = true;
         foundCbk(index);
       }
@@ -106,7 +106,7 @@ export class WebPassEditModalComponent {
           // Create a relation between list[webPasIndex] and category[catIndex]
           var newRel: RelWebCat = new RelWebCat();
           newRel.id_web = this.webpass._id;
-          newRel.id_cat = this.webpassList.category[catIndex].id;
+          newRel.id_cat = this.webpassList.category[catIndex]._id;
           newRel.enabled = 1;
           this.webpassList.relWebCat.push(newRel);
           this.newRel(newRel);

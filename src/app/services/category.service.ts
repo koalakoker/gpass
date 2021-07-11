@@ -7,7 +7,7 @@ import { Category } from '../modules/category';
 export class CategoryService {
 
   private mockup: Array<Category> = [];
-  private mockupId: number = 0;
+  private mockupId: string = '';
 
   constructor() {
   }
@@ -30,28 +30,28 @@ export class CategoryService {
     });
   }
 
-  createCategory(category: Category): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
+  createCategory(category: Category): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       this.mockup.push(category);
-      this.mockupId++;
+      this.mockupId+='.';
       resolve(this.mockupId);
     })
   }
 
-  deleteCategory(id: number): Promise<void> {
+  deleteCategory(id: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const category = this.mockup.find((cat) => {
-        return cat.id === id;
+        return cat._id === id;
       });
       const index = this.mockup.indexOf(category);
       this.mockup.splice(index, 1);
     });
   }
 
-  updateCategory(id: number, categoryUpdated: Category): Promise<Category> {
+  updateCategory(id: string, categoryUpdated: Category): Promise<Category> {
     return new Promise<Category>((resolve, reject) => {
       const category = this.mockup.find((cat) => {
-        return cat.id === id;
+        return cat._id === id;
       });
       const index = this.mockup.indexOf(category);
       this.mockup[index] = categoryUpdated;

@@ -1,15 +1,15 @@
 export class Category {
-    id: number;
+    _id: string;
     name: string;
     userid: number;
 
     constructor(category?: Category) {
         if (category == null) {
-            this.id = 0;
+            this._id = '0';
             this.name = 'Nuova Categoria';
         }
         else {
-            this.id = category.id;
+            this._id = category._id;
             this.name = category.name;
         }
     }

@@ -157,7 +157,7 @@ export class AppComponent implements OnInit {
           this.webPassDropDown.addItem(this.catDataAll);
           if (this.category) {
             this.category.forEach(cat => {
-              let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat.id, cat.name, 0, false);
+              let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat._id, cat.name, 0, false);
               this.webPassDropDown.addItem(newCatList);
             });
           }
