@@ -166,13 +166,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   async onNew() {
-    let userPassword: string = this.loginService.getUserKey();
     if (this.isNewPosible()) {
       const webPass = new WebPass();
-      webPass.crypt(userPassword);
       try {
         webPass._id = await this.webLinkService.createWebPass(webPass);
-        webPass.decrypt(userPassword);
         this.webPassList.unshift(webPass);
         this.hasChanged.emit(PageCodes.webPassPage);
       } catch(error) {

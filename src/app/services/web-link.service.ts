@@ -36,20 +36,18 @@ export class WebLinkService {
         w.decrypt(this.loginService.getUserKey());
         return w;
       }, this);
-      
-      // Different way to sort can be implemented by name is in server side
-      // webPassList.sort((a, b) => {
-      //   if (a.name < b.name) {
-      //     return -1;
-      //   } else {
-      //     if (a.name > b.name) {
-      //       return 1;
-      //     } else {
-      //       return 0;
-      //     }
-      //   }
-      // });
-      
+      // Sort it (must be done here because are now decrypted)
+      webPassList.sort((a, b) => {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        } else {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+      });
       return(webPassList);
     } catch (error) {
       console.log(error.error);
@@ -59,6 +57,8 @@ export class WebLinkService {
 
   async createWebPass(webPass: WebPass): Promise<string> {
     try {
+      let userPassword: string = this.loginService.getUserKey();
+      webPass.crypt(userPassword);
       const body = _.omit(webPass, ['_id']);
       const newVebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
       return (newVebPass._id);
@@ -77,6 +77,8 @@ export class WebLinkService {
 
   async updateWebPass(id: string, webPass: WebPass): Promise<WebPass> {
     try {
+      let userPassword: string = this.loginService.getUserKey();
+      webPass.crypt(userPassword);
       const body = _.omit(webPass, ['_id']);
       return await this.http.put<WebPass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
     } catch (error) {

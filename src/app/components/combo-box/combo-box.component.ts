@@ -218,39 +218,18 @@ export class ComboBoxComponent implements OnInit {
     this.selected.emit(this.textToSort);
   }
 
-  getList(searchStr: string = "") {
-    return new Promise((resolve,reject) => {
-      this.webLinkService.getFromUserLinks()
-        .then((data: Array<WebPass>) => {
-        // Decode and create a new WebPass list
-        var list: WebPass[] = data.map((x) => {
-          const w = new WebPass(x);
-          w.decrypt(this.loginService.userPassword);
-          return w;
+  async getList(searchStr: string = "") {
+    try {
+      let list: Array<WebPass> = await this.webLinkService.getFromUserLinks();
+      if (searchStr != "") {
+        list = list.filter((web: WebPass) => {
+          return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
         });
-        // Sort WebPass list
-        list.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          } else {
-            if (a.name > b.name) {
-              return 1;
-            } else {
-              return 0;
-            }
-          }
-        });
-        // Filter
-        if (searchStr != "") {
-          list = list.filter((web: WebPass) => {
-            return (web.name.toLocaleLowerCase().includes(searchStr.toLocaleLowerCase()));
-          });
-        }
-        resolve(list);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-    });
+      }
+      return (list);
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   }
 }

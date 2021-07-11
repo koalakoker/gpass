@@ -78,44 +78,23 @@ export class ChangePassComponent implements OnInit, Refreshable {
     return this.userService.updateUser(iUser);
   }
 
-  getWebPass(): Promise<WebPass[]> {
-    // Get the DB values and decrypt with old pass
-    return new Promise<WebPass[]>((resolve, reject) => {
-      this.webLinkService.getFromUserLinks()
-        .then((data: Array<WebPass>) => {
-          // Decode and create a new WebPass list
-          const list: WebPass[] = data.map((x) => {
-            const w = new WebPass(x);
-            w.decrypt(this.loginService.userPassword);
-            return w;
-          }, this);
-          resolve (list);
-        })
-        .catch(err => reject(err));
-      });
+  async getWebPass(): Promise<WebPass[]> {
+    try {
+      return (await this.webLinkService.getFromUserLinks());
+    } catch (error) {
+      console.log(error);
+      return[];
+    }
   }
 
-  cryptWebPassAndUpdateDB(list: WebPass[]): Promise<void> {
-    // Cript the values of the DB with the new pass
-    return new Promise<void>((resolve, reject) => {
-      if (list.length === 0) {
-        resolve();
-      }
-      this.itemToBeSentNbr = list.length;
-      list.forEach(webPass => {
-        const newWebPass = new WebPass(webPass);
-        webPass.crypt(this.new_password);
-        this.webLinkService.updateWebPass(webPass._id, webPass)
-          .then(
-            () => {
-              this.itemToBeSentNbr--;
-              if (this.itemToBeSentNbr === 0) {
-                resolve();
-              }
-            })
-          .catch( err => reject(err));
-      }, this);
-    });
+  async cryptWebPassAndUpdateDB(list: Array<WebPass>): Promise<void> {
+    try {
+      list.forEach(async (webPass) => {
+        await this.webLinkService.updateWebPass(webPass._id, webPass);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onChangePassButtonClick(): void {
