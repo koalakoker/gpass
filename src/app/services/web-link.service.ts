@@ -77,13 +77,12 @@ export class WebLinkService {
     }
   }
 
-  updateWebPass(id: string, webPass: WebPassClass): Promise<WebPassClass> {
-    return new Promise<WebPassClass>((resolve, reject) => {
-      const index = this.mockup.indexOf(this.mockup.find((web) => {
-        return web._id === id;
-      }));
-      this.mockup[index] = _.cloneDeep(webPass);
-      resolve(webPass);
-    });
+  async updateWebPass(id: string, webPass: WebPassClass): Promise<WebPassClass> {
+    try {
+      const body = _.omit(webPass, ['_id']);
+      return await this.http.put<WebPassClass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+    } catch (error) {
+      console.log(error.error);
+    }
   }
 }
