@@ -1,7 +1,7 @@
-import { extend } from "lodash";
 import { GCrypto } from "./gcrypto";
 
-class WebPass {
+export class WebPassClass {
+
     _id: string;
     name: string;
     url: string;
@@ -10,9 +10,26 @@ class WebPass {
     pass: string;
     registrationDate: string;
     expirationDate: string;
-}
 
-export class WebPassClass extends WebPass {
+    constructor(webPass?: WebPassClass) {
+        if (webPass == null) {
+            this._id = '';
+            this.name = '';
+            this.url = '';
+            this.username = '';
+            this.pass = '';
+            this.setToday();
+        }
+        else {
+            this._id = webPass._id;
+            this.name = webPass.name;
+            this.url = webPass.url;
+            this.username = webPass.username;
+            this.pass = webPass.pass;
+            this.registrationDate = webPass.registrationDate;
+            this.expirationDate = webPass.expirationDate;
+        }
+    }
 
     format(date: Date): string {
         const dd: number = date.getDate();
@@ -35,29 +52,6 @@ export class WebPassClass extends WebPass {
 
         days = mms + '/' + dds + '/' + yyyy.toString();
         return days;
-    }
-
-    constructor(webPass?: WebPassClass) {
-        super();
-        if (webPass == null)
-        {
-            this._id          = '';
-            this.name        = '';
-            this.url         = '';
-            this.username    = '';
-            this.pass        = '';
-            this.setToday();
-        }
-        else
-        {
-            this._id =               webPass._id;
-            this.name =             webPass.name;
-            this.url =              webPass.url;
-            this.username =         webPass.username;
-            this.pass =             webPass.pass;
-            this.registrationDate = webPass.registrationDate;
-            this.expirationDate =   webPass.expirationDate;
-        }
     }
 
     setToday() {
