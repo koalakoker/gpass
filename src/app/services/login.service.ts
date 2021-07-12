@@ -1,4 +1,4 @@
-//import jwt from 'jsonwebtoken';
+import jwt_decode from "jwt-decode";
 import { Injectable } from '@angular/core';
 import { GCrypto } from '../modules/gcrypto';
 import { LocalService } from './local.service';
@@ -17,7 +17,6 @@ export class LoginService {
   logged = false;
   userName: string;
   userPassword: string;
-  userHash: string;
   level: number = 0;
 
   constructor(
@@ -56,18 +55,8 @@ export class LoginService {
       })
   }
 
-  calculateUserHash(userName: string, userPassword: string): string {
-    // var user: User = new User();
-    // user.username = userName;
-    // user.updateHash(userPassword);
-    // return user.userhash;
-    return '';
-  }
-
   async checkLogin(userName: string, userPassword: string): Promise<number> {
-
     const user: IUser = {'email': userName, 'password': userPassword};
-    
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
       const token = response.headers.get('x-auth-token');
@@ -75,9 +64,6 @@ export class LoginService {
         console.log('Database error\nToken not generated');
       }
       this.localService.setKey('x-auth-token', token);
-
-      // Extract userid from jwt it is really needed?
-      
       this.updateUserLevel();
       return 0;
     } catch (error) {
@@ -141,8 +127,12 @@ export class LoginService {
   }
 
   updateUserLevel() {
-    // To be fixed
-    this.level = 1;
+    const token = this.localService.getKey('x-auth-token');
+    var decoded = jwt_decode(token);
+    this.level = 0;
+    if (decoded['isAdmin'] == true) {
+      this.level = 1;
+    };
   }
 
   updateUserPassword(newPassword: string) : void {

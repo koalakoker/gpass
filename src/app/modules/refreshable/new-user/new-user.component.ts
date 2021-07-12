@@ -48,7 +48,6 @@ export class NewUserComponent implements OnInit, Refreshable {
           const userName     = strListDeCrypt[0];
           const userPassword = strListDeCrypt[1];
           this.loginService.userName = userName;
-          this.loginService.userHash = userPassword;
           this.loginService.keepMeLogged = true;
           this.loginService.userPassword = '';
           this.loginService.checkLogin(userName, userPassword)
