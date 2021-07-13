@@ -25,6 +25,8 @@ import { WebPassEditModalComponent } from './bootstrap/modal/webpass-edit-modal.
 import { CategoryEditModalComponent } from './bootstrap/modal/category-edit-modal.component'
 import { NewUserModalComponent } from './bootstrap/modal/new-user-modal.component';
 import { UserEditModalComponent } from './bootstrap/modal/user-edit-modal.component';
+import { MessageBoxComponent } from './bootstrap/modal/message-box.component';
+
 import { LoginComponent } from './components/login/login.component';
 import { DropDownComponent } from './modules/menu/drop-down/drop-down.component';
 import { RouterLinkComponent } from './modules/menu/router-link/router-link.component';
@@ -51,7 +53,8 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
     LoginComponent,
     DropDownComponent,
     RouterLinkComponent,
-    SubItemComponent
+    SubItemComponent,
+    MessageBoxComponent
   ],
   imports: [
     BrowserModule,

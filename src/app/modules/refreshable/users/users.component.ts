@@ -10,7 +10,7 @@ import { LoginService } from '../../../services/login.service'
 import { User } from '../../user'
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import * as Modal from '../../../bootstrap/modal/modal'
+import * as Modal from '../../../bootstrap/modal/modalCodes'
 import { NewUserModalComponent } from '../../../bootstrap/modal/new-user-modal.component';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { UserEditModalComponent } from '../../../bootstrap/modal/user-edit-modal.component';

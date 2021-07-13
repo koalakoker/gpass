@@ -1,4 +1,6 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LocalService } from './local.service';
 import { IUser } from './user';
 
 @Injectable({
@@ -6,10 +8,31 @@ import { IUser } from './user';
 })
 export class UserService {
 
+  private meApiUrl: string = 'http://localhost:5000/api/users/me';
   private mockup: Array<IUser> = [];
   private mockupId: number = 0;
 
-  constructor() {
+  constructor(
+    private http: HttpClient,
+    private localService: LocalService
+  ) {}
+
+  private httpOptions() {
+    return {
+      headers: new HttpHeaders({
+        'x-auth-token': this.localService.getKey('x-auth-token'),
+      })
+    };
+  }
+
+  async getUserInfo(): Promise<any> {
+    try {
+      const user = await this.http.get(this.meApiUrl, this.httpOptions()).toPromise();
+      return user;
+    } catch (error) {
+      console.log(error);
+      return {};
+    }
   }
 
   getUsers(): Promise<Array<IUser>> {

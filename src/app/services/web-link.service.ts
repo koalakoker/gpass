@@ -58,10 +58,11 @@ export class WebLinkService {
   async createWebPass(webPass: WebPass): Promise<string> {
     try {
       let userPassword: string = this.loginService.getUserKey();
-      webPass.crypt(userPassword);
-      const body = _.omit(webPass, ['_id']);
-      const newVebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
-      return (newVebPass._id);
+      let webPassClone = _.cloneDeep(webPass);
+      webPassClone.crypt(userPassword);
+      const body = _.omit(webPassClone, ['_id']);
+      const newWebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
+      return (newWebPass._id);
     } catch (error) {
       console.log(error.error);
     }

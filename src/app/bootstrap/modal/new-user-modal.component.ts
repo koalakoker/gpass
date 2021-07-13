@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { User } from '../../modules/user';
-import * as Modal from '../modal/modal'
+import * as Modal from './modalCodes'
 
 @Component({
   selector:    'new-user-modal',

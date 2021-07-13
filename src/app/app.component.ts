@@ -6,7 +6,6 @@ import { LoginService } from './services/login.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
 import * as PageCodes from './modules/refreshable/pagesCodes'
-import * as ReturnCodes from './modules/refreshable/returnCodes';
 import * as InputCodes from './modules/refreshable/inputCodes';
 
 import { Category } from './modules/category';
@@ -17,12 +16,15 @@ import { LoginComponent } from './components/login/login.component';
 import { LoginState } from './components/login/loginState';
 
 import { Menu } from "./modules/menu/menu"
-import { ItemState, MenuItem } from "./modules/menu/menuItem";
+import { ItemState } from "./modules/menu/menuItem";
 import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
 import { CategoryService } from './services/category.service';
+import { MessageBoxService } from './services/message-box.service';
+import { UserService } from './services/user.service';
+import { User } from './modules/user';
 
 enum AppState {
   notLogged,
@@ -86,7 +88,9 @@ export class AppComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private userService: UserService,
+    private messageBox: MessageBoxService
   ) {
     this.gCrypto = new GCrypto();
     router.events.subscribe(event => {
@@ -346,6 +350,15 @@ export class AppComponent implements OnInit {
   plusOneYearAll() {
     // Propagate to child
     this.routedComponent.refresh(InputCodes.PlusOneYearAll);
+  }
+
+  async onGpassLabel() {
+    const me = await this.userService.getUserInfo();
+    const user = new User();
+    user.username = me['name'];
+    user.email = me['email'];
+    user.level = me['isAdmin'] ? 1 : 0; 
+    this.messageBox.showUser(user);
   }
 
   test() {

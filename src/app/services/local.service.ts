@@ -15,4 +15,8 @@ export class LocalService {
   getKey(key: string): string {
     return this.storage.get(key);
   }
+
+  clearAll(): void {
+    this.storage.clear();
+  }
 }

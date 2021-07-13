@@ -45,7 +45,7 @@ export class CategoryService {
   
       return(categories);
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
       return [];
     }
   }

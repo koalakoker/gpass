@@ -4,6 +4,10 @@ import { GCrypto } from '../modules/gcrypto';
 import { LocalService } from './local.service';
 import { IUser } from '../services/user';
 import { HttpClient } from '@angular/common/http';
+import { JwtDecoded } from "./jwtDecoded";
+
+const localLabelToken: string = 'x-auth-token';
+const localLabelPassw: string = 'userPassword';
 
 @Injectable({
   providedIn: 'root'
@@ -22,10 +26,6 @@ export class LoginService {
   constructor(
     private http: HttpClient,
     private localService: LocalService) {
-  }
-
-  getUserKey(): string {
-    return '1234'; // To be linked to user password
   }
 
   async decryptList(strList: string[]) {
@@ -59,11 +59,12 @@ export class LoginService {
     const user: IUser = {'email': userName, 'password': userPassword};
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
-      const token = response.headers.get('x-auth-token');
+      const token = response.headers.get(localLabelToken);
       if (!token) {
         console.log('Database error\nToken not generated');
       }
-      this.localService.setKey('x-auth-token', token);
+      this.localService.setKey(localLabelToken, token);
+      this.localService.setKey(localLabelPassw, userPassword);
       this.updateUserLevel();
       return 0;
     } catch (error) {
@@ -105,7 +106,7 @@ export class LoginService {
   }
 
   check(): boolean {
-    return this.localService.getKey('x-auth-token') != '';
+    return ((this.getToken() != undefined) && (this.getUserKey() != undefined));
   }
 
   checkRights(minLevel: number): boolean {
@@ -123,12 +124,11 @@ export class LoginService {
   }
 
   clearLocal() : void {
-    this.localService.setKey('x-auth-token', '');
+    this.localService.clearAll();
   }
 
   updateUserLevel() {
-    const token = this.localService.getKey('x-auth-token');
-    var decoded = jwt_decode(token);
+    var decoded = this.getTokenDecoded();
     this.level = 0;
     if (decoded['isAdmin'] == true) {
       this.level = 1;
@@ -145,8 +145,21 @@ export class LoginService {
   }
 
   logStatus(): void {
-    const token = this.localService.getKey('x-auth-token');
+    const token = this.getToken();
     console.log("Token" + token);
     
+  }
+
+  getToken(): string {
+    return this.localService.getKey(localLabelToken);
+  }
+
+  getTokenDecoded(): JwtDecoded {
+    const token = this.getToken();
+    return jwt_decode(token);
+  }
+
+  getUserKey(): string {
+    return this.localService.getKey(localLabelPassw);
   }
 }
