@@ -17,7 +17,6 @@ export class LoginService {
   private loginApiUrl: string = 'http://localhost:5000/api/auth/';
 
   gCrypto: GCrypto;
-  keepMeLogged = false;
   logged = false;
   userName: string;
   userPassword: string;
@@ -120,7 +119,6 @@ export class LoginService {
 
   clearUserVars(): void {
     this.logged = false;
-    this.keepMeLogged = false;
   }
 
   clearLocal() : void {
