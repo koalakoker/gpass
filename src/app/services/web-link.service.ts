@@ -26,31 +26,40 @@ export class WebLinkService {
     };
   }
 
+  decryptList(dataCypt: Array<WebPass>): Array<WebPass> {
+    let dataDecrypt: Array<WebPass> = [];
+    let userPassword: string = this.loginService.getUserKey();
+    dataDecrypt = dataCypt.map((element: WebPass) => {
+      const elementClone = new WebPass(element);
+      elementClone.decrypt(userPassword);
+      return elementClone;
+    }, this);
+    return dataDecrypt;
+  }
+
+  sortList(data: Array<WebPass>): Array<WebPass> {
+    data.sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      } else {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+    return data;
+  }
+
   async getFromUserLinks(): Promise<Array<WebPass>> {
     try {
-      const data = await this.http.get<Array<WebPass>>(this.apiUrl, this.httpOptions()).toPromise();
-      let webPassList: WebPass[] = [];
-      // Decode and create a new WebPass list
-      webPassList = data.map((x: WebPass) => {
-        const w = new WebPass(x);
-        w.decrypt(this.loginService.getUserKey());
-        return w;
-      }, this);
-      // Sort it (must be done here because are now decrypted)
-      webPassList.sort((a, b) => {
-        if (a.name.toLowerCase() < b.name.toLowerCase()) {
-          return -1;
-        } else {
-          if (a.name.toLowerCase() > b.name.toLowerCase()) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
-      });
-      return(webPassList);
+      let data = await this.http.get<Array<WebPass>>(this.apiUrl, this.httpOptions()).toPromise();
+      data = this.decryptList(data);
+      data = this.sortList(data);
+      return(data);
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
       return [];
     }
   }
@@ -64,7 +73,7 @@ export class WebLinkService {
       const newWebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
       return (newWebPass._id);
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
     }
   }
 
@@ -72,18 +81,19 @@ export class WebLinkService {
     try {
       await this.http.delete<WebPass>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
     }
   }
 
   async updateWebPass(id: string, webPass: WebPass): Promise<WebPass> {
     try {
       let userPassword: string = this.loginService.getUserKey();
-      webPass.crypt(userPassword);
-      const body = _.omit(webPass, ['_id']);
+      let webPassClone = _.cloneDeep(webPass);
+      webPassClone.crypt(userPassword);
+      const body = _.omit(webPassClone, ['_id']);
       return await this.http.put<WebPass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
     }
   }
 }

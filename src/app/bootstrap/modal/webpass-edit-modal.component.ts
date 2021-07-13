@@ -36,7 +36,7 @@ export class WebPassEditModalComponent {
   }
 
   async save() {
-    const webPass = new WebPass(this.webpass);
+    const webPass = this.webpass;
     try {
       await this.webLinkService.updateWebPass(webPass._id, webPass);
       console.log("Database updated");

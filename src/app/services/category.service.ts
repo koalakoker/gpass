@@ -26,24 +26,38 @@ export class CategoryService {
     };
   }
 
+  decryptList(dataCypt: Array<Category>): Array<Category> {
+    let dataDecrypt: Array<Category> = [];
+    let userPassword: string = this.loginService.getUserKey();
+    dataDecrypt = dataCypt.map((element: Category) => {
+      const elementClone = new Category(element);
+      elementClone.decrypt(userPassword);
+      return elementClone;
+    }, this);
+    return dataDecrypt;
+  }
+
+  sortList(data: Array<Category>): Array<Category> {
+    data.sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) {
+        return -1;
+      } else {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+    return data;
+  }
+
   async getFromUserCategory(): Promise<Array<Category>> {
     try {
-      const categories = await this.http.get<Array<Category>>(this.apiUrl, this.httpOptions()).toPromise();
-      
-      // Different way to sort can be implemented by name is in server side
-      // categories.sort((a, b) => {
-      //   if (a.name < b.name) {
-      //     return -1;
-      //   } else {
-      //     if (a.name > b.name) {
-      //       return 1;
-      //     } else {
-      //       return 0;
-      //     }
-      //   }
-      // })
-  
-      return(categories);
+      let data = await this.http.get<Array<Category>>(this.apiUrl, this.httpOptions()).toPromise();
+      data = this.decryptList(data);
+      data = this.sortList(data);    
+      return(data);
     } catch (error) {
       console.log(error);
       return [];
@@ -52,7 +66,10 @@ export class CategoryService {
 
   async createCategory(category: Category): Promise<string> {
     try {
-      const body = _.omit(category, ['_id']);
+      let userPassword: string = this.loginService.getUserKey();
+      let categoryClone = _.cloneDeep(category);
+      categoryClone.crypt(userPassword);
+      const body = _.omit(categoryClone, ['_id']);
       const newCategory = await this.http.post<Category>(this.apiUrl, body, this.httpOptions()).toPromise();
       return (newCategory._id);
     } catch (error) {
@@ -70,7 +87,10 @@ export class CategoryService {
 
   async updateCategory(id: string, category: Category): Promise<Category> {
     try {
-      const body = _.omit(category, ['_id']);
+      let userPassword: string = this.loginService.getUserKey();
+      let categoryClone = _.cloneDeep(category);
+      categoryClone.crypt(userPassword);
+      const body = _.omit(categoryClone, ['_id']);
       return await this.http.put<Category>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
     } catch (error) {
       console.log(error.error);
