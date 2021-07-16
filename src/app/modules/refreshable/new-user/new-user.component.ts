@@ -5,7 +5,7 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 
 import { ActivatedRoute } from '@angular/router';
-import { LoginService } from '../../../services/login.service'
+import { LoginService } from '../../../services/api/login.service'
 
 @Component({
   selector: 'app-new-user',

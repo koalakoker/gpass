@@ -1,59 +1,51 @@
 import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
-import { RelWebCat } from '../modules/relwebcat';
-import { LocalService } from './local.service';
+import { RelWebCat } from '../../modules/relwebcat';
+import { LocalService } from '../local.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginService } from './login.service';
+import { Api } from './api';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RelWebCatService {
+export class RelWebCatService extends Api {
 
   private apiUrl: string = 'http://localhost:5000/api/relWebCat/';
-  private mockup: Array<RelWebCat> = [];
-  private mockupId: string = '';
 
   constructor(
     private localService: LocalService,
     private loginService: LoginService,
     private http: HttpClient
-  ) { }
-
-  private httpOptions() {
-    return {
-      headers: new HttpHeaders({
-        'x-auth-token': this.localService.getKey('x-auth-token'),
-      })
-    };
-  }
+  ) {
+    super();
+   }
 
   async getWebCatRel(): Promise<Array<RelWebCat>> {
     try {
-      const relWebCats = await this.http.get<Array<RelWebCat>>(this.apiUrl, this.httpOptions()).toPromise();
+      const relWebCats = await this.http.get<Array<RelWebCat>>(this.apiUrl, this.httpOptions(this.localService)).toPromise();
       return (relWebCats);
     } catch (error) {
-      console.log(error.error);
-      return [];
+      this.error("is not possible to retrive the category relations");
     }
   }
 
   async createRelWebCat(rel: RelWebCat): Promise<string> {
     try {
       const body = _.omit(rel, ['_id']);
-      const newRel = await this.http.post<RelWebCat>(this.apiUrl, body, this.httpOptions()).toPromise();
+      const newRel = await this.http.post<RelWebCat>(this.apiUrl, body, this.httpOptions(this.localService)).toPromise();
       return (newRel._id);
     } catch (error) {
-      console.log(error.error);
+      this.error("is not possible to create a new category relation");
     }
   }
 
   async updateRelWebCat(id: string, rel: RelWebCat): Promise<RelWebCat> {
     try {
       const body = _.omit(rel, ['_id']);
-      return await this.http.put<RelWebCat>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+      return await this.http.put<RelWebCat>(this.apiUrl + '/' + id, body, this.httpOptions(this.localService)).toPromise();
     } catch (error) {
-      console.log(error.error);
+      this.error("is not possible to update the category relation");
     }
   }
 

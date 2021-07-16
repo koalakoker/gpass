@@ -6,7 +6,7 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 import * as InputCodes from '../inputCodes';
 
-import { LoginService } from '../../../services/login.service'
+import { LoginService } from '../../../services/api/login.service'
 import { User } from '../../user'
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,7 @@ import * as Modal from '../../../bootstrap/modal/modalCodes'
 import { NewUserModalComponent } from '../../../bootstrap/modal/new-user-modal.component';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { UserEditModalComponent } from '../../../bootstrap/modal/user-edit-modal.component';
-import { UserService } from 'src/app/services/user.service';
+import { UserService } from 'src/app/services/api/user.service';
 
 @Component({
   selector: 'app-users-component',
@@ -23,7 +23,7 @@ import { UserService } from 'src/app/services/user.service';
 export class UsersComponent implements OnInit, Refreshable {
 
   show: boolean = false;
-  user: User[];
+  user: Array<User>;
   selectedUser: User;
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
 
@@ -59,17 +59,7 @@ export class UsersComponent implements OnInit, Refreshable {
 
   async enter() {
     try {
-      const iUsers = await this.userService.getUsers();
-      var data: Array<User> = [];
-      iUsers.forEach(iUser => {
-        const user = new User();
-        user.id = iUser.id;
-        user.email = iUser.email;
-        user.username = iUser.email;
-        user.updateHash(iUser.password);
-        data.push(user);
-      });
-      this.user = data;
+      this.user = await this.userService.getUsers();
     } catch (error) {
       console.log(error);
     }
@@ -118,14 +108,11 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   async createNewUser(user: User, tempPassword: string) {
-    user.updateHash(tempPassword);
+    //user.updateHash(tempPassword);
+    user.password = tempPassword;
     try {
-      const id = await this.userService.createUser({
-        id: 0,
-        email: user.email,
-        password: tempPassword
-      });  
-      user.id = id;
+      const id = await this.userService.createUser(user);  
+      user._id = id;
       this.user.unshift(user);
     } catch (error) {
       console.log(error);
@@ -147,7 +134,7 @@ export class UsersComponent implements OnInit, Refreshable {
   async onButtonRemove(i: number) {
     const usr = this.user[i];
     try {
-      await this.userService.deleteUser(usr.id);  
+      await this.userService.deleteUser(usr._id);  
       this.user.splice(i, 1);
     } catch (error) {
       console.log(error);
@@ -156,7 +143,7 @@ export class UsersComponent implements OnInit, Refreshable {
 
   openConfirmUserInviteModal(i: number) {
     const modalRef = this.modalService.open(ConfirmModalComponent);
-    modalRef.componentInstance.title = "Send invitation email to " + this.user[i].username;
+    modalRef.componentInstance.title = "Send invitation email to " + this.user[i].name;
     modalRef.componentInstance.message = "Are you sure you want to sent invitation to this user?";
     modalRef.result
       .then((result) => {
@@ -166,15 +153,15 @@ export class UsersComponent implements OnInit, Refreshable {
 
   onButtonInvite(i: number) {
     const usr = this.user[i];
-    console.log("Send invitation to user: " + usr.username + " Email:" + usr.email + " Hash: " + usr.userhash);
+    console.log("Send invitation to user: " + usr.name + " Email:" + usr.email + " Hash: " + usr.password);
 
     // Add the params that needs to be crypted in loginService.sendLink
     var params = {
       // To be crypted
       "return_url": this.returnUrl,
-      "userhash": usr.userhash,
+      "userhash": usr.password,
       // No encription
-      "invitedUserId": usr.id
+      "invitedUserId": usr._id
     };
 
     this.loginService.sendLink(params)

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { NgbDropdown, NgbDropdownMenu } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from 'src/app/app.component';
-import { LoginService } from 'src/app/services/login.service';
+import { LoginService } from 'src/app/services/api/login.service';
 import { DropDown } from '../dropDown';
 import { MenuItem } from '../menuItem';
 

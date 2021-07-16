@@ -1,14 +1,15 @@
 import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
-import { Category } from '../modules/category';
-import { LocalService } from './local.service';
+import { Category } from '../../modules/category';
+import { LocalService } from '../local.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoginService } from './login.service';
+import { Api } from './api';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CategoryService {
+export class CategoryService extends Api {
 
   private apiUrl: string = 'http://localhost:5000/api/category/';
 
@@ -16,14 +17,8 @@ export class CategoryService {
     private localService: LocalService,
     private loginService: LoginService,
     private http: HttpClient
-  ) {}
-
-  private httpOptions() {
-    return {
-      headers: new HttpHeaders({
-        'x-auth-token': this.localService.getKey('x-auth-token'),
-      })
-    };
+  ) {
+    super();
   }
 
   decryptList(dataCypt: Array<Category>): Array<Category> {
@@ -54,13 +49,12 @@ export class CategoryService {
 
   async getFromUserCategory(): Promise<Array<Category>> {
     try {
-      let data = await this.http.get<Array<Category>>(this.apiUrl, this.httpOptions()).toPromise();
+      let data = await this.http.get<Array<Category>>(this.apiUrl, this.httpOptions(this.localService)).toPromise();
       data = this.decryptList(data);
       data = this.sortList(data);    
       return(data);
     } catch (error) {
-      console.log(error);
-      return [];
+      this.error("is not possible to retrieve the categories list");
     }
   }
 
@@ -70,18 +64,18 @@ export class CategoryService {
       let categoryClone = _.cloneDeep(category);
       categoryClone.crypt(userPassword);
       const body = _.omit(categoryClone, ['_id']);
-      const newCategory = await this.http.post<Category>(this.apiUrl, body, this.httpOptions()).toPromise();
+      const newCategory = await this.http.post<Category>(this.apiUrl, body, this.httpOptions(this.localService)).toPromise();
       return (newCategory._id);
     } catch (error) {
-      console.log(error.error);
+      this.error('is not possible to create a new category');
     }
   }
 
   async deleteCategory(id: string): Promise<void> {
     try {
-      await this.http.delete<Category>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
+      await this.http.delete<Category>(this.apiUrl + '/' + id, this.httpOptions(this.localService)).toPromise();
     } catch (error) {
-      console.log(error.error);
+      this.error("is not possible to delete the category");
     }
   }
 
@@ -91,9 +85,9 @@ export class CategoryService {
       let categoryClone = _.cloneDeep(category);
       categoryClone.crypt(userPassword);
       const body = _.omit(categoryClone, ['_id']);
-      return await this.http.put<Category>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+      return await this.http.put<Category>(this.apiUrl + '/' + id, body, this.httpOptions(this.localService)).toPromise();
     } catch (error) {
-      console.log(error.error);
+      this.error("is not possible to update the category");
     }
   }
 

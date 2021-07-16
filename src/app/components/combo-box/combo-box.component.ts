@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
 import { WebPass } from '../../modules/webpass'
-import { WebLinkService } from '../../services/web-link.service';
-import { LoginService } from '../../services/login.service';
+import { WebLinkService } from '../../services/api/web-link.service';
+import { LoginService } from '../../services/api/login.service';
 
 @Component({
   selector: 'combo-box',

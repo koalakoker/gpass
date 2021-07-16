@@ -13,15 +13,15 @@ import * as InputCodes from '../inputCodes';
 import { ActivatedRoute } from '@angular/router';
 
 import { GCrypto } from '../../gcrypto';
-import { WebLinkService } from 'src/app/services/web-link.service';
-import { LoginService } from '../../../services/login.service';
+import { WebLinkService } from 'src/app/services/api/web-link.service';
+import { LoginService } from '../../../services/api/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { WebPassEditModalComponent } from '../../../bootstrap/modal/webpass-edit-modal.component';
 import { Observer } from '../../observer';
-import { CategoryService } from 'src/app/services/category.service';
-import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
+import { CategoryService } from 'src/app/services/api/category.service';
+import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 
 @Component({
   selector: 'app-web-pass-list',

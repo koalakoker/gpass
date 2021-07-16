@@ -1,10 +1,11 @@
 import jwt_decode from "jwt-decode";
 import { Injectable } from '@angular/core';
-import { GCrypto } from '../modules/gcrypto';
-import { LocalService } from './local.service';
-import { IUser } from '../services/user';
+import { GCrypto } from '../../modules/gcrypto';
+import { LocalService } from '../local.service';
+import { User } from '../../modules/user';
 import { HttpClient } from '@angular/common/http';
-import { JwtDecoded } from "./jwtDecoded";
+import { JwtDecoded } from "../jwtDecoded";
+import { Api } from "./api";
 
 const localLabelToken: string = 'x-auth-token';
 const localLabelPassw: string = 'userPassword';
@@ -12,7 +13,7 @@ const localLabelPassw: string = 'userPassword';
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class LoginService extends Api {
 
   private loginApiUrl: string = 'http://localhost:5000/api/auth/';
 
@@ -25,6 +26,7 @@ export class LoginService {
   constructor(
     private http: HttpClient,
     private localService: LocalService) {
+      super();
   }
 
   async decryptList(strList: string[]) {
@@ -55,7 +57,9 @@ export class LoginService {
   }
 
   async checkLogin(userName: string, userPassword: string): Promise<number> {
-    const user: IUser = {'email': userName, 'password': userPassword};
+    const user: User = new User();
+    user.email = userName;
+    user.password = userPassword;
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
       const token = response.headers.get(localLabelToken);
@@ -67,7 +71,7 @@ export class LoginService {
       this.updateUserLevel();
       return 0;
     } catch (error) {
-      console.log(error.error);
+      this.error("is not possible to login");
       this.clear();
       return 4;
     }

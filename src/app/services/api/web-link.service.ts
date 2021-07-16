@@ -1,29 +1,24 @@
 import * as _ from 'lodash-es';
 import { Injectable } from '@angular/core';
-import { WebPass } from '../modules/webpass';
+import { WebPass } from '../../modules/webpass';
+import { Api } from './api';
 import { LoginService } from './login.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { LocalService } from './local.service';
+import { HttpClient} from '@angular/common/http';
+import { LocalService } from '../local.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WebLinkService {
+export class WebLinkService extends Api {
 
   private apiUrl: string = 'http://localhost:5000/api/webpass/';
   
   constructor(
     private localService: LocalService,
     private loginService: LoginService,
-    private http: HttpClient,
-  ) {}
-
-  private httpOptions() {
-    return {
-      headers: new HttpHeaders({
-        'x-auth-token': this.localService.getKey('x-auth-token'),
-      })
-    };
+    private http: HttpClient
+  ) {
+    super();
   }
 
   decryptList(dataCypt: Array<WebPass>): Array<WebPass> {
@@ -54,13 +49,12 @@ export class WebLinkService {
 
   async getFromUserLinks(): Promise<Array<WebPass>> {
     try {
-      let data = await this.http.get<Array<WebPass>>(this.apiUrl, this.httpOptions()).toPromise();
+      let data = await this.http.get<Array<WebPass>>(this.apiUrl, this.httpOptions(this.localService)).toPromise();
       data = this.decryptList(data);
       data = this.sortList(data);
       return(data);
     } catch (error) {
-      console.log(error);
-      return [];
+      this.error("is not possible to retrieve the webPass list");
     }
   }
 
@@ -70,18 +64,18 @@ export class WebLinkService {
       let webPassClone = _.cloneDeep(webPass);
       webPassClone.crypt(userPassword);
       const body = _.omit(webPassClone, ['_id']);
-      const newWebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions()).toPromise();
+      const newWebPass = await this.http.post<WebPass>(this.apiUrl, body, this.httpOptions(this.localService)).toPromise();
       return (newWebPass._id);
     } catch (error) {
-      console.log(error);
+      this.error("is not possible to create a new webPass");
     }
   }
 
   async deleteWebPass(id: string): Promise<void> {
     try {
-      await this.http.delete<WebPass>(this.apiUrl + '/' + id, this.httpOptions()).toPromise();
+      await this.http.delete<WebPass>(this.apiUrl + '/' + id, this.httpOptions(this.localService)).toPromise();
     } catch (error) {
-      console.log(error);
+      this.error("is not possible to delete a webPass");
     }
   }
 
@@ -91,9 +85,9 @@ export class WebLinkService {
       let webPassClone = _.cloneDeep(webPass);
       webPassClone.crypt(userPassword);
       const body = _.omit(webPassClone, ['_id']);
-      return await this.http.put<WebPass>(this.apiUrl + '/' + id, body, this.httpOptions()).toPromise();
+      return await this.http.put<WebPass>(this.apiUrl + '/' + id, body, this.httpOptions(this.localService)).toPromise();
     } catch (error) {
-      console.log(error);
+      this.error("is not possible to update a webPass");
     }
   }
 }

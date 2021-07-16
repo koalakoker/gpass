@@ -6,9 +6,9 @@ import { WebPassListComponent } from '../../modules/refreshable/web-pass-list/we
 import { Category } from '../../modules/category';
 import { RelWebCat } from '../../modules/relwebcat';
 
-import { LoginService } from '../../services/login.service';
-import { WebLinkService } from 'src/app/services/web-link.service';
-import { RelWebCatService } from 'src/app/services/rel-web-cat.service';
+import { LoginService } from '../../services/api/login.service';
+import { WebLinkService } from 'src/app/services/api/web-link.service';
+import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 
 @Component({
   selector:    'webpass-edit-modal',

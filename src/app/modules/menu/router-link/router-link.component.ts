@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MenuItem } from '../menuItem';
 import { RouterLink } from '../routerLink';
-import { LoginService } from 'src/app/services/login.service';
+import { LoginService } from 'src/app/services/api/login.service';
 
 @Component({
   selector: 'app-router-link',

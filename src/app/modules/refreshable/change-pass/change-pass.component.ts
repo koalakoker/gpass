@@ -3,11 +3,11 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
-import { WebLinkService } from '../../../services/web-link.service';
-import { UserService } from 'src/app/services/user.service';
+import { WebLinkService } from '../../../services/api/web-link.service';
+import { UserService } from 'src/app/services/api/user.service';
 import { WebPass } from '../../webpass';
-import { IUser } from '../../../services/user';
-import { LoginService } from '../../../services/login.service';
+import { User } from '../../user';
+import { LoginService } from '../../../services/api/login.service';
 
 @Component({
   selector: 'app-change-pass',
@@ -69,13 +69,8 @@ export class ChangePassComponent implements OnInit, Refreshable {
     }
   }
 
-  updateUserHashInDB(newPassword: string): Promise<IUser> {
-    const iUser: IUser = {
-      id: 0,
-      email: this.loginService.userName,
-      password: newPassword
-    };
-    return this.userService.updateUser(iUser);
+  updateUserHashInDB(newPassword: string) {
+    // TBI
   }
 
   async getWebPass(): Promise<WebPass[]> {

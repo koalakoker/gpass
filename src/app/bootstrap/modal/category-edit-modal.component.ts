@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Category } from '../../modules/category';
-import { CategoryService } from 'src/app/services/category.service';
+import { CategoryService } from 'src/app/services/api/category.service';
 
 @Component({
   selector:    'category-edit-modal',

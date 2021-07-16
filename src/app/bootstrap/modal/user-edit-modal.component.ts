@@ -1,6 +1,7 @@
+import * as _ from 'lodash-es';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserService } from 'src/app/services/user.service';
+import { UserService } from 'src/app/services/api/user.service';
 
 import { User } from '../../modules/user';
 
@@ -20,14 +21,18 @@ export class UserEditModalComponent {
     this.activeModal.close("");
   }
 
-  save() {
+  async save() {
     const user = new User(this.user);
-    this.userService.updateUser(user)
-      .catch(err => console.log(err));
+    try {
+      await this.userService.updateUser(_.pick(user, ['_id', 'isAdmin', 'resetpass']))
+      console.log('Database updated');
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  updateLevel(level: number) {
-    this.user.level = level;
+  updateLevel(isAdmin: number) {
+    this.user.isAdmin = (isAdmin === 1 ? true : false);
     this.save();
   }
 }

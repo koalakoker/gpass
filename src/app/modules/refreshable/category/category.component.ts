@@ -6,12 +6,12 @@ import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 import * as InputCodes from '../inputCodes';
 
-import { LoginService } from '../../../services/login.service';
+import { LoginService } from '../../../services/api/login.service';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { CategoryEditModalComponent } from '../../../bootstrap/modal/category-edit-modal.component';
-import { CategoryService } from 'src/app/services/category.service';
+import { CategoryService } from 'src/app/services/api/category.service';
 
 @Component({
   selector: 'app-category',

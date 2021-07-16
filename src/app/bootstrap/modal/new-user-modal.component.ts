@@ -42,6 +42,6 @@ export class NewUserModalComponent {
   }
 
   updateLevel(level: number) {
-    this.user.level = level;
+    this.user.isAdmin = (level === 1);
   }
 }

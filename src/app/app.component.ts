@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
-import { LoginService } from './services/login.service';
+import { LoginService } from './services/api/login.service';
 
 import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
@@ -21,9 +21,9 @@ import { DropDown } from "./modules/menu/dropDown";
 import { Action } from "./modules/menu/action";
 import { Divider } from "./modules/menu/divider";
 import { RouterLink } from './modules/menu/routerLink';
-import { CategoryService } from './services/category.service';
+import { CategoryService } from './services/api/category.service';
 import { MessageBoxService } from './services/message-box.service';
-import { UserService } from './services/user.service';
+import { UserService } from './services/api/user.service';
 import { User } from './modules/user';
 
 enum AppState {
@@ -355,9 +355,9 @@ export class AppComponent implements OnInit {
   async onGpassLabel() {
     const me = await this.userService.getUserInfo();
     const user = new User();
-    user.username = me['name'];
+    user.name = me['name'];
     user.email = me['email'];
-    user.level = me['isAdmin'] ? 1 : 0; 
+    user.isAdmin = me['isAdmin']; 
     this.messageBox.showUser(user);
   }
 

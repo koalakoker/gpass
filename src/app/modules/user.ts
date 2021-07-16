@@ -1,27 +1,27 @@
 import { GCrypto } from "./gcrypto";
 
 export class User {
-    id: number;
-    userhash: string;
-    username: string;
-    level: number;
-    email: string;
-    resetpass: number;
+    _id?: string;
+    password?: string;
+    name?: string;
+    isAdmin?: boolean;
+    email?: string;
+    resetpass?: boolean;
 
     constructor(user?: User) {
         if (user == null) {
-            this.username = 'New User';
+            this.name = 'New User';
             var password = 'password';
-            this.updateHash(password);
-            this.level = 0;
+            //this.updateHash(password);
+            this.isAdmin = false;
             this.email = '';
-            this.resetpass = 1;
+            this.resetpass = false;
         }
         else {
-            this.id = user.id;
-            this.userhash = user.userhash;
-            this.username = user.username;
-            this.level = user.level;
+            this._id = user._id;
+            this.password = user.password;
+            this.name = user.name;
+            this.isAdmin = user.isAdmin;
             this.email = user.email;
             this.resetpass = user.resetpass;
         }
@@ -29,6 +29,6 @@ export class User {
 
     updateHash(newPassword: string): void {
         var hash: string = GCrypto.hashUpperCase(newPassword);
-        this.userhash = GCrypto.crypt(this.username, hash);
+        this.password = GCrypto.crypt(this.name, hash);
     }
 }
