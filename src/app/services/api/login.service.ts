@@ -1,3 +1,4 @@
+import * as _ from 'lodash-es';
 import jwt_decode from "jwt-decode";
 import { Injectable } from '@angular/core';
 import { GCrypto } from '../../modules/gcrypto';
@@ -57,9 +58,10 @@ export class LoginService extends Api {
   }
 
   async checkLogin(userName: string, userPassword: string): Promise<number> {
-    const user: User = new User();
+    let user: User = new User();
     user.email = userName;
     user.password = userPassword;
+    user = _.pick(user, ['email', 'password']);
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
       const token = response.headers.get(localLabelToken);
