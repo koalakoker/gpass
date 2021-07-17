@@ -42,8 +42,8 @@ export class UserService extends Api {
 
   async createUser(user: User): Promise<string> {
     try {
-      const id = await this.http.post<string>(this.userApiUrl, user, this.httpOptions(this.localService)).toPromise();
-      return id;
+      const usr = await this.http.post<string>(this.userApiUrl, user, this.httpOptions(this.localService)).toPromise();
+      return usr['_id'];
     } catch (error) {
       this.error("is not possible to create an user");
     }

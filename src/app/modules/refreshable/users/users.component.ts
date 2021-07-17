@@ -108,7 +108,6 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   async createNewUser(user: User, tempPassword: string) {
-    //user.updateHash(tempPassword);
     user.password = tempPassword;
     try {
       const id = await this.userService.createUser(user);  

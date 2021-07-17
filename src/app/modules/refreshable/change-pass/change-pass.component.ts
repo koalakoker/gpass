@@ -1,3 +1,4 @@
+import * as _ from 'lodash-es';
 import { Refreshable, RefreshReturnData } from '../refreshable';
 import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
@@ -52,7 +53,7 @@ export class ChangePassComponent implements OnInit, Refreshable {
 
   async changeUserPass(new_password: string) {
     try {
-      await this.updateUserHashInDB(new_password);
+      await this.updateUserPasswordInDB(new_password);
       var list: WebPass[] = await this.getWebPass();
       await this.cryptWebPassAndUpdateDB(list);
       this.loginService.updateUserPassword(new_password);
@@ -69,8 +70,16 @@ export class ChangePassComponent implements OnInit, Refreshable {
     }
   }
 
-  updateUserHashInDB(newPassword: string) {
-    // TBI
+  async updateUserPasswordInDB(newPassword: string) {
+    try {
+      let user: User = await this.userService.getUserInfo();
+      user.password = newPassword;
+      user = _.pick(user, ['_id', 'name', 'password']);
+      await this.userService.updateUser(user);
+    } catch (error) {
+      throw new Error("Error updating user password");
+      
+    }
   }
 
   async getWebPass(): Promise<WebPass[]> {
