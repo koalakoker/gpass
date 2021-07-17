@@ -1,6 +1,6 @@
 <div class="container">
-  <input (change)="onChangeValueEditBoxes()" [(ngModel)]="new_password"        class="form-control" type="password" placeholder="Insert new password">
-  <input (change)="onChangeValueEditBoxes()" [(ngModel)]="repeat_new_password" class="form-control" type="password" placeholder="Retype new password">
+  <input (keyup)="onKeyUp()" [(ngModel)]="new_password"        class="form-control" type="password" placeholder="Insert new password">
+  <input (keyup)="onKeyUp()" [(ngModel)]="repeat_new_password" class="form-control" type="password" placeholder="Retype new password">
   <button #buttonChange *ngIf="valid"          (click)="onChangePassButtonClick()" class="btn-dark" type="button">Change</button>
   <!-- <button               *ngIf="checkRights(0)" (click)="onResetPassButtonClick()"  class="btn-dark" type="button">Reset</button> -->
 </div>

@@ -117,44 +117,45 @@ export class ChangePassComponent implements OnInit, Refreshable {
       });
   }
 
-  onChangeValueEditBoxes(): void {
-    this.validate();
-  }
+  errorMessageTimeout: any;
 
-  insertedValuesAreValid(): boolean {
-    return ((this.new_password !== '') &&
-            (this.repeat_new_password !== '') &&
-            (this.new_password === this.repeat_new_password));
-  }
+  onKeyUp() {
+    // Clear previus error timeout
+    if (this.errorMessageTimeout != undefined) {
+      clearTimeout(this.errorMessageTimeout)
+    }
 
-  validate(): void {
-    if (this.insertedValuesAreValid())  {
+    if (this.insertedValuesAreValid()) {
       this.valid = true;
       setTimeout(() => {
         this.buttonChange.nativeElement.focus();
       }, 100, this);
     } else {
       this.valid = false;
-      this.checkErrorMessage();
+      this.errorMessageTimeout = setTimeout(() => {
+        this.sendErrorMessage()
+      }, 1000);
     }
   }
 
-  checkErrorMessage(): void {
+  insertedValuesAreValid(): boolean {
+    return ((this.new_password.length >= 5) &&
+            (this.new_password === this.repeat_new_password));
+  }
+
+  sendErrorMessage(): void {
     const delta = 3000;
 
-    if (this.new_password === '') {
-      let message = 'The <mark><i>"new password"</mark></i> can\'t be empty\n';
+    if (this.new_password.length < 5) {
+      let message = "The new password must be at least 5 char";
       this.sendMessage(message, delta);
-    }
-
-    if (this.repeat_new_password === '') {
-      let message = 'The <mark><i>"retyped new password"</mark></i> can\'t be empty\n';
-      this.sendMessage(message, delta);
+      return;
     }
 
     if (this.repeat_new_password !== this.new_password) {
-      let message = 'The <mark><i>"retyped new password"</mark></i> must be the same of the <mark><i>"new password"</mark></i>\n';
+      let message = "The two passwords must be the same";
       this.sendMessage(message, delta);
+      return;
     }
   }
 
