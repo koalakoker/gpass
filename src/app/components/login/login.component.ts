@@ -8,13 +8,13 @@ import { LoginState } from './loginState';
 })
 export class LoginComponent implements OnInit {
 
-  state: LoginState = LoginState.userNameInsert;
+  state: LoginState = LoginState.emailInsert;
   @Output() userLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
-  @ViewChild('userNameInput') userNameInput: ElementRef;
+  @ViewChild('emailInput') userNameInput: ElementRef;
 
-  userName: string;
+  email: string;
   userPassword: string;
 
   errorCodeNoError           : number = 0;
@@ -35,15 +35,15 @@ export class LoginComponent implements OnInit {
     };
   }
 
-  isUserNameState() {
-    return this.state == LoginState.userNameInsert;
+  isEmailState() {
+    return this.state == LoginState.emailInsert;
   }
 
   isPasswordState() {
     return this.state == LoginState.passwordInsert;
   }
 
-  usernameEntered() {
+  emailEntered() {
     this.state = LoginState.passwordInsert;
     setTimeout(() => {
       this.passwordInput.nativeElement.focus();
@@ -55,14 +55,14 @@ export class LoginComponent implements OnInit {
   }
 
   clear() {
-    this.state = LoginState.userNameInsert;
-    this.userName = '';
+    this.state = LoginState.emailInsert;
+    this.email = '';
     this.userPassword = '';
   }
 
   async enter() {
     try {
-      let errorCode: number = await this.loginService.checkLogin(this.userName, this.userPassword);
+      let errorCode: number = await this.loginService.checkLogin(this.email, this.userPassword);
       if (errorCode == this.errorCodeNoError) {
         this.state = LoginState.logged;
         this.userLogged.emit();
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
         this.sendMessage.emit('Password not correct');
         if ((errorCode == this.errorCodeWrongUsername) || 
             (errorCode == this.errorCodeWrongUserPassword)) {
-          this.userName = '';
+          this.email = '';
         }
         this.clear();
       }

@@ -87,17 +87,13 @@ export class LoginService extends Api {
     // return user[0]["resetpass"] === "0" ? false : true;
     return false;
   }
+
+  check(): boolean {
+    return ((this.getToken() != undefined) && (this.getUserKey() != undefined));
+  }
   
-  checklogged(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      if (this.check()) {
-        this.logged = true;
-        resolve(true);
-      } else {
-        this.logged = false;
-        reject("login.service(checklogged)->User not logged");
-      }
-    })
+  checklogged() {
+    return (this.logged = this.check());
   }
 
   getDefined(value?:string): string {
@@ -108,10 +104,6 @@ export class LoginService extends Api {
       retVal = value;
     }
     return retVal;
-  }
-
-  check(): boolean {
-    return ((this.getToken() != undefined) && (this.getUserKey() != undefined));
   }
 
   checkRights(minLevel: number): boolean {
@@ -140,12 +132,7 @@ export class LoginService extends Api {
   }
 
   updateUserPassword(newPassword: string) : void {
-    // this.userPassword = newPassword;
-    // this.userHash = this.calculateUserHash(this.userName, newPassword);
-    // if (this.keepMeLogged) {
-    //   this.localService.setKey(Keys.UserPassword, this.userPassword);
-    //   this.localService.setKey(Keys.UserHash    , this.userHash);
-    // }
+    this.localService.setKey(localLabelPassw, newPassword);
   }
 
   logStatus(): void {

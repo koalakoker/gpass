@@ -47,14 +47,13 @@ export class UsersComponent implements OnInit, Refreshable {
   }
 
   ngOnInit(): void {
-    this.loginService.checklogged()
-      .then(() => {
+    if (this.loginService.checklogged())
+      {
         this.show = true;
         this.enter();
-      })
-      .catch((err) => {
-        console.log("promise failed with err:" + err);
-      }) 
+      } else {
+        console.log("User not logged");
+      }
   }
 
   async enter() {
@@ -70,17 +69,16 @@ export class UsersComponent implements OnInit, Refreshable {
       var ret: RefreshReturnData = new RefreshReturnData;
       ret.pageCode = PageCodes.usersPage;
       if (cmd == InputCodes.Refresh) {
-        this.loginService.checklogged()
-          .then(() => {
+        if (this.loginService.checklogged())
+          {
             this.show = true;
             this.enter();
             ret.childInject = ReturnCodes.ButtonInsertUsers;
             resolve(ret);
-          })
-          .catch((err) => {
+          } else {
             this.user = [];
             reject("Not logged");
-          });
+          };
       }
       else if (cmd == InputCodes.NewBtnPress) {
         this.onNewFunc();

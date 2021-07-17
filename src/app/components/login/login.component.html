@@ -1,10 +1,10 @@
-<!-- Username -->
-<ng-container *ngIf="isUserNameState()">
+<!-- Email -->
+<ng-container *ngIf="isEmailState()">
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <input id="loginInputName" (keyup.enter)="usernameEntered()" (change)="usernameEntered()" [(ngModel)]="userName"
-          class="form-control" type="text" placeholder="Insert username" #userNameInput>
+        <input (keyup.enter)="emailEntered()" (change)="emailEntered()" [(ngModel)]="email"
+          class="form-control" type="text" placeholder="Insert email" #emailInput>
       </div>
     </div>
   </div>

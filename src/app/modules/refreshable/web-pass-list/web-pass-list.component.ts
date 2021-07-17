@@ -61,26 +61,26 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
   
   refresh(cmd: string): Promise<RefreshReturnData> {
-    return new Promise<RefreshReturnData>((resolve, reject) => {
+    return new Promise<RefreshReturnData>(async (resolve, reject) => {
       var ret: RefreshReturnData = new RefreshReturnData;
       ret.pageCode = PageCodes.webPassPage;
-
 
       if (cmd == InputCodes.Refresh) {
         this.catID = this.route.snapshot.paramMap.get('cat');
         this.searchStr = this.route.snapshot.paramMap.get('str');
-        this.loginService.checklogged()
-        .then(() => {
-          this.getWebPassList()
-          .then(() => {
-            ret.childInject = ReturnCodes.ButtonInsertWebPass;  
+        if (this.loginService.checklogged())
+        {
+          try {
+            await this.getWebPassList();
+            ret.childInject = ReturnCodes.ButtonInsertWebPass;
             resolve(ret);
-          });    
-        })
-        .catch((err) => {
+          } catch (error) {
+            reject(error);
+          }
+        } else {
           this.webPassList = [];
-          reject("web-pass-list(refresh)->" + err);
-        })
+          reject("web-pass-list(refresh)->User not logged");
+        }
       } else if (cmd == InputCodes.NewBtnPress) {
         this.onNew();
         ret.childInject = ReturnCodes.None;
@@ -88,16 +88,15 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       } else if (cmd == InputCodes.SrcPress) {
         this.catID = '0';
         this.searchStr = this.route.snapshot.paramMap.get('str');
-        this.loginService.checklogged()
-        .then (() => {
+        if (this.loginService.checklogged())
+        {
           this.getWebPassList();
           ret.childInject = ReturnCodes.None;
           resolve(ret);
-        })
-        .catch ((err) => {
+        } else {
           this.webPassList = [];
-          reject(err);
-        })
+          reject('User not logged');
+        }
       } else if (cmd == InputCodes.PlusOneYearAll) {
         this.webPassList.forEach((web) => {
           web.plusOneYear();

@@ -53,14 +53,13 @@ export class CategoryComponent implements OnInit, Refreshable {
   }
 
   ngOnInit() {
-    this.loginService.checklogged()
-    .then (() => {
+    if (this.loginService.checklogged())
+    {
       this.show = true;
       this.enter();
-    })
-    .catch ((err) => {
-      console.log("promise failed with err:" + err);
-    })
+    } else {
+      console.log("User not logged");
+    }
   }
 
   refresh(cmd: string = ""): Promise<RefreshReturnData> {
@@ -68,17 +67,16 @@ export class CategoryComponent implements OnInit, Refreshable {
       var ret: RefreshReturnData = new RefreshReturnData;
       ret.pageCode = PageCodes.categoryPage;
       if (cmd == InputCodes.Refresh) {
-        this.loginService.checklogged()
-        .then(() => {
+        if (this.loginService.checklogged())
+        {
           this.show = true;
           this.enter();
           ret.childInject = ReturnCodes.ButtonInsertCategory
           resolve(ret);
-        })
-        .catch((err) => {
+        } else {
           this.category = [];
           reject("Not logged");
-        });
+        };
       }
       else if (cmd == InputCodes.NewBtnPress) {
         this.onNewFunc();

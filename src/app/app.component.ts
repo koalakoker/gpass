@@ -244,9 +244,9 @@ export class AppComponent implements OnInit {
       this.webPassDropDownUpdate();
     }
     if (event === PageCodes.changePass) {
-      this.userLogged();
-      this.loginComponent.state = LoginState.logged;
-      this.router.navigateByUrl("/list/0");
+      //this.userLogged();
+      //this.loginComponent.state = LoginState.logged;
+      //this.router.navigateByUrl("/list/0");
     }
   }
 

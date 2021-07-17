@@ -1,5 +1,5 @@
 export enum LoginState {
-  userNameInsert,
+  emailInsert,
   passwordInsert,
   logged
 }
