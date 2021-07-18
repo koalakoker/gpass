@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { LocalService } from '../local.service';
 import { User } from '../../modules/user';
 import { Api } from './api';
+import { GCrypto } from 'src/app/modules/gcrypto';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,9 @@ export class UserService extends Api {
 
   async createUser(user: User): Promise<string> {
     try {
-      const usr = await this.http.post<string>(this.userApiUrl, user, this.httpOptions(this.localService)).toPromise();
+      let userClone: User = _.cloneDeep(user);
+      userClone.password = GCrypto.hash(userClone.password);
+      const usr = await this.http.post<string>(this.userApiUrl, userClone, this.httpOptions(this.localService)).toPromise();
       return usr['_id'];
     } catch (error) {
       this.error("is not possible to create an user");
@@ -51,6 +54,10 @@ export class UserService extends Api {
 
   async updateUser(user: any): Promise<User> {
     try {
+      if (user.password != undefined) {
+        // user is not used in caller functions so can be modified 
+        user.password = GCrypto.hash(user.password);
+      }
       const id = user._id;
       const body = _.omit(user, ['_id']);
       return await this.http.put<User>(this.userApiUrl + '/' + id, body, this.httpOptions(this.localService)).toPromise();

@@ -60,7 +60,7 @@ export class LoginService extends Api {
   async checkLogin(userName: string, userPassword: string): Promise<number> {
     let user: User = new User();
     user.email = userName;
-    user.password = userPassword;
+    user.password = GCrypto.hash(userPassword);
     user = _.pick(user, ['email', 'password']);
     try {
       const response = await this.http.post(this.loginApiUrl, user, { observe: 'response', responseType: "text" }).toPromise();
