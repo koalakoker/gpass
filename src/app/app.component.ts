@@ -379,6 +379,6 @@ export class AppComponent implements OnInit {
 
   test() {
     console.log("Admin test");
+    this.routedComponent.refresh(InputCodes.Export);
   }
-
 }

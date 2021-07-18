@@ -99,6 +99,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         })
         ret.childInject = ReturnCodes.None;
         resolve(ret);
+      } else if (cmd == InputCodes.Export) {
+        this.export();
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
       }
     })
   }
@@ -365,5 +369,19 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       }, (reason) => {
         this.onCloseEdit();
       });
+  }
+
+  download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([JSON.stringify(content)], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+
+  export() {
+    console.log("Export");
+    this.download(this.webPassList, 'json.txt', 'text/plain');
   }
 }

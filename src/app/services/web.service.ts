@@ -21,7 +21,7 @@ export class WebService {
   constructor() {
     var baseAddr: string;
     if (isConfigForTesting()) {
-      baseAddr = "http://192.168.64.3/gpass/php/";
+      baseAddr = "http://localhost/php/";
     } else {
       baseAddr  = "php/";
     }
