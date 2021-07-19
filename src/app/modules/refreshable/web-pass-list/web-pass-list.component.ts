@@ -103,6 +103,12 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         })
         ret.childInject = ReturnCodes.None;
         resolve(ret);
+      } else if (cmd == InputCodes.Import) {
+        this.import({});
+      } else if (cmd == InputCodes.Export) {
+        this.export();
+        ret.childInject = ReturnCodes.None;
+        resolve(ret);
       }
     })
   }
@@ -162,6 +168,25 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   isPlusOneYearPossible(): boolean {
     return (this.webPassList.length > 0);
+  }
+
+  async import(PassJson: any) {
+    try {
+      await PassJson.forEach(async webPass => {
+        const newWP = new WebPass();
+        newWP.name = webPass.name;
+        newWP.url = webPass.url;
+        newWP.username = webPass.username;
+        newWP.pass = webPass.pass;
+        newWP.registrationDate = webPass.registrationDate;
+        newWP.expirationDate = webPass.expirationDate;
+        newWP._id = await this.webLinkService.createWebPass(newWP);
+        this.webPassList.unshift(newWP);
+      });
+      this.hasChanged.emit(PageCodes.webPassPage);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async onNew() {
@@ -309,5 +334,19 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       }, (reason) => {
         this.onCloseEdit();
       });
+  }
+
+  download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([JSON.stringify(content)], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+
+  export() {
+    console.log("Export");
+    this.download(this.webPassList, 'json.txt', 'text/plain');
   }
 }
