@@ -11,10 +11,8 @@ import { GCrypto } from 'src/app/modules/gcrypto';
 })
 export class UserService extends Api {
 
-  private meApiUrl:   string = 'http://localhost:5000/api/users/me';
-  private userApiUrl: string = 'http://localhost:5000/api/users/';
-  private mockup: Array<User> = [];
-  private mockupId: string = '';
+  private userApiUrl: string = this.apiBaseUrl + '/users/';
+  private meApiUrl: string = this.apiBaseUrl + '/users/me';
 
   constructor(
     private http: HttpClient,

@@ -11,11 +11,10 @@ import { Api } from './api';
 })
 export class RelWebCatService extends Api {
 
-  private apiUrl: string = 'http://localhost:5000/api/relWebCat/';
+  private apiUrl: string = this.apiBaseUrl + '/relWebCat/';
 
   constructor(
     private localService: LocalService,
-    private loginService: LoginService,
     private http: HttpClient
   ) {
     super();

@@ -16,7 +16,7 @@ const localLabelPassw: string = 'userPassword';
 })
 export class LoginService extends Api {
 
-  private loginApiUrl: string = 'http://localhost:5000/api/auth/';
+  private loginApiUrl: string = this.apiBaseUrl + '/auth/';
 
   gCrypto: GCrypto;
   logged = false;

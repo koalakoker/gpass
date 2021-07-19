@@ -11,7 +11,7 @@ import { Api } from './api';
 })
 export class CategoryService extends Api {
 
-  private apiUrl: string = 'http://localhost:5000/api/category/';
+  private apiUrl: string = this.apiBaseUrl + '/category/';
 
   constructor(
     private localService: LocalService,

@@ -11,7 +11,7 @@ import { LocalService } from '../local.service';
 })
 export class WebLinkService extends Api {
 
-  private apiUrl: string = 'http://localhost:5000/api/webpass/';
+  private apiUrl: string = this.apiBaseUrl + '/webpass/';
   
   constructor(
     private localService: LocalService,
