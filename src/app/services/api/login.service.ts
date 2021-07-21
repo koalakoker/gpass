@@ -73,7 +73,18 @@ export class LoginService extends Api {
       this.updateUserLevel();
       return 0;
     } catch (error) {
-      this.error("is not possible to login");
+      if (error.status === 0) {
+        this.error("Backend not reachable");
+        this.clear();
+        return 1;
+      }
+      if (error.status === 400) {
+        this.error(error.error);
+        this.clear();
+        return 2;
+      }
+      this.error("Unknown error");
+      console.log(error);
       this.clear();
       return 4;
     }

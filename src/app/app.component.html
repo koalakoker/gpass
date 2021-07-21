@@ -22,7 +22,8 @@
                 </ng-container>
 
                 <app-login #loginComponent
-                    (userLogged)="userLogged()"
+                    (userAlreadyLogged)="userAlreadyLogged()"
+                    (userLoggedNow)="userLoggedNow()"
                     (sendMessage)="printErrorMessage($event)">
                 </app-login>
 

@@ -9,7 +9,8 @@ import { LoginState } from './loginState';
 export class LoginComponent implements OnInit {
 
   state: LoginState = LoginState.emailInsert;
-  @Output() userLogged = new EventEmitter<void>();
+  @Output() userLoggedNow = new EventEmitter<void>();
+  @Output() userAlreadyLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('emailInput') userNameInput: ElementRef;
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
     if (this.loginService.check()) {
       this.state = LoginState.logged;
       this.loginService.updateUserLevel();
-      this.userLogged.emit();
+      this.userAlreadyLogged.emit();
     } else {
       this.clear();
     };
@@ -65,7 +66,7 @@ export class LoginComponent implements OnInit {
       let errorCode: number = await this.loginService.checkLogin(this.email, this.userPassword);
       if (errorCode == this.errorCodeNoError) {
         this.state = LoginState.logged;
-        this.userLogged.emit();
+        this.userLoggedNow.emit();
       } else {
         this.sendMessage.emit('Password not correct');
         if ((errorCode == this.errorCodeWrongUsername) || 
@@ -74,10 +75,9 @@ export class LoginComponent implements OnInit {
         }
         this.clear();
       }
-      
     } catch (error) {
       console.log(error);
-      this.sendMessage.emit('Login error');
+      this.sendMessage.emit(error);
       this.clear();
     }
   }

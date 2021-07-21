@@ -3,7 +3,7 @@ import { LocalService } from '../local.service';
 
 export class Api {
 
-  apiBaseUrl: string = 'https://glinks.herokuapp.com/api';
+  apiBaseUrl: string = 'http://localhost:5000/api';
 
   constructor() {}
 
@@ -16,6 +16,6 @@ export class Api {
   }
 
   protected error(message: string) {
-    throw new Error("Database error: " + message);
+    throw "Database error: " + message;
   }
 }

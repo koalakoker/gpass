@@ -75,6 +75,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
             ret.childInject = ReturnCodes.ButtonInsertWebPass;
             resolve(ret);
           } catch (error) {
+            this.webPassList = [];
             reject(error);
           }
         } else {
@@ -145,6 +146,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.afterLoad();
     } catch (error) {
       console.log(error);
+      throw new Error("Back end not reachable");
     }
   }
 

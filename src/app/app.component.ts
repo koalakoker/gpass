@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
 import { LoginService } from './services/api/login.service';
@@ -58,10 +58,9 @@ enum MenuItemTag {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   private routedComponent: Refreshable;
-  pendingRouterComponentRefresh: boolean = false;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
   
@@ -108,46 +107,43 @@ export class AppComponent implements OnInit {
     }
   }
 
-  componentRefresh(event: NavigationEnd): void {
-    this.routedComponent.refresh(InputCodes.Refresh)
-      .then((returnData) => {
-        this.childInjected = returnData.childInject;
-        this.pageCode = returnData.pageCode;
+  async componentRefresh(event: NavigationEnd): Promise<void> {
+    let returnData;
+    try {
+      returnData  = await this.routedComponent.refresh(InputCodes.Refresh);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+        
+    this.childInjected = returnData.childInject;
+    this.pageCode = returnData.pageCode;
 
-        switch (returnData.pageCode) {
-          case PageCodes.webPassPage:
-            this.webPassDropDownUpdate()
-              .then(() => {
-                for (let item of this.webPassDropDown.getItems()) {
-                  if (item instanceof RouterLink) {
-                    if ((item.link === event.url) || ((event.url === '/') && (item.label == "All"))) {
-                      item.activated = true;
-                    } else {
-                      item.activated = false;
-                    }
-                  }
-                }
-              });
-            break;
-          case PageCodes.categoryPage:
-            this.categoryDropDownUpdate();
-            break;
-          case PageCodes.usersPage:
-            break;
-          
-          default:
-
-            break;
+    switch (returnData.pageCode) {
+      case PageCodes.webPassPage:
+        await this.webPassDropDownUpdate() 
+        for (let item of this.webPassDropDown.getItems()) {
+          if (item instanceof RouterLink) {
+            if ((item.link === event.url) || ((event.url === '/') && (item.label == "All"))) {
+              item.activated = true;
+            } else {
+              item.activated = false;
+            }
+          }
         }
-      })
-      .catch((err) => {
-        console.log("Promise error: " + err);
-      });
+        break;
+      case PageCodes.categoryPage:
+        this.categoryDropDownUpdate();
+        break;
+      case PageCodes.usersPage:
+        break;
+      
+      default:
+
+        break;
+    }
   }
   
-  ngOnInit() {
-  }
-
   webPassDropDownUpdate(): Promise<void> {
     return new Promise<void> ((resolve,reject) => {
       this.categoryService.getFromUserCategory()
@@ -174,7 +170,7 @@ export class AppComponent implements OnInit {
   }
 
   categoryDropDownUpdate(): void {
-    this.categoryDropDown.clear();;
+    this.categoryDropDown.clear();
     this.categoryDropDown.addItem(new Action({ tag: MenuItemTag.category_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
   }
 
@@ -234,9 +230,6 @@ export class AppComponent implements OnInit {
   public setRoutedComponent(componentRef: Refreshable) {
     this.routedComponent = componentRef;
     componentRef.hasChanged.subscribe((event) => this.refreshableHasChanged(event));
-    if (this.pendingRouterComponentRefresh) {
-      this.userLogged();
-    }
   }
 
   refreshableHasChanged(event) {
@@ -275,48 +268,64 @@ export class AppComponent implements OnInit {
     this.interval = setInterval(() => {
       this.errorMessage = '';
       clearInterval(this.interval);
-    }, 2000);
+    }, 10000);
   }
 
   isLoggedState() {
     return this.appState == AppState.logged;
   }
 
-  async userLogged() {
-    if (this.routedComponent == undefined) 
-    {
-      this.pendingRouterComponentRefresh = true;
-      return;
-    }
+  // Old code pass in reset state
+  // let isPassInResetState = await this.loginService.isPassInResetState();
+  // if (isPassInResetState) {
+  //   this.menuHideAllButLogout();
+  //   this.router.navigateByUrl('/changePass');
+  // } else {
+  //   this.menuShowAll();
+  // }
+
+  async userLoggedNow() {
     try {
       this.appState = AppState.logged;
-      let returnData = await this.routedComponent.refresh(InputCodes.Refresh);  
-      this.childInjected = returnData.childInject;
-      this.pageCode = returnData.pageCode;
+      await this.routedComponent.refresh(InputCodes.Refresh);  
       await this.webPassDropDownUpdate();
-      
-      // let isPassInResetState = await this.loginService.isPassInResetState();
-      // if (isPassInResetState) {
-      //   this.menuHideAllButLogout();
-      //   this.router.navigateByUrl('/changePass');
-      // } else {
-      //   this.menuShowAll();
-      // }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  userAlreadyLogged() {
+    setTimeout(async () => {
+      try {
+        await this.routedComponent.refresh(InputCodes.Refresh);
+        try {
+          await this.webPassDropDownUpdate();
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+        this.appState = AppState.logged;
+      } catch (error) {
+        this.printErrorMessage(error);
+        console.log("TBI: Redirect to information page!!!");
+        return;
+      }
+    }, 100);
   }
 
   clear() {
     this.appState = AppState.notLogged;
   }
 
-  logOut() {
+  async logOut() {
     this.clear();
     this.loginService.clear();
     this.loginComponent.clear();
-    this.routedComponent.refresh(InputCodes.Refresh)
-    .catch(err => console.log(err));
+    try {
+      await this.routedComponent.refresh(InputCodes.Refresh);
+    } catch (error) {
+      console.log(error);
+    }
     this.childInjected = "";
     this.pageCode = "";
     this.category = [];
