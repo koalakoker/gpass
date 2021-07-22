@@ -6,6 +6,7 @@ import { ChangePassComponent } from './modules/refreshable/change-pass/change-pa
 import { CategoryComponent } from './modules/refreshable/category/category.component';
 import { UsersComponent } from './modules/refreshable/users/users.component';
 import { NewUserComponent } from './modules/refreshable/new-user/new-user.component'
+import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'changePass', component: ChangePassComponent },
   { path: 'users', component: UsersComponent },
   { path: 'search/:str', component: WebPassListComponent},
-  { path: 'newuser/:username/:userhash/:masterpassword', component: NewUserComponent}
+  { path: 'newuser/:username/:userhash/:masterpassword', component: NewUserComponent},
+  { path: 'waitForBackend', component: WaitForBackendComponent },
 ];
 
 @NgModule({

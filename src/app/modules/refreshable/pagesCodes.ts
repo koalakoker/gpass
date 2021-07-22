@@ -6,3 +6,4 @@ export var dbCreateBackupTable: string = "dbCreateBackupTable";
 export var passGenerator: string = "passGenerator";
 export var changePass: string = "changePass";
 export var dbBackup: string = "dbBackup";
+export var waitForBackend: string = "waitForBackend";

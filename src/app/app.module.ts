@@ -31,6 +31,7 @@ import { LoginComponent } from './components/login/login.component';
 import { DropDownComponent } from './modules/menu/drop-down/drop-down.component';
 import { RouterLinkComponent } from './modules/menu/router-link/router-link.component';
 import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
+import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +55,8 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
     DropDownComponent,
     RouterLinkComponent,
     SubItemComponent,
-    MessageBoxComponent
+    MessageBoxComponent,
+    WaitForBackendComponent
   ],
   imports: [
     BrowserModule,

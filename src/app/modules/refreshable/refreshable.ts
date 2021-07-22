@@ -10,8 +10,12 @@ export class RefreshReturnData {
     pageCode: string;
     childInject: string;
 
-    constructor() {
-        this.pageCode = "";
+    constructor(pageCode?: string) {
+        if (pageCode !== undefined) {
+            this.pageCode = pageCode;
+        } else {
+            this.pageCode = "";
+        }
         this.childInject = "";
     }
 }

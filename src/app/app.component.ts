@@ -297,7 +297,12 @@ export class AppComponent {
   userAlreadyLogged() {
     setTimeout(async () => {
       try {
-        await this.routedComponent.refresh(InputCodes.Refresh);
+        try {
+          await this.routedComponent.refresh(InputCodes.Refresh);
+        } catch (error) {
+          console.log(error);
+          return;
+        }
         try {
           await this.webPassDropDownUpdate();
         } catch (error) {
@@ -314,7 +319,7 @@ export class AppComponent {
   }
 
   redirectToWaitBackend() {
-    console.log("TBI: Redirect to check backend page!!!");
+    this.router.navigateByUrl("/waitForBackend");
   }
 
   clear() {
