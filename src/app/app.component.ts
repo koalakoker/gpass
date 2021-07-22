@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
   categoryDropDown: DropDown;
   userDropDown: DropDown;
   lockDropDownOpen: boolean = true;
-  checkDuration_ms: number = 2000;
+  checkDuration_ms: number = 5000;
 
   constructor(
     private categoryService: CategoryService,
