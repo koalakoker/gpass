@@ -307,10 +307,14 @@ export class AppComponent {
         this.appState = AppState.logged;
       } catch (error) {
         this.printErrorMessage(error);
-        console.log("TBI: Redirect to information page!!!");
+        this.redirectToWaitBackend();
         return;
       }
     }, 100);
+  }
+
+  redirectToWaitBackend() {
+    console.log("TBI: Redirect to check backend page!!!");
   }
 
   clear() {
