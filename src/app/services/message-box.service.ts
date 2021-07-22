@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AboutModalComponent } from '../bootstrap/modal/about-modal/about-modal.component';
 import { MessageBoxComponent } from '../bootstrap/modal/message-box.component';
-import { UserEditModalComponent } from '../bootstrap/modal/user-edit-modal.component';
 import { User } from '../modules/user'
 
 @Injectable({
@@ -20,7 +20,7 @@ export class MessageBoxService {
   }
 
   async showUser(user: User) {
-    const modalRef = this.modalService.open(UserEditModalComponent);
+    const modalRef = this.modalService.open(AboutModalComponent);
     modalRef.componentInstance.user = user;
     await modalRef.result;
     this.onClose();

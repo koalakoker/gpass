@@ -32,6 +32,7 @@ import { DropDownComponent } from './modules/menu/drop-down/drop-down.component'
 import { RouterLinkComponent } from './modules/menu/router-link/router-link.component';
 import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
 import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
+import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,7 +57,8 @@ import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/
     RouterLinkComponent,
     SubItemComponent,
     MessageBoxComponent,
-    WaitForBackendComponent
+    WaitForBackendComponent,
+    AboutModalComponent
   ],
   imports: [
     BrowserModule,
