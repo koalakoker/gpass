@@ -12,7 +12,6 @@ export class LoginComponent implements OnInit {
   @Output() userLoggedNow = new EventEmitter<void>();
   @Output() userAlreadyLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
-  @Output() redirectToWaitBackend = new EventEmitter<void>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('emailInput') userNameInput: ElementRef;
 
@@ -77,9 +76,6 @@ export class LoginComponent implements OnInit {
         this.clear();
       }
     } catch (error) {
-      if (error === "Backend not reachable") {
-        this.redirectToWaitBackend.emit();
-      }
       console.log(error);
       this.sendMessage.emit(error);
       this.clear();

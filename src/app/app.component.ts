@@ -302,12 +302,10 @@ export class AppComponent implements OnInit {
 
   userAlreadyLogged() {
     setTimeout(async () => {
-      
       try {
         await this.routedComponent.refresh(InputCodes.Refresh);
       } catch (error) {
         this.printErrorMessage(error);
-        this.redirectToWaitBackend();
         return;
       }
       try {
@@ -318,10 +316,6 @@ export class AppComponent implements OnInit {
       }
       this.appState = AppState.logged;
     }, 100);
-  }
-
-  redirectToWaitBackend() {
-    this.router.navigateByUrl("/waitForBackend");
   }
 
   clear() {
