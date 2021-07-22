@@ -3,7 +3,8 @@ import { LocalService } from '../local.service';
 
 export class Api {
 
-  apiBaseUrl: string = 'http://localhost:5000/api';
+  //apiBaseUrl: string = 'http://localhost:5000/api';
+  apiBaseUrl: string = 'http://glinks.herokuapp.com/api';
 
   constructor() {}
 

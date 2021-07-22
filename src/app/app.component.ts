@@ -1,4 +1,4 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, ViewChild, OnInit} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
 import { LoginService } from './services/api/login.service';
@@ -13,7 +13,6 @@ import { ComboBoxComponent } from './components/combo-box/combo-box.component';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent } from './components/login/login.component';
-import { LoginState } from './components/login/loginState';
 
 import { Menu } from "./modules/menu/menu"
 import { ItemState } from "./modules/menu/menuItem";
@@ -58,7 +57,7 @@ enum MenuItemTag {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
@@ -83,6 +82,7 @@ export class AppComponent {
   categoryDropDown: DropDown;
   userDropDown: DropDown;
   lockDropDownOpen: boolean = true;
+  checkDuration_ms: number = 2000;
 
   constructor(
     private categoryService: CategoryService,
@@ -101,10 +101,12 @@ export class AppComponent {
     this.menuPopulate();
   }
 
+  ngOnInit() {
+    this.checkForBackend();
+  }
+
   navigationEnd(event: NavigationEnd) {
-    if (this.isLoggedState()) {
-      this.componentRefresh(event);
-    }
+    this.componentRefresh(event);
   }
 
   async componentRefresh(event: NavigationEnd): Promise<void> {
@@ -241,6 +243,10 @@ export class AppComponent {
       //this.loginComponent.state = LoginState.logged;
       //this.router.navigateByUrl("/list/0");
     }
+    if (event === PageCodes.waitForBackend) {
+      this.appState = AppState.logged;
+      this.router.navigateByUrl("/list/0");
+    }
   }
 
   tabChange(changeEvent: NgbNavChangeEvent) {
@@ -296,25 +302,21 @@ export class AppComponent {
 
   userAlreadyLogged() {
     setTimeout(async () => {
+      
       try {
-        try {
-          await this.routedComponent.refresh(InputCodes.Refresh);
-        } catch (error) {
-          console.log(error);
-          return;
-        }
-        try {
-          await this.webPassDropDownUpdate();
-        } catch (error) {
-          console.log(error);
-          return;
-        }
-        this.appState = AppState.logged;
+        await this.routedComponent.refresh(InputCodes.Refresh);
       } catch (error) {
         this.printErrorMessage(error);
         this.redirectToWaitBackend();
         return;
       }
+      try {
+        await this.webPassDropDownUpdate();
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      this.appState = AppState.logged;
     }, 100);
   }
 
@@ -377,6 +379,19 @@ export class AppComponent {
     user.email = me['email'];
     user.isAdmin = me['isAdmin']; 
     this.messageBox.showUser(user);
+  }
+
+  async checkForBackend(): Promise<boolean> {
+    try {
+      const me = await this.userService.getUserInfo();
+      setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
+      return true;
+    } catch (error) {
+      setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
+      this.appState = AppState.notLogged;
+      this.router.navigateByUrl("waitForBackend");
+      return false;
+    }
   }
 
   test() {

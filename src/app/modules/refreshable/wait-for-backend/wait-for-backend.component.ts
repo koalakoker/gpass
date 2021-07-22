@@ -47,10 +47,10 @@ export class WaitForBackendComponent implements Refreshable {
   async checkForBackend(): Promise<boolean> {
     try {
       const me = await this.userService.getUserInfo();
+      this.hasChanged.emit(PageCodes.waitForBackend);
       return true;
     } catch (error) {
-      //setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
-      console.log("Backend not ready");
+      setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       return false;
     }
   }
