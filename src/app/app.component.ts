@@ -113,7 +113,9 @@ export class AppComponent implements OnInit {
   }
 
   navigationEnd(event: NavigationEnd) {
-    this.componentRefresh(event);
+    if (this.appState === AppState.logged) {
+      this.componentRefresh(event);
+    }
   }
 
   async componentRefresh(event: NavigationEnd): Promise<void> {

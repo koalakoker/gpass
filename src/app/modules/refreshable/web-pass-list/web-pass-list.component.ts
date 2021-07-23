@@ -70,7 +70,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     
     var ret: RefreshReturnData = new RefreshReturnData;
     ret.pageCode = PageCodes.webPassPage;
-    console.log(cmd);
+    
     if (cmd == InputCodes.Refresh) {
       this.catID     = this.getParameterFromUrl('cat');
       this.searchStr = this.getParameterFromUrl('str');
