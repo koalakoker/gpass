@@ -54,69 +54,74 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     private loginService: LoginService) {
       this.g = new GCrypto();
   }
-  
+
+  getParameterFromUrl(str: string): string | undefined {
+    const param = this.route.snapshot.paramMap.get(str);
+    if (param === null) return undefined;
+    return param;
+  }
+
   ngOnInit() {
-    this.catID = this.route.snapshot.paramMap.get('cat');
-    this.searchStr = this.route.snapshot.paramMap.get('str');
+    this.catID     = this.getParameterFromUrl('cat');
+    this.searchStr = this.getParameterFromUrl('str');
   }
   
-  refresh(cmd: string): Promise<RefreshReturnData> {
-    return new Promise<RefreshReturnData>(async (resolve, reject) => {
-      var ret: RefreshReturnData = new RefreshReturnData;
-      ret.pageCode = PageCodes.webPassPage;
-
-      if (cmd == InputCodes.Refresh) {
-        this.catID = this.route.snapshot.paramMap.get('cat');
-        this.searchStr = this.route.snapshot.paramMap.get('str');
-        if (this.loginService.checklogged())
-        {
-          try {
-            await this.getWebPassList();
-            ret.childInject = ReturnCodes.ButtonInsertWebPass;
-            resolve(ret);
-          } catch (error) {
-            this.webPassList = [];
-            reject(error);
-          }
-        } else {
+  async refresh(cmd: string): Promise<RefreshReturnData> {
+    
+    var ret: RefreshReturnData = new RefreshReturnData;
+    ret.pageCode = PageCodes.webPassPage;
+    console.log(cmd);
+    if (cmd == InputCodes.Refresh) {
+      this.catID     = this.getParameterFromUrl('cat');
+      this.searchStr = this.getParameterFromUrl('str');
+      if (this.loginService.checklogged())
+      {
+        try {
+          await this.getWebPassList();
+          ret.childInject = ReturnCodes.ButtonInsertWebPass;
+          return(ret);
+        } catch (error) {
           this.webPassList = [];
-          reject("web-pass-list(refresh)->User not logged");
+          throw(error);
         }
-      } else if (cmd == InputCodes.NewBtnPress) {
-        this.onNew();
-        ret.childInject = ReturnCodes.None;
-        resolve(ret);
-      } else if (cmd == InputCodes.SrcPress) {
-        this.catID = '0';
-        this.searchStr = this.route.snapshot.paramMap.get('str');
-        if (this.loginService.checklogged())
-        {
-          this.getWebPassList();
-          ret.childInject = ReturnCodes.None;
-          resolve(ret);
-        } else {
-          this.webPassList = [];
-          reject('User not logged');
-        }
-      } else if (cmd == InputCodes.PlusOneYearAll) {
-        this.webPassList.forEach((web) => {
-          web.plusOneYear();
-        })
-        ret.childInject = ReturnCodes.None;
-        resolve(ret);
-      } else if (cmd == InputCodes.Import) {
-        this.import({});
-      } else if (cmd == InputCodes.Export) {
-        this.export();
-        ret.childInject = ReturnCodes.None;
-        resolve(ret);
+      } else {
+        this.webPassList = [];
+        throw("web-pass-list(refresh)->User not logged");
       }
-    })
+    } else if (cmd == InputCodes.NewBtnPress) {
+      this.onNew();
+      ret.childInject = ReturnCodes.None;
+      return(ret);
+    } else if (cmd == InputCodes.SrcPress) {
+      this.catID = '0';
+      this.searchStr = this.getParameterFromUrl('str');
+      if (this.loginService.checklogged())
+      {
+        this.getWebPassList();
+        ret.childInject = ReturnCodes.None;
+        return(ret);
+      } else {
+        this.webPassList = [];
+        throw('User not logged');
+      }
+    } else if (cmd == InputCodes.PlusOneYearAll) {
+      this.webPassList.forEach((web) => {
+        web.plusOneYear();
+      })
+      ret.childInject = ReturnCodes.None;
+      return(ret);
+    } else if (cmd == InputCodes.Import) {
+      this.import({});
+    } else if (cmd == InputCodes.Export) {
+      this.export();
+      ret.childInject = ReturnCodes.None;
+      return(ret);
+    }
   }
 
-  afterLoad() {
+  afterLoad(webPassListRaw: Array<WebPass>) {
     // Select only by cat (0 = all)
-    if (this.catID != '0') {
+    if ((this.catID !== '0') && (this.catID !== undefined)) {
       this.relWebCat = this.relWebCat.filter((x) => {
         return ((x.id_cat == this.catID) && (x.enabled == 1));
       });
@@ -124,26 +129,25 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.relWebCat.forEach((rel) => {
         filtWebId.push(rel.id_web);
       });
-      this.webPassList = this.webPassList.filter((web) => {
+      webPassListRaw = webPassListRaw.filter((web) => {
         return this.include(filtWebId, web._id);
       });
     } else {
-      if (this.searchStr != null) {
-        if (this.searchStr != "") {
-          this.webPassList = this.webPassList.filter((web) => {
-            return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
-          });
-        }
+      if ((this.searchStr !== '') && (this.searchStr !== undefined)) {
+        webPassListRaw = webPassListRaw.filter((web) => {
+          return (web.name.toLocaleLowerCase().includes(this.searchStr.toLocaleLowerCase()));
+        });
       }
     }
+    this.webPassList = webPassListRaw;
   }
 
   async getWebPassList() {    
     try {
-      this.webPassList = _.cloneDeep(await this.webLinkService.getFromUserLinks());
+      const webPassListRaw = _.cloneDeep(await this.webLinkService.getFromUserLinks());
       this.category = _.cloneDeep(await this.categoryService.getFromUserCategory());
       this.relWebCat = _.cloneDeep(await this.relWebCatService.getWebCatRel());
-      this.afterLoad();
+      this.afterLoad(webPassListRaw);
     } catch (error) {
       console.log(error);
       throw new Error("Back end not reachable");

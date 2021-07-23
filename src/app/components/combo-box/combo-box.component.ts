@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core'
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core'
 import { WebPass } from '../../modules/webpass'
 import { WebLinkService } from '../../services/api/web-link.service';
 import { LoginService } from '../../services/api/login.service';
@@ -10,12 +10,13 @@ import { LoginService } from '../../services/api/login.service';
 })
 export class ComboBoxComponent implements OnInit {
   @Output() selected = new EventEmitter<string>();
+  @ViewChild('searchInput') searchInput: ElementRef;
 
   list: WebPass[];
   retrievedList: WebPass[];
   showDropDown: boolean;
   counter: number;
-  textToSort: string;
+  textToSort: string = '';
   chipher_password: string;
   logged = false;
   listToBeUpdated = true;
@@ -32,6 +33,10 @@ export class ComboBoxComponent implements OnInit {
         this.textToSort = "";
       }
     }
+  }
+
+  setFocus(): void {
+    this.searchInput.nativeElement.focus();
   }
 
   onFocusEventAction(): void {

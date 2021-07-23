@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit} from '@angular/core';
+import { Component, ViewChild, OnInit, HostListener} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
 import { LoginService } from './services/api/login.service';
@@ -62,7 +62,14 @@ export class AppComponent implements OnInit {
   private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
-  
+
+  @HostListener('document:keypress', ['$event'])
+  keyDownEvent(event: KeyboardEvent) {
+    if ((event.ctrlKey) && (event.key === 'f')) {
+      this.comboInput.setFocus();
+    }
+  }
+
   gCrypto: GCrypto;
   errorMessage: string = '';
   message: string = '';
@@ -376,6 +383,10 @@ export class AppComponent implements OnInit {
   }
 
   async checkForBackend(): Promise<boolean> {
+    if (this.appState === AppState.notLogged) {
+      setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
+      return;
+    }
     try {
       const me = await this.userService.getUserInfo();
       setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
