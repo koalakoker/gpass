@@ -34,6 +34,7 @@ import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
 import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
 import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.component';
 import { QuestionModalComponent } from './bootstrap/modal/question-modal/question-modal.component';
+import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +61,8 @@ import { QuestionModalComponent } from './bootstrap/modal/question-modal/questio
     MessageBoxComponent,
     WaitForBackendComponent,
     AboutModalComponent,
-    QuestionModalComponent
+    QuestionModalComponent,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,

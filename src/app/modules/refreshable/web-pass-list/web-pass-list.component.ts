@@ -1,5 +1,4 @@
-import * as _ from 'lodash-es';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 
 import { WebPass } from '../../webpass';
 import { Category } from '../../category';
@@ -12,6 +11,7 @@ import * as InputCodes from '../inputCodes';
 
 import { ActivatedRoute } from '@angular/router';
 
+import * as _ from 'lodash-es';
 import { GCrypto } from '../../gcrypto';
 import { WebLinkService } from 'src/app/services/api/web-link.service';
 import { LoginService } from '../../../services/api/login.service';
@@ -22,6 +22,7 @@ import { WebPassEditModalComponent } from '../../../bootstrap/modal/webpass-edit
 import { Observer } from '../../observer';
 import { CategoryService } from 'src/app/services/api/category.service';
 import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
+import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -44,6 +45,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   needReenter: boolean = false;
   DebugTxt: string = "";
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
+  @ViewChild('progressBar') progressBar: ProgressBarComponent;
 
   constructor(
     private modalService: NgbModal,
@@ -347,10 +349,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         input.type = 'file';
         input.click();
         input.addEventListener('input', (event) => {
-          console.log('file selected');
           var reader = new FileReader();
           reader.onload = () => {
-            console.log("file read");
             var obj = JSON.parse(reader.result.toString());
             resolve(obj);
           };
@@ -363,7 +363,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   async import() {
-    console.log('Start import');
+    this.progressBar.init(this.webPassList.length);
     let json;
     try {
       json = await this.upload();
@@ -376,10 +376,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         const newWP = new WebPass(webPass);
         await this.webLinkService.createWebPass(newWP);
         itemProcessed += 1;
-        console.log(itemProcessed + ' - ' + json.length);
+        this.progressBar.nextStep();
         if (itemProcessed == json.length) {
           this.hasChanged.emit(PageCodes.forceRefresh);
-          console.log('End of import');
+          this.progressBar.end();
         }
       });
     } catch (error) {
@@ -388,16 +388,16 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   async deleteAll() {
-    console.log('Start delete');
+    this.progressBar.init(this.webPassList.length);
     let itemProcessed = 0;
     this.webPassList.forEach(async webPass => {
       await this.webLinkService.deleteWebPass(webPass._id);
       itemProcessed += 1;
-      console.log(itemProcessed + ' - ' + this.webPassList.length);
+      this.progressBar.nextStep();
       if (itemProcessed == this.webPassList.length) {
         this.webPassList = [];
         this.hasChanged.emit(PageCodes.webPassPage);
-        console.log('End of delete');
+        this.progressBar.end();
       }
     });
   }
