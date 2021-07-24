@@ -111,11 +111,15 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       ret.childInject = ReturnCodes.None;
       return(ret);
     } else if (cmd == InputCodes.Import) {
-      this.import({});
+      this.import();
+      ret.childInject = ReturnCodes.None;
     } else if (cmd == InputCodes.Export) {
       this.export();
       ret.childInject = ReturnCodes.None;
       return(ret);
+    } else if (cmd == InputCodes.DeleteAll) {
+      this.deleteAll();
+      ret.childInject = ReturnCodes.None;
     }
   }
 
@@ -174,25 +178,6 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   isPlusOneYearPossible(): boolean {
     return (this.webPassList.length > 0);
-  }
-
-  async import(PassJson: any) {
-    try {
-      await PassJson.forEach(async webPass => {
-        const newWP = new WebPass();
-        newWP.name = webPass.name;
-        newWP.url = webPass.url;
-        newWP.username = webPass.username;
-        newWP.pass = webPass.pass;
-        newWP.registrationDate = webPass.registrationDate;
-        newWP.expirationDate = webPass.expirationDate;
-        newWP._id = await this.webLinkService.createWebPass(newWP);
-        this.webPassList.unshift(newWP);
-      });
-      this.hasChanged.emit(PageCodes.webPassPage);
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   async onNew() {
@@ -348,11 +333,72 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     a.href = URL.createObjectURL(file);
     a.download = fileName;
     a.click();
-}
-
+  }
 
   export() {
     console.log("Export");
     this.download(this.webPassList, 'json.txt', 'text/plain');
+  }
+
+  upload() {
+    return new Promise<any>((resolve, reject) => {
+      try {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.click();
+        input.addEventListener('input', (event) => {
+          console.log('file selected');
+          var reader = new FileReader();
+          reader.onload = () => {
+            console.log("file read");
+            var obj = JSON.parse(reader.result.toString());
+            resolve(obj);
+          };
+          reader.readAsText(input.files[0]);
+        });
+      } catch (error) {
+        reject('error selecting file');
+      }
+    })
+  }
+
+  async import() {
+    console.log('Start import');
+    let json;
+    try {
+      json = await this.upload();
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      let itemProcessed = 0;
+      await json.forEach(async webPass => {
+        const newWP = new WebPass(webPass);
+        await this.webLinkService.createWebPass(newWP);
+        itemProcessed += 1;
+        console.log(itemProcessed + ' - ' + json.length);
+        if (itemProcessed == json.length) {
+          this.hasChanged.emit(PageCodes.forceRefresh);
+          console.log('End of import');
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteAll() {
+    console.log('Start delete');
+    let itemProcessed = 0;
+    this.webPassList.forEach(async webPass => {
+      await this.webLinkService.deleteWebPass(webPass._id);
+      itemProcessed += 1;
+      console.log(itemProcessed + ' - ' + this.webPassList.length);
+      if (itemProcessed == this.webPassList.length) {
+        this.webPassList = [];
+        this.hasChanged.emit(PageCodes.webPassPage);
+        console.log('End of delete');
+      }
+    });
   }
 }

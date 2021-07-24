@@ -24,6 +24,7 @@ import { CategoryService } from './services/api/category.service';
 import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';
 import { User } from './modules/user';
+import { QuestionModalAnswers } from './bootstrap/modal/question-modal/question-modal.component';
 
 enum AppState {
   notLogged,
@@ -35,8 +36,12 @@ enum MenuItemTag {
   webPass_all              = "webPass_all",
   webPass_new              = "webPass_new",
   webPass_plusOneYearAll   = "webPass_plusOneYearAll",
+  webPass_deleteAll        = "webPass_deleteAll",
   webPass_logOut           = "webPass_logOut",
   webPass_divider1         = "webPass_divider1",
+  webPass_divider2         = "webPass_divider2",
+  webPass_export           = "webPass_export",
+  webPass_import           = "webPass_import",
 
   category                 = "category",
   category_new             = "category_new",
@@ -155,29 +160,29 @@ export class AppComponent implements OnInit {
     }
   }
   
-  webPassDropDownUpdate(): Promise<void> {
-    return new Promise<void> ((resolve,reject) => {
-      this.categoryService.getFromUserCategory()
-        .then((data: Array<Category>) => {
-          this.category = data;
-          this.webPassDropDown.clear();
-          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
-          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_plusOneYearAll , label: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
-          this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_logOut         , label: "Logout"    , onClick: this.logOut         }));
-          this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider1));
-          this.webPassDropDown.addItem(this.catDataAll);
-          if (this.category) {
-            this.category.forEach(cat => {
-              let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat._id, cat.name, 0, false);
-              this.webPassDropDown.addItem(newCatList);
-            });
-          }
-          resolve();
-        })
-        .catch(err => {
-          reject(err);
+  async webPassDropDownUpdate(): Promise<void> {
+    try {
+      const data: Array<Category> = await this.categoryService.getFromUserCategory();
+      this.category = data;
+      this.webPassDropDown.clear();
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_deleteAll      , label: "delete all", onClick: this.deleteAll     , state: this.getDeleteAllState()}));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_plusOneYearAll , label: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_logOut         , label: "Logout"    , onClick: this.logOut         }));
+      this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider1));
+      this.webPassDropDown.addItem(this.catDataAll);
+      if (this.category) {
+        this.category.forEach(cat => {
+          let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat._id, cat.name, 0, false);
+          this.webPassDropDown.addItem(newCatList);
         });
-    });
+      }
+      this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider2));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_export, label: "Export", onClick: this.onExport, state: this.getExportActionState() }));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_import, label: "Import", onClick: this.onImport, state: this.getImportActionState() }));
+    } catch (error) {
+      throw(error);
+    }
   }
 
   categoryDropDownUpdate(): void {
@@ -255,6 +260,9 @@ export class AppComponent implements OnInit {
     if (event === PageCodes.waitForBackend) {
       this.appState = AppState.logged;
       this.router.navigateByUrl("/list/0");
+    }
+    if (event === PageCodes.forceRefresh) {
+      this.componentRefresh(event);
     }
   }
 
@@ -345,10 +353,6 @@ export class AppComponent implements OnInit {
     this.category = [];
   }  
       
-  onNew(): void {
-    this.routedComponent.refresh(InputCodes.NewBtnPress);
-  }
-
   getNewActionState(): ItemState {
     try {
       return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
@@ -356,7 +360,27 @@ export class AppComponent implements OnInit {
       console.log(error);
     }
   } 
+  
+  onNew(): void {
+    this.routedComponent.refresh(InputCodes.NewBtnPress);
+  }
+  
+  getExportActionState(): ItemState {
+    return ItemState.enabled;
+  }
+  
+  onExport(): void {
+    this.routedComponent.refresh(InputCodes.Export);
+  }
+  
+  getImportActionState(): ItemState {
+    return ItemState.enabled;
+  }
 
+  onImport(): void {
+    this.routedComponent.refresh(InputCodes.Import);
+  }
+  
   onSearch() {
     this.searchString = this.comboInput.textToSort;
     this.router.navigateByUrl('/search/' + this.searchString);
@@ -375,13 +399,24 @@ export class AppComponent implements OnInit {
     this.routedComponent.refresh(InputCodes.PlusOneYearAll);
   }
 
+  getDeleteAllState() {
+    return ItemState.enabled;
+  }
+
+  async deleteAll() {
+    const ans = await this.messageBox.question('Warning','You are about to delete all. Are you sure?');
+    if (ans === QuestionModalAnswers.yes) {
+      this.routedComponent.refresh(InputCodes.DeleteAll);
+    }
+  }
+
   async onGpassLabel() {
     const me = await this.userService.getUserInfo();
     const user = new User();
     user.name = me['name'];
     user.email = me['email'];
     user.isAdmin = me['isAdmin']; 
-    this.messageBox.showUser(user);
+    this.messageBox.about(user);
   }
 
   async checkForBackend(): Promise<boolean> {

@@ -33,6 +33,7 @@ import { RouterLinkComponent } from './modules/menu/router-link/router-link.comp
 import { SubItemComponent } from './modules/menu/sub-item/sub-item.component';
 import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
 import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.component';
+import { QuestionModalComponent } from './bootstrap/modal/question-modal/question-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,7 +59,8 @@ import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.c
     SubItemComponent,
     MessageBoxComponent,
     WaitForBackendComponent,
-    AboutModalComponent
+    AboutModalComponent,
+    QuestionModalComponent
   ],
   imports: [
     BrowserModule,
