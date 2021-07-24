@@ -24,7 +24,7 @@ import { CategoryService } from './services/api/category.service';
 import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';
 import { User } from './modules/user';
-import { QuestionModalAnswers } from './bootstrap/modal/question-modal/question-modal.component';
+import { ModalAnswers } from './bootstrap/modal/modalAnswers';
 
 enum AppState {
   notLogged,
@@ -39,7 +39,6 @@ enum MenuItemTag {
   webPass_deleteAll        = "webPass_deleteAll",
   webPass_logOut           = "webPass_logOut",
   webPass_divider1         = "webPass_divider1",
-  webPass_divider2         = "webPass_divider2",
   webPass_export           = "webPass_export",
   webPass_import           = "webPass_import",
 
@@ -168,6 +167,8 @@ export class AppComponent implements OnInit {
       this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
       this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_deleteAll      , label: "delete all", onClick: this.deleteAll     , state: this.getDeleteAllState()}));
       this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_plusOneYearAll , label: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_export         , label: "Export"    , onClick: this.onExport      , state: this.getExportActionState() }));
+      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_import         , label: "Import"    , onClick: this.onImport      , state: this.getImportActionState() }));
       this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_logOut         , label: "Logout"    , onClick: this.logOut         }));
       this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider1));
       this.webPassDropDown.addItem(this.catDataAll);
@@ -177,9 +178,7 @@ export class AppComponent implements OnInit {
           this.webPassDropDown.addItem(newCatList);
         });
       }
-      this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider2));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_export, label: "Export", onClick: this.onExport, state: this.getExportActionState() }));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_import, label: "Import", onClick: this.onImport, state: this.getImportActionState() }));
+      
     } catch (error) {
       throw(error);
     }
@@ -406,7 +405,7 @@ export class AppComponent implements OnInit {
 
   async deleteAll() {
     const ans = await this.messageBox.question('Warning','You are about to delete all. Are you sure?');
-    if (ans === QuestionModalAnswers.yes) {
+    if (ans === ModalAnswers.yes) {
       this.routedComponent.refresh(InputCodes.DeleteAll);
     }
   }

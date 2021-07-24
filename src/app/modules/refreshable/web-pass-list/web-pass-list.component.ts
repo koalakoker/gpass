@@ -23,6 +23,8 @@ import { Observer } from '../../observer';
 import { CategoryService } from 'src/app/services/api/category.service';
 import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-bar.component';
+import { MessageBoxService } from 'src/app/services/message-box.service';
+import { ModalAnswers } from 'src/app/bootstrap/modal/modalAnswers';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -48,6 +50,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   @ViewChild('progressBar') progressBar: ProgressBarComponent;
 
   constructor(
+    private messageBoxService: MessageBoxService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private webLinkService: WebLinkService,
@@ -337,9 +340,11 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     a.click();
   }
 
-  export() {
-    console.log("Export");
-    this.download(this.webPassList, 'json.txt', 'text/plain');
+  async export() {
+    const ans = await this.messageBoxService.password('Insert password','Insert password to cripy the exported data');
+    if (ans === ModalAnswers.yes) {
+      this.download(this.webPassList, 'json.txt', 'text/plain');
+    }
   }
 
   upload() {

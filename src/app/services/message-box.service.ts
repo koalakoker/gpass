@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AboutModalComponent } from '../bootstrap/modal/about-modal/about-modal.component';
 import { MessageBoxComponent } from '../bootstrap/modal/message-box.component';
-import { QuestionModalAnswers, QuestionModalComponent } from '../bootstrap/modal/question-modal/question-modal.component';
+import { QuestionModalComponent } from '../bootstrap/modal/question-modal/question-modal.component';
+import { ModalAnswers } from '../bootstrap/modal/modalAnswers';
 import { User } from '../modules/user'
+import { PasswordModalComponent } from '../bootstrap/modal/password-modal/password-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +38,24 @@ export class MessageBoxService {
       ans = await modalRef.result;
     } catch (error) {
       if ((error === 0) || (error == 1)) {
-        ans = QuestionModalAnswers.esc;
+        ans = ModalAnswers.esc;
+      } else {
+        ans = error;
+      }
+    }
+    return ans;
+  }
+
+  async password(title: string, message: string) {
+    const modalRef = this.modalService.open(PasswordModalComponent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.message = message;
+    let ans;
+    try {
+      ans = await modalRef.result;
+    } catch (error) {
+      if ((error === 0) || (error == 1)) {
+        ans = ModalAnswers.esc;
       } else {
         ans = error;
       }

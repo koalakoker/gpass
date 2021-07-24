@@ -35,6 +35,7 @@ import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/
 import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.component';
 import { QuestionModalComponent } from './bootstrap/modal/question-modal/question-modal.component';
 import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.component';
+import { PasswordModalComponent } from './bootstrap/modal/password-modal/password-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,7 +63,8 @@ import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.comp
     WaitForBackendComponent,
     AboutModalComponent,
     QuestionModalComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    PasswordModalComponent
   ],
   imports: [
     BrowserModule,
