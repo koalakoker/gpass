@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter} from '@angular/core';
+import { Component, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import { Refreshable, RefreshReturnData } from '../refreshable';
 import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
@@ -9,12 +9,16 @@ import { UserService } from 'src/app/services/api/user.service';
   selector: 'app-wait-for-backend',
   templateUrl: './wait-for-backend.component.html'
 })
-export class WaitForBackendComponent implements Refreshable {
+export class WaitForBackendComponent implements Refreshable, AfterViewInit {
 
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
-  checkDuration_ms: number = 2000; 
+  checkDuration_ms: number = 5000; 
 
   constructor(private userService: UserService) { }
+
+  ngAfterViewInit() {
+    this.checkForBackend();
+  }
 
   async refresh(cmd: string): Promise<RefreshReturnData> {
     var ret: RefreshReturnData = new RefreshReturnData(PageCodes.waitForBackend);
@@ -45,6 +49,7 @@ export class WaitForBackendComponent implements Refreshable {
   }
 
   async checkForBackend(): Promise<boolean> {
+    console.log('waitforbackendComponent -> checkForBackend');
     try {
       const me = await this.userService.getUserInfo();
       this.hasChanged.emit(PageCodes.waitForBackend);

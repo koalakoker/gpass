@@ -260,6 +260,7 @@ export class AppComponent implements OnInit {
     if (event === PageCodes.waitForBackend) {
       this.appState = AppState.logged;
       this.router.navigateByUrl("/list/0");
+      this.checkForBackend();
     }
     if (event === PageCodes.forceRefresh) {
       this.componentRefresh(event);
@@ -420,6 +421,7 @@ export class AppComponent implements OnInit {
   }
 
   async checkForBackend(): Promise<boolean> {
+    console.log('app.component -> checkForBackend');
     if (this.appState === AppState.notLogged) {
       setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       return;
@@ -429,7 +431,6 @@ export class AppComponent implements OnInit {
       setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       return true;
     } catch (error) {
-      setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       this.appState = AppState.notLogged;
       this.router.navigateByUrl("waitForBackend");
       return false;
