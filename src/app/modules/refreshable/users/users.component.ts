@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { isConfigForTesting } from '../../config'
 
 import { Refreshable, RefreshReturnData } from '../refreshable';
 import * as PageCodes from '../pagesCodes'
@@ -33,12 +32,7 @@ export class UsersComponent implements OnInit, Refreshable {
     private loginService: LoginService,
     private userService: UserService,
     private modalService: NgbModal) {
-      let baseAddr = '';
-      if (isConfigForTesting()) {
-        baseAddr = 'http://localhost:4200/';
-      } else {
-        baseAddr = 'https://www.koalakoker.com/gpass/';
-      }
+      let baseAddr = 'https://www.koalakoker.com/gpass/';
       this.returnUrl = baseAddr + '#/newuser'
     }
   
