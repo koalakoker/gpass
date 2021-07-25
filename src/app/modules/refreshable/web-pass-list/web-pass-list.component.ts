@@ -25,6 +25,9 @@ import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-bar.component';
 import { MessageBoxService } from 'src/app/services/message-box.service';
 import { ModalAnswers } from 'src/app/bootstrap/modal/modalAnswers';
+import { UserService } from 'src/app/services/api/user.service';
+import { ImportService } from 'src/app/services/import.service';
+import { ExportService } from 'src/app/services/export.service';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -50,13 +53,14 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   @ViewChild('progressBar') progressBar: ProgressBarComponent;
 
   constructor(
-    private messageBoxService: MessageBoxService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private webLinkService: WebLinkService,
     private categoryService: CategoryService,
     private relWebCatService: RelWebCatService,
-    private loginService: LoginService) {
+    private loginService: LoginService,
+    private exportService: ExportService,
+    private importService: ImportService) {
       this.g = new GCrypto();
   }
 
@@ -116,10 +120,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       ret.childInject = ReturnCodes.None;
       return(ret);
     } else if (cmd == InputCodes.Import) {
-      this.import();
+      this.onImport();
       ret.childInject = ReturnCodes.None;
     } else if (cmd == InputCodes.Export) {
-      this.export();
+      this.onExport();
       ret.childInject = ReturnCodes.None;
       return(ret);
     } else if (cmd == InputCodes.DeleteAll) {
@@ -332,64 +336,32 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       });
   }
 
-  download(content, fileName, contentType) {
-    var a = document.createElement("a");
-    var file = new Blob([JSON.stringify(content)], {type: contentType});
-    a.href = URL.createObjectURL(file);
-    a.download = fileName;
-    a.click();
+  async onExport() {
+    this.exportService.onExport(this.webPassList);
   }
 
-  async export() {
-    const ans = await this.messageBoxService.password('Insert password','Insert password to cripy the exported data');
-    if (ans === ModalAnswers.yes) {
-      this.download(this.webPassList, 'json.txt', 'text/plain');
+  async onImport() {
+    try {
+      const json = await this.importService.onImport();
+      this.importFromJson(json);
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  upload() {
-    return new Promise<any>((resolve, reject) => {
-      try {
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.click();
-        input.addEventListener('input', (event) => {
-          var reader = new FileReader();
-          reader.onload = () => {
-            var obj = JSON.parse(reader.result.toString());
-            resolve(obj);
-          };
-          reader.readAsText(input.files[0]);
-        });
-      } catch (error) {
-        reject('error selecting file');
+  importFromJson(json) {
+    this.progressBar.init(json.length);
+    let itemProcessed = 0;
+    json.forEach(async webPass => {
+      const newWP = new WebPass(webPass);
+      await this.webLinkService.createWebPass(newWP);
+      itemProcessed += 1;
+      this.progressBar.nextStep();
+      if (itemProcessed == json.length) {
+        this.hasChanged.emit(PageCodes.forceRefresh);
+        this.progressBar.end();
       }
-    })
-  }
-
-  async import() {
-    this.progressBar.init(this.webPassList.length);
-    let json;
-    try {
-      json = await this.upload();
-    } catch (error) {
-      console.log(error);
-    }
-    try {
-      let itemProcessed = 0;
-      await json.forEach(async webPass => {
-        const newWP = new WebPass(webPass);
-        await this.webLinkService.createWebPass(newWP);
-        itemProcessed += 1;
-        this.progressBar.nextStep();
-        if (itemProcessed == json.length) {
-          this.hasChanged.emit(PageCodes.forceRefresh);
-          this.progressBar.end();
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    });
   }
 
   async deleteAll() {

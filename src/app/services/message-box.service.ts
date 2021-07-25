@@ -46,13 +46,15 @@ export class MessageBoxService {
     return ans;
   }
 
-  async password(title: string, message: string) {
+  async password(title: string, message: string): Promise<any> {
     const modalRef = this.modalService.open(PasswordModalComponent);
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.message = message;
     let ans;
+    let password = '';
     try {
       ans = await modalRef.result;
+      password = modalRef.componentInstance.password;
     } catch (error) {
       if ((error === 0) || (error == 1)) {
         ans = ModalAnswers.esc;
@@ -60,7 +62,7 @@ export class MessageBoxService {
         ans = error;
       }
     }
-    return ans;
+    return { ans, password };
   }
 
   onClose() {

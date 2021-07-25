@@ -13,6 +13,7 @@ export class PasswordModalComponent implements OnInit {
   confirm: string = ModalAnswers.confirm;
   cancel: string = ModalAnswers.cancel;
   @ViewChild('passwordInput') passwordInput: ElementRef;
+  password: string = '';
 
   constructor(public activeModal: NgbActiveModal) { }
 
@@ -21,8 +22,6 @@ export class PasswordModalComponent implements OnInit {
       this.passwordInput.nativeElement.focus();
     }, 100);
   }
-
-
 
   dismiss(str: string) {
     this.activeModal.dismiss(str);

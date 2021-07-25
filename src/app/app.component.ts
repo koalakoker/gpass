@@ -113,7 +113,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.checkForBackend();
+    //this.checkForBackend();
   }
 
   navigationEnd(event: NavigationEnd) {
