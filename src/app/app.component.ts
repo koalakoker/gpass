@@ -94,6 +94,7 @@ export class AppComponent implements OnInit {
   userDropDown: DropDown;
   lockDropDownOpen: boolean = true;
   checkDuration_ms: number = 5000;
+  loading: boolean = false;
 
   constructor(
     private categoryService: CategoryService,
@@ -125,7 +126,9 @@ export class AppComponent implements OnInit {
   async componentRefresh(event: NavigationEnd): Promise<void> {
     let returnData;
     try {
+      this.loading = true;
       returnData  = await this.routedComponent.refresh(InputCodes.Refresh);
+      this.loading = false;
     } catch (error) {
       console.log(error);
       return;
@@ -310,7 +313,9 @@ export class AppComponent implements OnInit {
   async userLoggedNow() {
     try {
       this.appState = AppState.logged;
-      await this.routedComponent.refresh(InputCodes.Refresh);  
+      this.loading = true;
+      await this.routedComponent.refresh(InputCodes.Refresh);
+      this.loading = false;
       await this.webPassDropDownUpdate();
     } catch (error) {
       console.log(error);
@@ -320,7 +325,9 @@ export class AppComponent implements OnInit {
   userAlreadyLogged() {
     setTimeout(async () => {
       try {
+        this.loading = true;
         await this.routedComponent.refresh(InputCodes.Refresh);
+        this.loading = false;
       } catch (error) {
         this.printErrorMessage(error);
         return;
@@ -344,7 +351,9 @@ export class AppComponent implements OnInit {
     this.loginService.clear();
     this.loginComponent.clear();
     try {
+      this.loading = true;
       await this.routedComponent.refresh(InputCodes.Refresh);
+      this.loading = false;
     } catch (error) {
       console.log(error);
     }

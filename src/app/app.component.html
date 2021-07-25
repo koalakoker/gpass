@@ -38,7 +38,9 @@
     </div>
 </nav>
 
+<div class="loader" *ngIf="loading"></div>
 <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
+
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
     {{errorMessage}}
