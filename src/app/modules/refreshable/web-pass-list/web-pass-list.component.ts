@@ -169,7 +169,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
   queryForAction(action: string): boolean {
     if (action === InputCodes.NewBtnPress) {
-      return (this.isNewPosible())
+      return (this.isNewPossible())
     }
     if (action === InputCodes.PlusOneYearAll) {
 
@@ -181,7 +181,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     console.log("Notyfy the parent webpasslist->app");
   }
 
-  isNewPosible(): boolean {
+  isNewPossible(): boolean {
     return (this.loginService.getUserKey() !== "");
   }
 
@@ -190,7 +190,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   }
 
   async onNew() {
-    if (this.isNewPosible()) {
+    if (this.isNewPossible()) {
       const webPass = new WebPass();
       try {
         webPass._id = await this.webLinkService.createWebPass(webPass);

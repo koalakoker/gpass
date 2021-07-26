@@ -166,6 +166,12 @@ export class AppComponent implements OnInit {
         break;
     }
   }
+
+  async dropDownUpdate() {
+    this.categoryDropDownUpdate();
+    this.notesDropDownUpdate();
+    await this.webPassDropDownUpdate();
+  }
   
   async webPassDropDownUpdate(): Promise<void> {
     try {
@@ -336,7 +342,7 @@ export class AppComponent implements OnInit {
       this.loading = true;
       await this.routedComponent.refresh(InputCodes.Refresh);
       this.loading = false;
-      await this.webPassDropDownUpdate();
+      await this.dropDownUpdate();
     } catch (error) {
       console.log(error);
     }
@@ -353,7 +359,7 @@ export class AppComponent implements OnInit {
         return;
       }
       try {
-        await this.webPassDropDownUpdate();
+        await this.dropDownUpdate();
       } catch (error) {
         console.log(error);
         return;

@@ -42,6 +42,10 @@ export class NotesComponent implements OnInit, Refreshable {
         this.notesList = [];
         throw ("web-pass-list(refresh)->User not logged");
       }
+    } else if (cmd == InputCodes.NewBtnPress) {
+      this.onNew();
+      ret.childInject = ReturnCodes.None;
+      return (ret);
     }
     return ret;
   }
@@ -52,6 +56,23 @@ export class NotesComponent implements OnInit, Refreshable {
 
   async getNotesList() {
     return []; // TBI
+  }
+
+  async onNew() {
+    if (this.isNewPossible()) {
+      const note = new Note();
+      try {
+        //note._id = await this.webLinkService.createWebPass(note);
+        this.notesList.unshift(note);
+        this.hasChanged.emit(PageCodes.notesPage);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  isNewPossible(): boolean {
+    return true;
   }
 
 }
