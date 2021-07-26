@@ -1,5 +1,6 @@
 export const None : string = "";
 export const ButtonInsertWebPass : string = "btnInsertWebPass";
+export const ButtonInsertNote : string = "btnInsertNote";
 export const ButtonInsertCategory :string = "btnInsertCategory";
 export const ButtonInsertUsers: string = "btnInsertUsers";
 export const LoginValid: string = "LoginValid";

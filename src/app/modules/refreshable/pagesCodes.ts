@@ -1,4 +1,5 @@
 export const webPassPage:         string = 'webPassPage';
+export const notesPage:           string = 'notesPage';
 export const categoryPage:        string = 'categoryPage';
 export const usersPage:           string = 'usersPage';
 export const newUserPage:         string = 'newUserPage';

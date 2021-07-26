@@ -42,6 +42,9 @@ enum MenuItemTag {
   webPass_export           = "webPass_export",
   webPass_import           = "webPass_import",
 
+  notes                    = "notes",
+  notes_new                = "notes_new",
+
   category                 = "category",
   category_new             = "category_new",
 
@@ -79,7 +82,6 @@ export class AppComponent implements OnInit {
   message: string = '';
   DebugTxt: string = "";
   interval;
-  childInjected: string = "";
   pageCode: string = "";
   param = "";
   category: Category[];
@@ -90,6 +92,7 @@ export class AppComponent implements OnInit {
   catDataAll: RouterLink = new RouterLink(MenuItemTag.webPass_all, "/list/0", "All", 0, true);
   menu: Menu = new Menu();
   webPassDropDown: DropDown;
+  notesDropDown: DropDown;
   categoryDropDown: DropDown;
   userDropDown: DropDown;
   lockDropDownOpen: boolean = true;
@@ -133,8 +136,7 @@ export class AppComponent implements OnInit {
       console.log(error);
       return;
     }
-        
-    this.childInjected = returnData.childInject;
+    
     this.pageCode = returnData.pageCode;
 
     switch (returnData.pageCode) {
@@ -152,6 +154,9 @@ export class AppComponent implements OnInit {
         break;
       case PageCodes.categoryPage:
         this.categoryDropDownUpdate();
+        break;
+      case PageCodes.notesPage:
+        this.notesDropDownUpdate();
         break;
       case PageCodes.usersPage:
         break;
@@ -191,6 +196,11 @@ export class AppComponent implements OnInit {
     this.categoryDropDown.clear();
     this.categoryDropDown.addItem(new Action({ tag: MenuItemTag.category_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
   }
+  
+  notesDropDownUpdate(): void {
+    this.notesDropDown.clear();
+    this.notesDropDown.addItem(new Action({ tag: MenuItemTag.notes_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
+  }
 
   menuPopulate() {
     let dropDown: DropDown;
@@ -198,6 +208,10 @@ export class AppComponent implements OnInit {
     dropDown = new DropDown(MenuItemTag.webPass, "WebPass");
     this.menu.push(dropDown);
     this.webPassDropDown = dropDown;
+
+    dropDown = new DropDown(MenuItemTag.notes, "Notes");
+    this.menu.push(dropDown);
+    this.notesDropDown = dropDown;
 
     dropDown = new DropDown(MenuItemTag.category, "Category");
     this.menu.push(dropDown);
@@ -219,30 +233,6 @@ export class AppComponent implements OnInit {
 
     routerLink = new RouterLink(MenuItemTag.routerLink_newPass, '/newPass', "New password");
     this.menu.push(routerLink);
-  }
-
-  menuHideAllButLogout(): void {
-    this.webPassDropDown.getItems().forEach(item => {
-      if (item.tag !== MenuItemTag.webPass_logOut) {
-        item.visible = false;
-      }
-    });
-
-    this.menu.forEach(item => {
-      if (item.tag !== MenuItemTag.webPass) {
-        item.visible = false;
-      }
-    });
-  }
-
-  menuShowAll(): void {
-    this.webPassDropDown.getItems().forEach(item => {
-      item.visible = true;
-    });
-
-    this.menu.forEach(item => {
-      item.visible = true;
-    });
   }
 
   public setRoutedComponent(componentRef: Refreshable) {
@@ -276,6 +266,11 @@ export class AppComponent implements OnInit {
         this.router.navigateByUrl('/list/0');
       }
     }
+    if (changeEvent.nextId === this.notesDropDown.index) {
+      if (!(this.pageCode == PageCodes.notesPage)) {
+        this.router.navigateByUrl("/notes");
+      }
+    }
     if (changeEvent.nextId === this.categoryDropDown.index) {
       if (!(this.pageCode == PageCodes.categoryPage)) {
         this.router.navigateByUrl("/category");
@@ -301,13 +296,38 @@ export class AppComponent implements OnInit {
     return this.appState == AppState.logged;
   }
 
-  // Old code pass in reset state
+  // *****Old code pass in reset state*****
+  
   // let isPassInResetState = await this.loginService.isPassInResetState();
   // if (isPassInResetState) {
   //   this.menuHideAllButLogout();
   //   this.router.navigateByUrl('/changePass');
   // } else {
   //   this.menuShowAll();
+  // }
+
+  // menuHideAllButLogout(): void {
+  //   this.webPassDropDown.getItems().forEach(item => {
+  //     if (item.tag !== MenuItemTag.webPass_logOut) {
+  //       item.visible = false;
+  //     }
+  //   });
+
+  //   this.menu.forEach(item => {
+  //     if (item.tag !== MenuItemTag.webPass) {
+  //       item.visible = false;
+  //     }
+  //   });
+  // }
+
+  // menuShowAll(): void {
+  //   this.webPassDropDown.getItems().forEach(item => {
+  //     item.visible = true;
+  //   });
+
+  //   this.menu.forEach(item => {
+  //     item.visible = true;
+  //   });
   // }
 
   async userLoggedNow() {
@@ -357,7 +377,6 @@ export class AppComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
-    this.childInjected = "";
     this.pageCode = "";
     this.category = [];
   }  

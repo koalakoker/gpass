@@ -36,6 +36,7 @@ import { AboutModalComponent } from './bootstrap/modal/about-modal/about-modal.c
 import { QuestionModalComponent } from './bootstrap/modal/question-modal/question-modal.component';
 import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.component';
 import { PasswordModalComponent } from './bootstrap/modal/password-modal/password-modal.component';
+import { NotesComponent } from './modules/refreshable/notes/notes.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,7 +65,8 @@ import { PasswordModalComponent } from './bootstrap/modal/password-modal/passwor
     AboutModalComponent,
     QuestionModalComponent,
     ProgressBarComponent,
-    PasswordModalComponent
+    PasswordModalComponent,
+    NotesComponent
   ],
   imports: [
     BrowserModule,

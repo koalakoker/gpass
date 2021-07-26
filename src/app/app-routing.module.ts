@@ -7,10 +7,12 @@ import { CategoryComponent } from './modules/refreshable/category/category.compo
 import { UsersComponent } from './modules/refreshable/users/users.component';
 import { NewUserComponent } from './modules/refreshable/new-user/new-user.component'
 import { WaitForBackendComponent } from './modules/refreshable/wait-for-backend/wait-for-backend.component';
+import { NotesComponent } from './modules/refreshable/notes/notes.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },
   { path: 'list/:cat', component: WebPassListComponent },
+  { path: 'notes', component: NotesComponent },
   { path: 'category', component: CategoryComponent },
   { path: 'newPass', component: PassGeneratorComponent },
   { path: 'changePass', component: ChangePassComponent },

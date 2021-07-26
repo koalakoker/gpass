@@ -1,0 +1,42 @@
+<div class="container-fluid">
+  <div class="list-group">
+    <div *ngFor="let element of notesList; let i = index" (click)="onSelect(element)">
+
+      <!-- Button -->
+      <div class="row">
+        <div class="col">
+          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}"
+            (click)="openEditModal(i)">
+            {{getUrl('name', i).value}}
+          </button>
+        </div>
+        <div class="col">
+          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+  border-color: rgb(204, 194, 194);" class="btn btn-primary" ngxClipboard [cbContent]="getUrl('username', i).value"
+            (cbOnSuccess)="sendMessage('Username copied to clipboard')">Usr
+          </button>
+          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+  border-color: rgb(204, 194, 194);" class="btn btn-primary" ngxClipboard [cbContent]="getUrl('pass', i).value"
+            (cbOnSuccess)="sendMessage('Password copied to clipboard')">Psw
+          </button>
+          <a target="blank" href="http://{{getUrl('url', i).value}}" *ngIf="getUrl('url', i).value != 'url'">
+            <input ngxClipboard [cbContent]="getUrl('username', i).value" type=button style="height: 54px; width: 54px; border: 2px; border-style: solid;
+  border-color: rgb(204, 194, 194);" class="btn btn-success" value="Go">
+          </a>
+          <button *ngIf="getUrl('url', i).value == 'url'" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+  border-color: rgb(204, 194, 194);" class="btn btn-secondary">Go
+          </button>
+          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
+  border-color: rgb(204, 194, 194);" class="btn btn-danger" (click)="open(i)">Del
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<br>
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">
+  {{errorMessage}}
+</div>
+<app-progress-bar #progressBar></app-progress-bar>
