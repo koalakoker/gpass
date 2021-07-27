@@ -19,14 +19,12 @@ export class MessageBoxService {
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.message = message;
     await modalRef.result;
-    this.onClose();
   }
 
   async about(user: User) {
     const modalRef = this.modalService.open(AboutModalComponent);
     modalRef.componentInstance.user = user;
     await modalRef.result;
-    this.onClose();
   }
 
   async question(title: string, message: string) {
@@ -63,8 +61,5 @@ export class MessageBoxService {
       }
     }
     return { ans, password };
-  }
-
-  onClose() {
   }
 }

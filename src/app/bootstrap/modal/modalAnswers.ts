@@ -1,7 +1,7 @@
 export class ModalAnswers {
-  static yes: string = 'yes click';
-  static no: string = 'no click';
-  static esc: string = 'esc click';
+  static yes: string = 'Yes';
+  static no: string = 'No';
+  static esc: string = 'Esc';
   static confirm: string = 'Confirm';
   static cancel: string = 'Cancel';
 }

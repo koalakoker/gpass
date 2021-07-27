@@ -9,7 +9,7 @@ export class Note {
   constructor(note?: Note) {
     if (note == null) {
       this._id = '';
-      this.title = '';
+      this.title = 'New note';
       this.content = '';
     }
     else {

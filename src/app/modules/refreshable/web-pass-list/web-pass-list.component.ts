@@ -23,9 +23,6 @@ import { Observer } from '../../observer';
 import { CategoryService } from 'src/app/services/api/category.service';
 import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-bar.component';
-import { MessageBoxService } from 'src/app/services/message-box.service';
-import { ModalAnswers } from 'src/app/bootstrap/modal/modalAnswers';
-import { UserService } from 'src/app/services/api/user.service';
 import { ImportService } from 'src/app/services/import.service';
 import { ExportService } from 'src/app/services/export.service';
 
@@ -312,7 +309,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     return found;
   }
 
-  open(i: number) {
+  delete(i: number) {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.title = "Warning";
     modalRef.componentInstance.message = "Are you sure to delete this?";
@@ -320,6 +317,21 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       .then((result) => {
         this.onButtonRemove(i);
       },()=>{});
+  }
+
+  async deleteAll() {
+    this.progressBar.init(this.webPassList.length);
+    let itemProcessed = 0;
+    this.webPassList.forEach(async webPass => {
+      await this.webLinkService.deleteWebPass(webPass._id);
+      itemProcessed += 1;
+      this.progressBar.nextStep();
+      if (itemProcessed == this.webPassList.length) {
+        this.webPassList = [];
+        this.hasChanged.emit(PageCodes.webPassPage);
+        this.progressBar.end();
+      }
+    });
   }
 
   openEditModal(i: number) {
@@ -359,21 +371,6 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.progressBar.nextStep();
       if (itemProcessed == json.length) {
         this.hasChanged.emit(PageCodes.forceRefresh);
-        this.progressBar.end();
-      }
-    });
-  }
-
-  async deleteAll() {
-    this.progressBar.init(this.webPassList.length);
-    let itemProcessed = 0;
-    this.webPassList.forEach(async webPass => {
-      await this.webLinkService.deleteWebPass(webPass._id);
-      itemProcessed += 1;
-      this.progressBar.nextStep();
-      if (itemProcessed == this.webPassList.length) {
-        this.webPassList = [];
-        this.hasChanged.emit(PageCodes.webPassPage);
         this.progressBar.end();
       }
     });
