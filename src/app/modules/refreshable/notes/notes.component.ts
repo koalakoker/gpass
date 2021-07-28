@@ -9,6 +9,8 @@ import { NoteService } from 'src/app/services/api/note.service';
 import * as _ from 'lodash-es';
 import { MessageBoxService } from 'src/app/services/message-box.service';
 import { ModalAnswers } from 'src/app/bootstrap/modal/modalAnswers';
+import { NoteEditModalComponent } from 'src/app/bootstrap/modal/note-edit-modal/note-edit-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-notes',
@@ -24,7 +26,8 @@ export class NotesComponent implements OnInit, Refreshable {
   constructor(
     private loginService: LoginService,
     private apiService: NoteService,
-    private modalService: MessageBoxService
+    private messageBoxService: MessageBoxService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -122,12 +125,29 @@ export class NotesComponent implements OnInit, Refreshable {
     return (this.isSelected(note) ? "active" : "");
   }
 
-  openEditModal(e) {
+  async editNoteModal(note: Note) {
+    const modalRef = this.modalService.open(NoteEditModalComponent);
+    modalRef.componentInstance.title = "Edit note";
+    modalRef.componentInstance.note = note;
+    await modalRef.result;
+  }
 
+  async onEdit(i: number) {
+    await this.editNoteModal(this.notesList[i]);
+    this.onCloseEdit();
+  }
+
+  onCloseEdit() {
+    // if (this.needReenter) {
+    //   if (this.catID != '0') {
+    //     this.getWebPassList();
+    //   }
+    //   this.needReenter = false;
+    // }
   }
 
   async onButtonDelete(i: number) {
-    const ans = await this.modalService.question("Warning", "Are you sure to delete this?");
+    const ans = await this.messageBoxService.question("Warning", "Are you sure to delete this?");
     if (ans == ModalAnswers.yes) {
       this.delete(i);
     }

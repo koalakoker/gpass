@@ -37,6 +37,7 @@ import { QuestionModalComponent } from './bootstrap/modal/question-modal/questio
 import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.component';
 import { PasswordModalComponent } from './bootstrap/modal/password-modal/password-modal.component';
 import { NotesComponent } from './modules/refreshable/notes/notes.component';
+import { NoteEditModalComponent } from './bootstrap/modal/note-edit-modal/note-edit-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +67,8 @@ import { NotesComponent } from './modules/refreshable/notes/notes.component';
     QuestionModalComponent,
     ProgressBarComponent,
     PasswordModalComponent,
-    NotesComponent
+    NotesComponent,
+    NoteEditModalComponent
   ],
   imports: [
     BrowserModule,
