@@ -1,0 +1,10 @@
+.editText {
+  border-style: none;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #212529;
+  border-style: none;
+}

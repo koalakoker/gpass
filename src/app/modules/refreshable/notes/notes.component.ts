@@ -126,8 +126,8 @@ export class NotesComponent implements OnInit, Refreshable {
   }
 
   async editNoteModal(note: Note) {
-    const modalRef = this.modalService.open(NoteEditModalComponent);
-    modalRef.componentInstance.title = "Edit note";
+    const modalRef = this.modalService.open(NoteEditModalComponent, { scrollable: true, size: 'xl' });
+    modalRef.componentInstance.title = note.title;
     modalRef.componentInstance.note = note;
     await modalRef.result;
   }
