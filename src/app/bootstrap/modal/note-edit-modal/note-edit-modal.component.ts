@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { update } from 'lodash';
 import * as _ from 'lodash-es';
 import { Note } from 'src/app/modules/note';
 import { NoteService } from 'src/app/services/api/note.service';
@@ -15,9 +14,9 @@ import { ModalAnswers } from '../modalAnswers';
 export class NoteEditModalComponent implements OnInit {
   note: Note;
   noteDB: Note;
+  titleWidth: number;
   textAreaWidth: number;
   textAreaStyleWidth: number;
-  textAreaStyleMarginLeft: number;
   @ViewChild('closeButton') closeButton: ElementRef;
   @ViewChild('textArea') textArea: ElementRef;
   @ViewChild('textAreaContent') textAreaContent: ElementRef;
@@ -40,7 +39,7 @@ export class NoteEditModalComponent implements OnInit {
 
   textAreaWidthUpdate() {
     this.textAreaStyleWidth = this.textAreaWidth - 30;
-    this.textAreaStyleMarginLeft = 0;
+    this.titleWidth = this.textAreaWidth - 60;
   }
 
   onResize(event) {

@@ -2,6 +2,7 @@
   <input
   #titleInput 
   class="modal-title" 
+  [style.width.px]="titleWidth"
   type="text" 
   [(ngModel)]="note.title"
   (blur)='onBlur()'
@@ -21,7 +22,6 @@
     #textAreaContent 
     class="editText"
     [style.width.px]="textAreaStyleWidth"
-    [style.margin-left.px]="textAreaStyleMarginLeft"
     [(ngModel)]='note.content'
     (blur)='onBlur()'
     (keydown.esc)='onClose()'
