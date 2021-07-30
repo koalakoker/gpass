@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AboutModalComponent } from '../bootstrap/modal/about-modal/about-modal.component';
-import { MessageBoxComponent } from '../bootstrap/modal/message-box.component';
+import { MessageBoxComponent } from '../bootstrap/modal/message-box/message-box.component';
 import { QuestionModalComponent } from '../bootstrap/modal/question-modal/question-modal.component';
 import { ModalAnswers } from '../bootstrap/modal/modalAnswers';
 import { User } from '../modules/user'

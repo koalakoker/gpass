@@ -1,10 +1,18 @@
 <div class="modal-header">
   <input
-    #titleInput 
-    class="modal-title" 
-    type="text" 
-    [(ngModel)]="title">
-  <button type="button" class="close" aria-label="Close" (click)="onCloseEdit()">
+  #titleInput 
+  class="modal-title" 
+  type="text" 
+  [(ngModel)]="note.title"
+  (blur)='onBlur()'
+  (keydown.esc)='onClose()'>
+  <button 
+    #closeButton
+    type="button" 
+    class="close" 
+    aria-label="Close" 
+    (click)="onClose()"
+    (keydown.esc)='onClose()'>
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
@@ -14,10 +22,11 @@
     class="editText"
     [style.width.px]="textAreaStyleWidth"
     [style.margin-left.px]="textAreaStyleMarginLeft"
+    [(ngModel)]='note.content'
+    (blur)='onBlur()'
+    (keydown.esc)='onClose()'
     id="content" 
     name="content" 
     rows="200">
-  Content
   </textarea>
-  
 </div>

@@ -126,10 +126,12 @@ export class NotesComponent implements OnInit, Refreshable {
   }
 
   async editNoteModal(note: Note) {
-    const modalRef = this.modalService.open(NoteEditModalComponent, { scrollable: true, size: 'xl' });
+    const modalRef = this.modalService.open(NoteEditModalComponent, { scrollable: true, size: 'xl', keyboard: false });
     modalRef.componentInstance.title = note.title;
     modalRef.componentInstance.note = note;
-    await modalRef.result;
+    try {
+      await modalRef.result;
+    } catch (error) {}
   }
 
   async onEdit(i: number) {
