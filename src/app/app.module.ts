@@ -38,6 +38,8 @@ import { ProgressBarComponent } from './bootstrap/progress-bar/progress-bar.comp
 import { PasswordModalComponent } from './bootstrap/modal/password-modal/password-modal.component';
 import { NotesComponent } from './modules/refreshable/notes/notes.component';
 import { NoteEditModalComponent } from './bootstrap/modal/note-edit-modal/note-edit-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,7 +80,9 @@ import { NoteEditModalComponent } from './bootstrap/modal/note-edit-modal/note-e
     ClipboardModule,
     StorageServiceModule,
     RouterModule,
-    NgbModule
+    NgbModule,
+    BrowserAnimationsModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

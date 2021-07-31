@@ -2,9 +2,22 @@
 <ng-container *ngIf="isEmailState()">
   <div class="container">
     <div class="row">
-      <div class="col-sm">
-        <input (keyup.enter)="emailEntered()" [(ngModel)]="email"
-          class="form-control" type="text" placeholder="Insert email" #emailInput>
+      <div class="col loginColumn">
+        <input 
+          class="form-control loginInput"
+          type="text"
+          placeholder="Insert email" 
+          #emailInput
+          [(ngModel)]="email"
+          (keyup.enter)="emailEntered()">
+      </div>
+      <div class="col loginButtons" *ngIf="emailIsValid()">
+        <button 
+          class="btn btn-primary"
+          type="button"
+          (click)="emailEntered()">
+          <mat-icon>check</mat-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -14,9 +27,30 @@
 <ng-container *ngIf="isPasswordState()">
   <div class="container">
     <div class="row">
-      <div class="col-sm">
-        <input (keyup.enter)="passwordEntered()" [(ngModel)]="userPassword"
-          class="form-control" type="password" placeholder="Insert password" #passwordInput>
+      <div class="col loginColumn">
+        <input 
+          class="form-control loginInput" 
+          type="password"
+          placeholder="Insert password" 
+          #passwordInput
+          [(ngModel)]="userPassword"
+          (keyup.enter)="passwordEntered()">
+      </div>
+      <div class="col loginButtons" *ngIf='passwordIsValid()'>
+        <button 
+          class="btn btn-primary"
+          type="button"
+          (click)="passwordEntered()">
+          <mat-icon>check</mat-icon>
+        </button>
+      </div>
+      <div class="col loginButtons">
+        <button 
+          class="btn btn-danger"
+          type="button"
+          (click)="backToEmail()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
       </div>
     </div>
   </div>

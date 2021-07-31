@@ -4,7 +4,8 @@ import { LoginState } from './loginState';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
 
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
   @Output() userAlreadyLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
-  @ViewChild('emailInput') userNameInput: ElementRef;
+  @ViewChild('emailInput') emailInput: ElementRef;
 
   email: string;
   userPassword: string;
@@ -44,11 +45,26 @@ export class LoginComponent implements OnInit {
     return this.state == LoginState.passwordInsert;
   }
 
+  emailIsValid(): boolean {
+    return (this.email != ''); 
+  }
+
   emailEntered() {
     this.state = LoginState.passwordInsert;
     setTimeout(() => {
       this.passwordInput.nativeElement.focus();
     }, 100);
+  }
+
+  backToEmail() {
+    this.state = LoginState.emailInsert;
+    setTimeout(() => {
+      this.emailInput.nativeElement.focus();
+    }, 100);
+  }
+
+  passwordIsValid(): boolean {
+    return (this.userPassword != '');
   }
 
   passwordEntered() {
