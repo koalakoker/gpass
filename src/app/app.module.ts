@@ -40,6 +40,7 @@ import { NotesComponent } from './modules/refreshable/notes/notes.component';
 import { NoteEditModalComponent } from './bootstrap/modal/note-edit-modal/note-edit-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
+import { NavbarComponent } from './components/navbar/navbar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +71,8 @@ import { MatIconModule } from '@angular/material/icon';
     ProgressBarComponent,
     PasswordModalComponent,
     NotesComponent,
-    NoteEditModalComponent
+    NoteEditModalComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

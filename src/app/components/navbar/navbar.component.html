@@ -1,0 +1,35 @@
+<nav #navBar class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <span class="navbar-brand" (click)='onGpassLabel()'>
+      GPass</span>
+    <button class="navbar-toggler" type="button" aria-controls="navbarContent" [attr.aria-expanded]="!collapsed"
+      aria-label="Toggle navigation" (click)="onNavbarToggle()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse" [class.collapse]="collapsed" id="navbarContent">
+      <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto" (navChange)="tabChange($event)">
+        <ng-container *ngIf="isLoggedState()">
+          <ng-container *ngFor="let menuItem of menu">
+            <ng-container *ngIf="menuItem.isDropDown()">
+              <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
+            </ng-container>
+            <ng-container *ngIf="menuItem.isRouterLink()">
+              <app-router-link [menuItem]='menuItem'></app-router-link>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <app-login #loginComponent (userAlreadyLogged)="userAlreadyLogged()" (userLoggedNow)="userLoggedNow()"
+          (sendMessage)="printErrorMessage($event)">
+        </app-login>
+
+      </ul>
+
+      <div class="d-flex" *ngIf="isLoggedState()">
+        <combo-box (selected)="onSearch()"></combo-box>
+        <button class="btn btn-outline-success" type="submit" (click)="onSearch()">Search</button>
+      </div>
+
+    </div>
+  </div>
+</nav>

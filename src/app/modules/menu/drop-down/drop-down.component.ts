@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { NgbDropdown, NgbDropdownMenu } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from 'src/app/app.component';
+import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { LoginService } from 'src/app/services/api/login.service';
 import { DropDown } from '../dropDown';
 import { MenuItem } from '../menuItem';
@@ -12,7 +13,7 @@ import { MenuItem } from '../menuItem';
 export class DropDownComponent implements OnInit {
   @ViewChild(NgbDropdownMenu) ngbDropdownMenu: NgbDropdownMenu;
   @Input() menuItem: MenuItem;
-  @Input() parent: AppComponent;
+  @Input() parent: NavbarComponent;
   dropDown: DropDown;
 
   constructor(private loginService: LoginService) { }

@@ -1,63 +1,18 @@
-import { Component, ViewChild, OnInit, HostListener, ElementRef} from '@angular/core';
-
+import { Component, ViewChild, OnInit, HostListener} from '@angular/core';
 import { GCrypto } from './modules/gcrypto';
 import { LoginService } from './services/api/login.service';
-
 import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
 import * as PageCodes from './modules/refreshable/pagesCodes'
 import * as InputCodes from './modules/refreshable/inputCodes';
-
-import { Category } from './modules/category';
 import { ComboBoxComponent } from './components/combo-box/combo-box.component';
-import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-
 import { LoginComponent } from './components/login/login.component';
-
-import { Menu } from "./modules/menu/menu"
 import { ItemState } from "./modules/menu/menuItem";
-import { DropDown } from "./modules/menu/dropDown";
-import { Action } from "./modules/menu/action";
-import { Divider } from "./modules/menu/divider";
-import { RouterLink } from './modules/menu/routerLink';
-import { CategoryService } from './services/api/category.service';
 import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';
-import { User } from './modules/user';
 import { ModalAnswers } from './bootstrap/modal/modalAnswers';
-
-enum AppState {
-  notLogged,
-  logged
-}
-
-enum MenuItemTag {
-  webPass                  = "webPass",
-  webPass_all              = "webPass_all",
-  webPass_new              = "webPass_new",
-  webPass_plusOneYearAll   = "webPass_plusOneYearAll",
-  webPass_deleteAll        = "webPass_deleteAll",
-  webPass_logOut           = "webPass_logOut",
-  webPass_divider1         = "webPass_divider1",
-  webPass_export           = "webPass_export",
-  webPass_import           = "webPass_import",
-
-  notes                    = "notes",
-  notes_new                = "notes_new",
-
-  category                 = "category",
-  category_new             = "category_new",
-
-  users                    = "users",
-  users_new                = "users_new",
-
-  admin                    = "admin",
-  admin_removeMasterKey    = "removeMasterKey",
-  admin_test               = "test",
-
-  routerLink_changePass    = "routerLink_changePass",
-  routerLink_newPass       = "routerLink_newPass"
-}
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { ActionsQuery } from './actionsQuery';
 
 @Component({
   selector: 'app-root',
@@ -69,8 +24,7 @@ export class AppComponent implements OnInit {
   private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
-  @ViewChild('navBar') private navBar: ElementRef;
-  routerOutletPaddingTop: number = 0;
+  @ViewChild(NavbarComponent) private navbarComponent: NavbarComponent;
   
   @HostListener('document:keypress', ['$event'])
   keyDownEvent(event: KeyboardEvent) {
@@ -84,25 +38,14 @@ export class AppComponent implements OnInit {
   message: string = '';
   DebugTxt: string = "";
   interval;
-  pageCode: string = "";
   param = "";
-  category: Category[];
-  activeId = 0;
-  collapsed = true;
   searchString: string = "";
-  appState : AppState = AppState.notLogged;
-  catDataAll: RouterLink = new RouterLink(MenuItemTag.webPass_all, "/list/0", "All", 0, true);
-  menu: Menu = new Menu();
-  webPassDropDown: DropDown;
-  notesDropDown: DropDown;
-  categoryDropDown: DropDown;
-  userDropDown: DropDown;
-  lockDropDownOpen: boolean = true;
   checkDuration_ms: number = 5000;
   loading: boolean = false;
+  routerOutletPaddingTop: number = 0;
+  actionsQuery: ActionsQuery = new ActionsQuery();
 
   constructor(
-    private categoryService: CategoryService,
     private router: Router,
     private loginService: LoginService,
     private userService: UserService,
@@ -115,39 +58,40 @@ export class AppComponent implements OnInit {
         this.navigationEnd(event);
       }
     });
-    this.menuPopulate();
-  }
-
-  setNavbarStyleNotLogged() {
-    this.navBar.nativeElement.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
-  }
-  
-  setNavbarStyleLogged() {
-    this.navBar.nativeElement.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
-  }
-
-  onNavbarToggle() {
-    this.collapsed = !this.collapsed;
-    const initialHeight = this.navBar.nativeElement.offsetHeight;
-    setTimeout(() => {
-      const finalHeight = this.navBar.nativeElement.offsetHeight;
-      const deltaPx = finalHeight - initialHeight;
-      const margin = 5;
-      if (deltaPx > 0) {
-        this.routerOutletPaddingTop = deltaPx + margin;
-      } else {
-        this.routerOutletPaddingTop = margin;
-      }
-    }, 50);
+    this.actionsQuery.getDeleteAllStateFn = this.getDeleteAllState;
+    this.actionsQuery.getExportActionStateFn = this.getExportActionState;
+    this.actionsQuery.getImportActionStateFn = this.getImportActionState;
+    this.actionsQuery.getNewActionStateFn = this.getNewActionState;
+    this.actionsQuery.getPlustOneYearAllStateFn = this.getPlustOneYearAllState;
+    this.actionsQuery.parent = this;
   }
 
   ngOnInit() {
     //this.checkForBackend();
   }
 
+  onRouterNavigate(url: string) {
+    this.router.navigateByUrl(url);
+  }
+
+  isLoggedState() {
+    return this.loginService.logged;
+  }
+
   navigationEnd(event: NavigationEnd) {
-    if (this.appState === AppState.logged) {
+    if (this.isLoggedState) {
       this.componentRefresh(event);
+    }
+  }
+
+  async onRefresh() {
+    try {
+      this.loading = true;
+      await this.routedComponent.refresh(InputCodes.Refresh);
+      this.loading = false;
+    } catch (error) {
+      this.printErrorMessage(error);
+      return;
     }
   }
 
@@ -161,109 +105,7 @@ export class AppComponent implements OnInit {
       console.log(error);
       return;
     }
-    
-    this.pageCode = returnData.pageCode;
-
-    switch (returnData.pageCode) {
-      case PageCodes.webPassPage:
-        await this.webPassDropDownUpdate() 
-        for (let item of this.webPassDropDown.getItems()) {
-          if (item instanceof RouterLink) {
-            if ((item.link === event.url) || ((event.url === '/') && (item.label == "All"))) {
-              item.activated = true;
-            } else {
-              item.activated = false;
-            }
-          }
-        }
-        break;
-      case PageCodes.categoryPage:
-        this.categoryDropDownUpdate();
-        break;
-      case PageCodes.notesPage:
-        this.notesDropDownUpdate();
-        break;
-      case PageCodes.usersPage:
-        break;
-      
-      default:
-
-        break;
-    }
-  }
-
-  async dropDownUpdate() {
-    this.categoryDropDownUpdate();
-    this.notesDropDownUpdate();
-    await this.webPassDropDownUpdate();
-  }
-  
-  async webPassDropDownUpdate(): Promise<void> {
-    try {
-      const data: Array<Category> = await this.categoryService.getFromUserCategory();
-      this.category = data;
-      this.webPassDropDown.clear();
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_new            , label: "New"       , onClick: this.onNew         , state: this.getNewActionState()}));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_deleteAll      , label: "delete all", onClick: this.deleteAll     , state: this.getDeleteAllState()}));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_plusOneYearAll , label: "+1 Yr. all", onClick: this.plusOneYearAll, state: this.getPlustOneYearAllState()}));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_export         , label: "Export"    , onClick: this.onExport      , state: this.getExportActionState() }));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_import         , label: "Import"    , onClick: this.onImport      , state: this.getImportActionState() }));
-      this.webPassDropDown.addItem(new Action({ tag: MenuItemTag.webPass_logOut         , label: "Logout"    , onClick: this.logOut         }));
-      this.webPassDropDown.addItem(new Divider(MenuItemTag.webPass_divider1));
-      this.webPassDropDown.addItem(this.catDataAll);
-      if (this.category) {
-        this.category.forEach(cat => {
-          let newCatList = new RouterLink('webPass_' + cat.name, '/list/' + cat._id, cat.name, 0, false);
-          this.webPassDropDown.addItem(newCatList);
-        });
-      }
-      
-    } catch (error) {
-      throw(error);
-    }
-  }
-
-  categoryDropDownUpdate(): void {
-    this.categoryDropDown.clear();
-    this.categoryDropDown.addItem(new Action({ tag: MenuItemTag.category_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
-  }
-  
-  notesDropDownUpdate(): void {
-    this.notesDropDown.clear();
-    this.notesDropDown.addItem(new Action({ tag: MenuItemTag.notes_new, label: "New", onClick: this.onNew, state: this.getNewActionState()}));
-  }
-
-  menuPopulate() {
-    let dropDown: DropDown;
-
-    dropDown = new DropDown(MenuItemTag.webPass, "WebPass");
-    this.menu.push(dropDown);
-    this.webPassDropDown = dropDown;
-
-    dropDown = new DropDown(MenuItemTag.notes, "Notes");
-    this.menu.push(dropDown);
-    this.notesDropDown = dropDown;
-
-    dropDown = new DropDown(MenuItemTag.category, "Category");
-    this.menu.push(dropDown);
-    this.categoryDropDown = dropDown;
-
-    dropDown = new DropDown(MenuItemTag.users, "Users", 1);
-    dropDown.addItem(new Action({tag: MenuItemTag.users_new, label: "New", onClick: this.onNew }));
-    this.menu.push(dropDown);
-    this.userDropDown = dropDown;
-
-    dropDown = new DropDown(MenuItemTag.admin, "Admin", 1);
-    dropDown.addItem(new Action({tag: MenuItemTag.admin_test            , label: "Test"             , onClick: this.test      }));
-    this.menu.push(dropDown);
-
-    let routerLink: RouterLink;
-
-    routerLink = new RouterLink(MenuItemTag.routerLink_changePass, '/changePass', "Change password");
-    this.menu.push(routerLink);
-
-    routerLink = new RouterLink(MenuItemTag.routerLink_newPass, '/newPass', "New password");
-    this.menu.push(routerLink);
+    this.navbarComponent.afterRefresh(returnData.pageCode, event);
   }
 
   public setRoutedComponent(componentRef: Refreshable) {
@@ -273,7 +115,7 @@ export class AppComponent implements OnInit {
 
   refreshableHasChanged(event) {
     if (event === PageCodes.webPassPage) {
-      this.webPassDropDownUpdate();
+      this.navbarComponent.webPassDropDownUpdate();
     }
     if (event === PageCodes.changePass) {
       //this.userLogged();
@@ -281,37 +123,12 @@ export class AppComponent implements OnInit {
       //this.router.navigateByUrl("/list/0");
     }
     if (event === PageCodes.waitForBackend) {
-      this.appState = AppState.logged;
-      this.setNavbarStyleLogged();
+      this.navbarComponent.setNavbarStyleLogged();
       this.router.navigateByUrl("/list/0");
       this.checkForBackend();
     }
     if (event === PageCodes.forceRefresh) {
       this.componentRefresh(event);
-    }
-  }
-
-  tabChange(changeEvent: NgbNavChangeEvent) {
-    this.lockDropDownOpen = true;
-    if (changeEvent.nextId === this.webPassDropDown.index) {
-      if (!(this.pageCode == PageCodes.webPassPage)) {
-        this.router.navigateByUrl('/list/0');
-      }
-    }
-    if (changeEvent.nextId === this.notesDropDown.index) {
-      if (!(this.pageCode == PageCodes.notesPage)) {
-        this.router.navigateByUrl("/notes");
-      }
-    }
-    if (changeEvent.nextId === this.categoryDropDown.index) {
-      if (!(this.pageCode == PageCodes.categoryPage)) {
-        this.router.navigateByUrl("/category");
-      }
-    }
-    if (changeEvent.nextId === this.userDropDown.index) {
-      if (!(this.pageCode == PageCodes.usersPage)) {
-        this.router.navigateByUrl("/users");
-      }
     }
   }
 
@@ -322,10 +139,6 @@ export class AppComponent implements OnInit {
       this.errorMessage = '';
       clearInterval(this.interval);
     }, 10000);
-  }
-
-  isLoggedState() {
-    return this.appState == AppState.logged;
   }
 
   // *****Old code pass in reset state*****
@@ -362,43 +175,8 @@ export class AppComponent implements OnInit {
   //   });
   // }
 
-  async userLoggedNow() {
-    try {
-      this.appState = AppState.logged;
-      this.setNavbarStyleLogged();
-      this.loading = true;
-      await this.routedComponent.refresh(InputCodes.Refresh);
-      this.loading = false;
-      await this.dropDownUpdate();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  userAlreadyLogged() {
-    setTimeout(async () => {
-      try {
-        this.loading = true;
-        await this.routedComponent.refresh(InputCodes.Refresh);
-        this.loading = false;
-      } catch (error) {
-        this.printErrorMessage(error);
-        return;
-      }
-      try {
-        await this.dropDownUpdate();
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-      this.appState = AppState.logged;
-      this.setNavbarStyleLogged();
-    }, 100);
-  }
-
   clear() {
-    this.appState = AppState.notLogged;
-    this.setNavbarStyleNotLogged();
+    this.navbarComponent.setNavbarStyleNotLogged();
   }
 
   async logOut() {
@@ -412,8 +190,8 @@ export class AppComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
-    this.pageCode = "";
-    this.category = [];
+    this.navbarComponent.pageCode = "";
+    this.navbarComponent.category = [];
   }  
       
   getNewActionState(): ItemState {
@@ -473,18 +251,9 @@ export class AppComponent implements OnInit {
     }
   }
 
-  async onGpassLabel() {
-    const me = await this.userService.getUserInfo();
-    const user = new User();
-    user.name = me['name'];
-    user.email = me['email'];
-    user.isAdmin = me['isAdmin']; 
-    this.messageBox.about(user);
-  }
-
   async checkForBackend(): Promise<boolean> {
     console.log('app.component -> checkForBackend');
-    if (this.appState === AppState.notLogged) {
+    if (!this.isLoggedState()) {
       setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       return;
     }
@@ -493,11 +262,15 @@ export class AppComponent implements OnInit {
       setTimeout(this.checkForBackend.bind(this), this.checkDuration_ms);
       return true;
     } catch (error) {
-      this.appState = AppState.notLogged;
-      this.setNavbarStyleNotLogged();
+      //this.appState = AppState.notLogged;
+      this.navbarComponent.setNavbarStyleNotLogged();
       this.router.navigateByUrl("waitForBackend");
       return false;
     }
+  }
+
+  onToggle(value: number) {
+    this.routerOutletPaddingTop = value;
   }
 
   test() {
