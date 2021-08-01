@@ -116,6 +116,16 @@ export class AppComponent implements OnInit {
     this.menuPopulate();
   }
 
+  setNavbarStyleNotLogged() {
+    let element = document.getElementById('navBar');
+    element.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
+  }
+  
+  setNavbarStyleLogged() {
+    let element = document.getElementById('navBar');
+    element.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+  }
+
   ngOnInit() {
     //this.checkForBackend();
   }
@@ -257,6 +267,7 @@ export class AppComponent implements OnInit {
     }
     if (event === PageCodes.waitForBackend) {
       this.appState = AppState.logged;
+      this.setNavbarStyleLogged();
       this.router.navigateByUrl("/list/0");
       this.checkForBackend();
     }
@@ -339,6 +350,7 @@ export class AppComponent implements OnInit {
   async userLoggedNow() {
     try {
       this.appState = AppState.logged;
+      this.setNavbarStyleLogged();
       this.loading = true;
       await this.routedComponent.refresh(InputCodes.Refresh);
       this.loading = false;
@@ -365,11 +377,13 @@ export class AppComponent implements OnInit {
         return;
       }
       this.appState = AppState.logged;
+      this.setNavbarStyleLogged();
     }, 100);
   }
 
   clear() {
     this.appState = AppState.notLogged;
+    this.setNavbarStyleNotLogged();
   }
 
   async logOut() {
@@ -465,6 +479,7 @@ export class AppComponent implements OnInit {
       return true;
     } catch (error) {
       this.appState = AppState.notLogged;
+      this.setNavbarStyleNotLogged();
       this.router.navigateByUrl("waitForBackend");
       return false;
     }
