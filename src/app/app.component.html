@@ -1,9 +1,9 @@
-<nav id="navBar" class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+<nav #navBar class="navbar navbar-expand navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <span class="navbar-brand" (click)='onGpassLabel()'>
             GPass</span>
         <button class="navbar-toggler" type="button" aria-controls="navbarContent" [attr.aria-expanded]="!collapsed"
-            aria-label="Toggle navigation" (click)="collapsed = !collapsed">
+            aria-label="Toggle navigation" (click)="onNavbarToggle()">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -39,7 +39,9 @@
 </nav>
 
 <div class="loader" *ngIf="loading"></div>
-<router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
+<div class="routerOutlet" [style.padding-top.px]="routerOutletPaddingTop">
+    <router-outlet (activate)="setRoutedComponent($event)"></router-outlet>
+</div>
 
 <br>
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage!==''">

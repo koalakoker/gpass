@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, HostListener} from '@angular/core';
+import { Component, ViewChild, OnInit, HostListener, ElementRef} from '@angular/core';
 
 import { GCrypto } from './modules/gcrypto';
 import { LoginService } from './services/api/login.service';
@@ -69,7 +69,9 @@ export class AppComponent implements OnInit {
   private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(LoginComponent) private loginComponent: LoginComponent;
-
+  @ViewChild('navBar') private navBar: ElementRef;
+  routerOutletPaddingTop: number = 0;
+  
   @HostListener('document:keypress', ['$event'])
   keyDownEvent(event: KeyboardEvent) {
     if ((event.ctrlKey) && (event.key === 'f')) {
@@ -117,13 +119,26 @@ export class AppComponent implements OnInit {
   }
 
   setNavbarStyleNotLogged() {
-    let element = document.getElementById('navBar');
-    element.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
+    this.navBar.nativeElement.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
   }
   
   setNavbarStyleLogged() {
-    let element = document.getElementById('navBar');
-    element.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+    this.navBar.nativeElement.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+  }
+
+  onNavbarToggle() {
+    this.collapsed = !this.collapsed;
+    const initialHeight = this.navBar.nativeElement.offsetHeight;
+    setTimeout(() => {
+      const finalHeight = this.navBar.nativeElement.offsetHeight;
+      const deltaPx = finalHeight - initialHeight;
+      const margin = 5;
+      if (deltaPx > 0) {
+        this.routerOutletPaddingTop = deltaPx + margin;
+      } else {
+        this.routerOutletPaddingTop = margin;
+      }
+    }, 50);
   }
 
   ngOnInit() {
