@@ -207,7 +207,11 @@ export class AppComponent implements OnInit {
   }
   
   getExportActionState(): ItemState {
-    return ItemState.enabled;
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
   }
   
   onExport(): void {
@@ -241,7 +245,11 @@ export class AppComponent implements OnInit {
   }
 
   getDeleteAllState() {
-    return ItemState.enabled;
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async deleteAll() {

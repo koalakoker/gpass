@@ -168,9 +168,10 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     if (action === InputCodes.NewBtnPress) {
       return (this.isNewPossible())
     }
-    if (action === InputCodes.PlusOneYearAll) {
-
-      return (this.isPlusOneYearPossible());
+    if ((action === InputCodes.PlusOneYearAll) || 
+        (action === InputCodes.DeleteAll) ||
+        (action === InputCodes.Export)) {
+      return (this.isListNotEmpty());
     }
   }
 
@@ -182,7 +183,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     return (this.loginService.getUserKey() !== "");
   }
 
-  isPlusOneYearPossible(): boolean {
+  isListNotEmpty(): boolean {
     return (this.webPassList.length > 0);
   }
 
