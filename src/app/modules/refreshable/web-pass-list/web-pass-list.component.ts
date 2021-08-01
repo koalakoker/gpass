@@ -111,9 +111,7 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
         throw('User not logged');
       }
     } else if (cmd == InputCodes.PlusOneYearAll) {
-      this.webPassList.forEach((web) => {
-        web.plusOneYear();
-      })
+      this.plus1yrAll();
       ret.childInject = ReturnCodes.None;
       return(ret);
     } else if (cmd == InputCodes.Import) {
@@ -318,6 +316,21 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       .then((result) => {
         this.onButtonRemove(i);
       },()=>{});
+  }
+
+  async plus1yrAll() {
+    this.progressBar.init(this.webPassList.length);
+    let itemProcessed = 0;
+    this.webPassList.forEach(async webPass => {
+      webPass.plusOneYear();
+      await this.webLinkService.updateWebPass(webPass._id, webPass);
+      itemProcessed += 1;
+      this.progressBar.nextStep();
+      if (itemProcessed == this.webPassList.length) {
+        this.hasChanged.emit(PageCodes.webPassPage);
+        this.progressBar.end();
+      }
+    });
   }
 
   async deleteAll() {
