@@ -7,15 +7,7 @@
     (loading)="onLoading($event)"
     (sendMessage)="onSendMessage($event)"
     (searchSignal)="onSearch($event)"
-    
-    (onNewSignal)="onNew()"
-    (deleteAllSignal)="deleteAll()"
-    (plusOneYearAllSignal)="plusOneYearAll()"
-    (onExportSignal)="onExport()"
-    (onImportSignal)="onImport()"
-    (logOutSignal)="logOut()"
-    (testSignal)="test()"
-
+    (actionSignal)="onActionSignal($event)"
     ></app-navbar>
 <div class="loader" *ngIf="loading"></div>
 <div class="routerOutlet" [style.padding-top.px]="routerOutletPaddingTop">

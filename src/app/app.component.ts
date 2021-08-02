@@ -11,7 +11,8 @@ import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';
 import { ModalAnswers } from './bootstrap/modal/modalAnswers';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { ActionsQuery } from './actionsQuery';
+import { ActionsQuery } from './components/navbar/actionsQuery';
+import { ActionSignal } from './components/navbar/actionSignal';
 
 @Component({
   selector: 'app-root',
@@ -212,6 +213,35 @@ export class AppComponent implements OnInit {
   }
 
   /* Actions */
+
+  onActionSignal(action: ActionSignal) {
+    switch (action) {
+      case ActionSignal.onNewSignal:
+          this.onNew();
+        break;
+      case ActionSignal.deleteAllSignal:
+          this.deleteAll();
+        break;
+      case ActionSignal.plusOneYearAllSignal:
+          this.plusOneYearAll();
+        break;
+      case ActionSignal.onExportSignal:
+          this.onExport();
+        break;
+      case ActionSignal.onImportSignal:
+          this.onImport();
+        break;
+      case ActionSignal.logOutSignal:
+          this.logOut();
+        break;
+      case ActionSignal.testSignal:
+          this.test();
+        break;
+    
+      default:
+        break;
+    }
+  }
 
   getNewActionState(): ItemState {
     try {

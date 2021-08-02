@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { NavigationEnd } from '@angular/router';
 import { NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
-import { ActionsQuery } from 'src/app/actionsQuery';
+import { ActionsQuery } from 'src/app/components/navbar/actionsQuery';
 import { Category } from 'src/app/modules/category';
 import { Action } from 'src/app/modules/menu/action';
+import { ActionSignal } from './actionSignal';
 import { Divider } from 'src/app/modules/menu/divider';
 import { DropDown } from 'src/app/modules/menu/dropDown';
 import { Menu } from 'src/app/modules/menu/menu';
@@ -66,15 +67,7 @@ export class NavbarComponent {
   @Output() private loading = new EventEmitter<boolean>();
   @Output() private sendMessage = new EventEmitter<string>();
   @Output() private searchSignal = new EventEmitter<string>();
-
-  @Output() private onNewSignal = new EventEmitter();
-  @Output() private deleteAllSignal = new EventEmitter();
-  @Output() private plusOneYearAllSignal = new EventEmitter();
-  @Output() private onExportSignal = new EventEmitter();
-  @Output() private onImportSignal = new EventEmitter();
-  @Output() private logOutSignal = new EventEmitter();
-  @Output() private testSignal = new EventEmitter();
-
+  @Output() private actionSignal = new EventEmitter<ActionSignal>();
   @Input() private actionsQuery: ActionsQuery;
   
   collapsed = true;
@@ -256,17 +249,18 @@ export class NavbarComponent {
     routerLink = new RouterLink(MenuItemTag.routerLink_newPass, '/newPass', "New password");
     this.menu.push(routerLink);
   }
-
-  onNew() { this.onNewSignal.emit() }
+  
   onSearch() {
     this.searchSignal.emit(this.comboInput.textToSort);
   }
-  deleteAll() { this.deleteAllSignal.emit() }
-  plusOneYearAll() { this.plusOneYearAllSignal.emit() }
-  onExport() { this.onExportSignal.emit() }
-  onImport() { this.onImportSignal.emit() }
-  logOut() { this.logOutSignal.emit() }
-  test() { this.testSignal.emit() }
+
+  onNew()          { this.actionSignal.emit(ActionSignal.onNewSignal)          }
+  deleteAll()      { this.actionSignal.emit(ActionSignal.deleteAllSignal)      }
+  plusOneYearAll() { this.actionSignal.emit(ActionSignal.plusOneYearAllSignal) }
+  onExport()       { this.actionSignal.emit(ActionSignal.onExportSignal)       }
+  onImport()       { this.actionSignal.emit(ActionSignal.onImportSignal)       }
+  logOut()         { this.actionSignal.emit(ActionSignal.logOutSignal)         }
+  test()           { this.actionSignal.emit(ActionSignal.testSignal)           }
 
   isLoggedState() {
     return this.loginService.logged;
