@@ -21,13 +21,12 @@ import { ActionsQuery } from './actionsQuery';
 export class AppComponent implements OnInit {
 
   private routedComponent: Refreshable;
-  @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
   @ViewChild(NavbarComponent) private navbarComponent: NavbarComponent;
   
   @HostListener('document:keypress', ['$event'])
   keyDownEvent(event: KeyboardEvent) {
     if ((event.ctrlKey) && (event.key === 'f')) {
-      this.comboInput.setFocus();
+      this.navbarComponent.comboInput.setFocus();
     }
   }
 
@@ -37,7 +36,6 @@ export class AppComponent implements OnInit {
   DebugTxt: string = "";
   interval;
   param = "";
-  searchString: string = "";
   checkDuration_ms: number = 5000;
   loading: boolean = false;
   routerOutletPaddingTop: number = 0;
@@ -209,9 +207,8 @@ export class AppComponent implements OnInit {
     this.routerOutletPaddingTop = value;
   }
 
-  onSearch() {
-    this.searchString = this.comboInput.textToSort;
-    this.router.navigateByUrl('/search/' + this.searchString);
+  onSearch(searchString) {
+    this.router.navigateByUrl('/search/' + searchString);
   }
 
   /* Actions */
