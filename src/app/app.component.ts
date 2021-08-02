@@ -6,7 +6,6 @@ import { Refreshable } from './modules/refreshable/refreshable';
 import * as PageCodes from './modules/refreshable/pagesCodes'
 import * as InputCodes from './modules/refreshable/inputCodes';
 import { ComboBoxComponent } from './components/combo-box/combo-box.component';
-import { LoginComponent } from './components/login/login.component';
 import { ItemState } from "./modules/menu/menuItem";
 import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';
@@ -23,7 +22,6 @@ export class AppComponent implements OnInit {
 
   private routedComponent: Refreshable;
   @ViewChild(ComboBoxComponent) private comboInput: ComboBoxComponent;
-  @ViewChild(LoginComponent) private loginComponent: LoginComponent;
   @ViewChild(NavbarComponent) private navbarComponent: NavbarComponent;
   
   @HostListener('document:keypress', ['$event'])
@@ -90,6 +88,7 @@ export class AppComponent implements OnInit {
       await this.routedComponent.refresh(InputCodes.Refresh);
       this.loading = false;
     } catch (error) {
+      this.loading = false;
       this.printErrorMessage(error);
       return;
     }
@@ -102,6 +101,7 @@ export class AppComponent implements OnInit {
       returnData  = await this.routedComponent.refresh(InputCodes.Refresh);
       this.loading = false;
     } catch (error) {
+      this.loading = false;
       console.log(error);
       return;
     }
@@ -182,17 +182,26 @@ export class AppComponent implements OnInit {
   async logOut() {
     this.clear();
     this.loginService.clear();
-    this.loginComponent.clear();
+    this.navbarComponent.loginComponent.clear();
     try {
       this.loading = true;
       await this.routedComponent.refresh(InputCodes.Refresh);
       this.loading = false;
     } catch (error) {
+      this.loading = false;
       console.log(error);
     }
     this.navbarComponent.pageCode = "";
     this.navbarComponent.category = [];
-  }  
+  }
+
+  onLoading(state) {
+    this.loading = state;
+  }
+
+  onSendMessage(txt) {
+    this.printErrorMessage(txt);
+  }
       
   getNewActionState(): ItemState {
     try {

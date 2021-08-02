@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   @Output() userLoggedNow = new EventEmitter<void>();
   @Output() userAlreadyLogged = new EventEmitter<void>();
   @Output() sendMessage = new EventEmitter<string>();
+  @Output() loading = new EventEmitter<boolean>();
   @ViewChild('passwordInput') passwordInput: ElementRef;
   @ViewChild('emailInput') emailInput: ElementRef;
 
@@ -79,7 +80,9 @@ export class LoginComponent implements OnInit {
 
   async enter() {
     try {
+      this.loading.emit(true);
       let errorCode: number = await this.loginService.checkLogin(this.email, this.userPassword);
+      this.loading.emit(false);
       if (errorCode == this.errorCodeNoError) {
         this.state = LoginState.logged;
         this.userLoggedNow.emit();
@@ -92,6 +95,7 @@ export class LoginComponent implements OnInit {
         this.clear();
       }
     } catch (error) {
+      this.loading.emit(false);
       console.log(error);
       this.sendMessage.emit(error);
       this.clear();

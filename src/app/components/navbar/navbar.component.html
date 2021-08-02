@@ -19,7 +19,11 @@
           </ng-container>
         </ng-container>
 
-        <app-login #loginComponent (userAlreadyLogged)="userAlreadyLogged()" (userLoggedNow)="userLoggedNow()"
+        <app-login 
+          #loginComponent 
+          (userAlreadyLogged)="userAlreadyLogged()" 
+          (userLoggedNow)="userLoggedNow()"
+          (loading)="onLoading($event)"
           (sendMessage)="printErrorMessage($event)">
         </app-login>
 

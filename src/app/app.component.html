@@ -10,6 +10,8 @@
     (deleteAllSignal)="deleteAll()"
     (plusOneYearAllSignal)="plusOneYearAll()"
     (logOutSignal)="logOut()"
+    (loading)="onLoading($event)"
+    (sendMessage)="onSendMessage($event)"
     (testSignal)="test()"
     ></app-navbar>
 <div class="loader" *ngIf="loading"></div>

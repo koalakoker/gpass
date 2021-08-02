@@ -14,6 +14,7 @@ import { LoginService } from 'src/app/services/api/login.service';
 import { UserService } from 'src/app/services/api/user.service';
 import { MessageBoxService } from 'src/app/services/message-box.service';
 import * as PageCodes from '../../modules/refreshable/pagesCodes';
+import { LoginComponent } from '../login/login.component';
 
 enum AppState {
   notLogged,
@@ -56,9 +57,13 @@ enum MenuItemTag {
 export class NavbarComponent {
 
   @ViewChild('navBar') private navBar: ElementRef;
+  @ViewChild(LoginComponent) loginComponent: LoginComponent;
   @Output() private onToggle = new EventEmitter();
   @Output() private routerNavigate = new EventEmitter();
   @Output() private onRefresh = new EventEmitter();
+  @Output() private loading = new EventEmitter<boolean>();
+  @Output() private sendMessage = new EventEmitter<string>();
+
   @Output() private onNewSignal = new EventEmitter();
   @Output() private deleteAllSignal = new EventEmitter();
   @Output() private plusOneYearAllSignal = new EventEmitter();
@@ -284,8 +289,12 @@ export class NavbarComponent {
     }, 100);
   }
 
+  onLoading(state) {
+    this.loading.emit(state)
+  }
+
   printErrorMessage(txt: string) {
-    console.log("To be called appComponent print error message function");
+    this.sendMessage.emit(txt);
   }
 
 }
