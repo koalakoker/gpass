@@ -4,15 +4,17 @@
     (onToggle)="onToggle($event)"
     (routerNavigate)="onRouterNavigate($event)"
     (onRefresh)="onRefresh()"
-    (onNewSignal)="onNew()"
-    (onExportSignal)="onExport()"
-    (onImportSignal)="onImport()"
-    (deleteAllSignal)="deleteAll()"
-    (plusOneYearAllSignal)="plusOneYearAll()"
-    (logOutSignal)="logOut()"
     (loading)="onLoading($event)"
     (sendMessage)="onSendMessage($event)"
+    
+    (onNewSignal)="onNew()"
+    (deleteAllSignal)="deleteAll()"
+    (plusOneYearAllSignal)="plusOneYearAll()"
+    (onExportSignal)="onExport()"
+    (onImportSignal)="onImport()"
+    (logOutSignal)="logOut()"
     (testSignal)="test()"
+
     ></app-navbar>
 <div class="loader" *ngIf="loading"></div>
 <div class="routerOutlet" [style.padding-top.px]="routerOutletPaddingTop">

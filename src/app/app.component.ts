@@ -179,93 +179,12 @@ export class AppComponent implements OnInit {
     this.navbarComponent.setNavbarStyleNotLogged();
   }
 
-  async logOut() {
-    this.clear();
-    this.loginService.clear();
-    this.navbarComponent.loginComponent.clear();
-    try {
-      this.loading = true;
-      await this.routedComponent.refresh(InputCodes.Refresh);
-      this.loading = false;
-    } catch (error) {
-      this.loading = false;
-      console.log(error);
-    }
-    this.navbarComponent.pageCode = "";
-    this.navbarComponent.category = [];
-  }
-
   onLoading(state) {
     this.loading = state;
   }
 
   onSendMessage(txt) {
     this.printErrorMessage(txt);
-  }
-      
-  getNewActionState(): ItemState {
-    try {
-      return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
-    } catch (error) {
-      console.log(error);
-    }
-  } 
-  
-  onNew(): void {
-    this.routedComponent.refresh(InputCodes.NewBtnPress);
-  }
-  
-  getExportActionState(): ItemState {
-    try {
-      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  
-  onExport(): void {
-    this.routedComponent.refresh(InputCodes.Export);
-  }
-  
-  getImportActionState(): ItemState {
-    return ItemState.enabled;
-  }
-
-  onImport(): void {
-    this.routedComponent.refresh(InputCodes.Import);
-  }
-  
-  onSearch() {
-    this.searchString = this.comboInput.textToSort;
-    this.router.navigateByUrl('/search/' + this.searchString);
-  }
-
-  getPlustOneYearAllState() {
-    try {
-      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll)?ItemState.enabled:ItemState.disabled;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  
-  plusOneYearAll() {
-    // Propagate to child
-    this.routedComponent.refresh(InputCodes.PlusOneYearAll);
-  }
-
-  getDeleteAllState() {
-    try {
-      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async deleteAll() {
-    const ans = await this.messageBox.question('Warning','You are about to delete all. Are you sure?');
-    if (ans === ModalAnswers.yes) {
-      this.routedComponent.refresh(InputCodes.DeleteAll);
-    }
   }
 
   async checkForBackend(): Promise<boolean> {
@@ -288,6 +207,88 @@ export class AppComponent implements OnInit {
 
   onToggle(value: number) {
     this.routerOutletPaddingTop = value;
+  }
+
+  onSearch() {
+    this.searchString = this.comboInput.textToSort;
+    this.router.navigateByUrl('/search/' + this.searchString);
+  }
+
+  /* Actions */
+
+  getNewActionState(): ItemState {
+    try {
+      return this.routedComponent.queryForAction(InputCodes.NewBtnPress)?ItemState.enabled:ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+  
+  onNew(): void {
+    this.routedComponent.refresh(InputCodes.NewBtnPress);
+  }
+
+  getDeleteAllState() {
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteAll() {
+    const ans = await this.messageBox.question('Warning', 'You are about to delete all. Are you sure?');
+    if (ans === ModalAnswers.yes) {
+      this.routedComponent.refresh(InputCodes.DeleteAll);
+    }
+  }
+
+  getPlustOneYearAllState() {
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  plusOneYearAll() {
+    this.routedComponent.refresh(InputCodes.PlusOneYearAll);
+  }
+  
+  getExportActionState(): ItemState {
+    try {
+      return this.routedComponent.queryForAction(InputCodes.PlusOneYearAll) ? ItemState.enabled : ItemState.disabled;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+  onExport(): void {
+    this.routedComponent.refresh(InputCodes.Export);
+  }
+  
+  getImportActionState(): ItemState {
+    return ItemState.enabled;
+  }
+
+  onImport(): void {
+    this.routedComponent.refresh(InputCodes.Import);
+  }
+  
+  async logOut() {
+    this.clear();
+    this.loginService.clear();
+    this.navbarComponent.loginComponent.clear();
+    try {
+      this.loading = true;
+      await this.routedComponent.refresh(InputCodes.Refresh);
+      this.loading = false;
+    } catch (error) {
+      this.loading = false;
+      console.log(error);
+    }
+    this.navbarComponent.pageCode = "";
+    this.navbarComponent.category = [];
   }
 
   test() {
