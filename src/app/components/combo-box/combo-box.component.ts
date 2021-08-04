@@ -3,7 +3,6 @@ import { WebPass } from '../../modules/webpass'
 import { WebLinkService } from '../../services/api/web-link.service';
 import { ResizeService as SizeService } from 'src/app/services/resize.service';
 import { ScreenSize } from '../size-detector/screen-size.enum';
-import { reject } from 'lodash';
 @Component({
   selector: 'combo-box',
   templateUrl: './combo-box.component.html',
@@ -181,7 +180,6 @@ export class ComboBoxComponent implements OnInit {
         default:
           break;
       }
-      console.log("Done after " + fails + " trials");
       resolve();
     } else {
       fails += 1;
@@ -232,7 +230,7 @@ export class ComboBoxComponent implements OnInit {
       try {
         const list:Array<WebPass> = await this.getList(this.textToSort);
         this.retrievedList = list;
-        this.updateList(list);
+        await this.updateList(list);
         this.changeSelected(event);
       } catch (error) {
         console.log(error); 
@@ -289,7 +287,6 @@ export class ComboBoxComponent implements OnInit {
       return (list);
     } catch (error) {
       console.log(error);
-      return [];
     }
   }
 }
