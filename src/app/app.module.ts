@@ -41,6 +41,8 @@ import { NoteEditModalComponent } from './bootstrap/modal/note-edit-modal/note-e
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { SizeDetectorComponent } from './components/size-detector/size-detector.component';
+import { ResizeService } from './services/resize.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +74,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     PasswordModalComponent,
     NotesComponent,
     NoteEditModalComponent,
-    NavbarComponent
+    NavbarComponent,
+    SizeDetectorComponent
   ],
   imports: [
     BrowserModule,
@@ -86,7 +89,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     BrowserAnimationsModule,
     MatIconModule
   ],
-  providers: [],
+  providers: [ResizeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
