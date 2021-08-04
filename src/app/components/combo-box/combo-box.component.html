@@ -1,7 +1,7 @@
 <div class="d-flex">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm">
+  <div class="container searchContainer">
+    <div>
+      <div>
         <input
           #searchInput 
           type="text" 
@@ -15,9 +15,9 @@
           aria-label="Search" />
       </div>  
     </div>
-    <div class="row">
-      <div class="col-sm">
-        <ul class="list-group myList" *ngIf="showDropDown">
+    <div>
+      <div #myList class="myList_sm" *ngIf="showDropDown">
+        <ul class="list-group">
           <li *ngFor="let data of list; let i = index"
             (click)="clickOnElement(data.name)" 
             class="list-group-item"
@@ -28,3 +28,4 @@
     </div>
   </div>
 </div>
+<app-size-detector></app-size-detector>

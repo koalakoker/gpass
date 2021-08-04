@@ -1,7 +1,22 @@
-.myList {
+.myList_xl {
   position:fixed;
   top: 0;
   right: 0;
-  width: 300px;
-  border: 2px solid #2d21ad;
+  width: 260px;
+  border: 1px solid gray;
+  transform: translate(-123px,48px);
+}
+
+.myList_sm {
+  position:fixed;
+  top: 0;
+  right: 0;
+  width: 50%;
+  border: 1px solid gray;
+  transform: translate(-50%,0px);
+}
+
+.searchContainer {
+  padding-left: 0px;
+  padding-right: 0px;
 }

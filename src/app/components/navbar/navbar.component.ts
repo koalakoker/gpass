@@ -254,6 +254,10 @@ export class NavbarComponent {
     this.searchSignal.emit(this.comboInput.textToSort);
   }
 
+  clearSearch() {
+    this.comboInput.clearInput();
+  }
+
   onNew()          { this.actionSignal.emit(ActionSignal.onNewSignal)          }
   deleteAll()      { this.actionSignal.emit(ActionSignal.deleteAllSignal)      }
   plusOneYearAll() { this.actionSignal.emit(ActionSignal.plusOneYearAllSignal) }

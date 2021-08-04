@@ -5,7 +5,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Refreshable } from './modules/refreshable/refreshable';
 import * as PageCodes from './modules/refreshable/pagesCodes'
 import * as InputCodes from './modules/refreshable/inputCodes';
-import { ComboBoxComponent } from './components/combo-box/combo-box.component';
 import { ItemState } from "./modules/menu/menuItem";
 import { MessageBoxService } from './services/message-box.service';
 import { UserService } from './services/api/user.service';

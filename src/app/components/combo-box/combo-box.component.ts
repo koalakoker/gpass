@@ -1,8 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core'
 import { WebPass } from '../../modules/webpass'
 import { WebLinkService } from '../../services/api/web-link.service';
-import { LoginService } from '../../services/api/login.service';
-
+import { ResizeService as SizeService } from 'src/app/services/resize.service';
+import { ScreenSize } from '../size-detector/screen-size.enum';
+import { reject } from 'lodash';
 @Component({
   selector: 'combo-box',
   templateUrl: './combo-box.component.html',
@@ -11,6 +12,8 @@ import { LoginService } from '../../services/api/login.service';
 export class ComboBoxComponent implements OnInit {
   @Output() selected = new EventEmitter<string>();
   @ViewChild('searchInput') searchInput: ElementRef;
+  @ViewChild('myList') myList: ElementRef;
+  myListTopPosition: number = 0;
 
   list: WebPass[];
   retrievedList: WebPass[];
@@ -22,10 +25,11 @@ export class ComboBoxComponent implements OnInit {
   listToBeUpdated = true;
   firstElementShowed: number = 0;
   maxElement: number = 0;
+  screenSize: ScreenSize;
 
   constructor(
     private webLinkService: WebLinkService,
-    private loginService: LoginService) {
+    private sizeService: SizeService) {
     this.reset();
     window.onresize = () => {
       if (this.showDropDown) {
@@ -33,6 +37,9 @@ export class ComboBoxComponent implements OnInit {
         this.textToSort = "";
       }
     }
+    this.sizeService.onResize$.subscribe((size) => {
+      this.screenSize = size;
+    });
   }
 
   setFocus(): void {
@@ -79,8 +86,7 @@ export class ComboBoxComponent implements OnInit {
         this.textToSort = this.list[this.counter].name;
       }
     } else if (event.key === 'Escape') {
-      this.reset();
-      this.textToSort = "";
+      this.clearInput();
     } else if (event.key === 'Enter') {
       this.reset();
       this.selected.emit(this.textToSort);
@@ -93,10 +99,10 @@ export class ComboBoxComponent implements OnInit {
   }
 
   getMaxElementsFitWindowHeight(): number {
-    var windowHeight = window.innerHeight;
-    var margin = 5;
-    var elementSize = 49;
-    var maxElements = (windowHeight - margin) / elementSize;
+    const windowHeight = window.innerHeight;
+    const margin = 5 + this.myListTopPosition;
+    const elementSize = 49;
+    let maxElements = (windowHeight - margin) / elementSize;
     maxElements = Math.floor(maxElements);
     return maxElements;
   }
@@ -157,16 +163,63 @@ export class ComboBoxComponent implements OnInit {
     return list;
   }
 
-  updateList(list: WebPass[]) {
+  updateMyListStyle(resolve: any, reject: any, fails: number) {
+    if (this.myList !== undefined) {
+      switch (this.screenSize) {
+        case ScreenSize.XL:
+            this.myList.nativeElement.className = 'myList_xl';
+            this.myListTopPosition = 48;
+          break;
+        case ScreenSize.LG:
+        case ScreenSize.MD:
+        case ScreenSize.XS:
+        case ScreenSize.SM:
+            this.myList.nativeElement.className = 'myList_sm';
+            this.myListTopPosition = 0;
+          break;
+      
+        default:
+          break;
+      }
+      console.log("Done after " + fails + " trials");
+      resolve();
+    } else {
+      fails += 1;
+      if (fails < 10) {
+        setTimeout(() => {
+          this.updateMyListStyle(resolve, reject, fails);
+        }, 1);
+      } else {
+        reject('myList not created');
+      }
+    }
+  }
+
+  updateMyListElement(): Promise<void> {
+    return new Promise<void>((resolve,reject) => {
+      setTimeout(() => {
+        this.updateMyListStyle(resolve, reject, 0);
+      }, 1);
+
+    })
+  }
+
+  async updateList(list: WebPass[]) {
     if (list) {
-
-      // Manage here the length of the list to stay in the view
-      this.maxElement = this.getMaxElementsFitWindowHeight();
-      list = this.cutListBetweenBounds(list, this.firstElementShowed, this.maxElement); 
-
-      this.list = list;
-      this.showDropDown = true;
-      this.listToBeUpdated = false;
+      this.showDropDown = true; // This start to create the myList element but is not ready now
+      try {
+        await this.updateMyListElement();
+        
+        // Manage here the length of the list to stay in the view
+        this.maxElement = this.getMaxElementsFitWindowHeight(); // Here the myListTopPosition must be updated
+        list = this.cutListBetweenBounds(list, this.firstElementShowed, this.maxElement); 
+  
+        this.list = list;
+        this.listToBeUpdated = false;
+        
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       this.list = [];
       this.showDropDown = false;
@@ -174,17 +227,16 @@ export class ComboBoxComponent implements OnInit {
     }
   }
 
-  onKeyDownAction(event: KeyboardEvent): void {
+  async onKeyDownAction(event: KeyboardEvent): Promise<void> {
     if (this.listToBeUpdated) {
-      this.getList(this.textToSort)
-      .then((list: WebPass[]) => {
+      try {
+        const list:Array<WebPass> = await this.getList(this.textToSort);
         this.retrievedList = list;
         this.updateList(list);
         this.changeSelected(event);
-      })
-      .catch((error) => {
-        console.log("getList rejected with " + JSON.stringify(error));
-      });
+      } catch (error) {
+        console.log(error); 
+      }
     } else {
       this.changeSelected(event);
     }
@@ -199,6 +251,11 @@ export class ComboBoxComponent implements OnInit {
     this.reset();
   }
 
+  clearInput(): void {
+    this.reset();
+    this.textToSort = "";
+  }
+
   reset(): void {
     this.showDropDown = false;
     this.listToBeUpdated = true;
@@ -206,15 +263,13 @@ export class ComboBoxComponent implements OnInit {
     this.maxElement = 0;
   }
 
-  textChange(value: string) {
-    this.getList(value)
-    .then((list: WebPass[]) => {
-      this.retrievedList = list;
-      this.updateList(list);
-    })
-    .catch((error) => {
-      console.log("getList rejected with " + JSON.stringify(error));
-    });
+  async textChange(value: string) {
+    try {
+      this.retrievedList = await this.getList(value);
+      this.updateList(this.retrievedList);
+    } catch (error) {
+      console.log(error);
+    }
   }
   
   clickOnElement(valueSelected: string) {
