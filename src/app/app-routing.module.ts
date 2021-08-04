@@ -11,6 +11,7 @@ import { NotesComponent } from './modules/refreshable/notes/notes.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/list/0', pathMatch: 'full' },
+  { path: 'search/', redirectTo: '/list/0', pathMatch: 'full' },
   { path: 'list/:cat', component: WebPassListComponent },
   { path: 'notes', component: NotesComponent },
   { path: 'category', component: CategoryComponent },

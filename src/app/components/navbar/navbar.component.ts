@@ -256,6 +256,7 @@ export class NavbarComponent {
 
   clearSearch() {
     this.comboInput.clearInput();
+    this.searchSignal.emit('');
   }
 
   onNew()          { this.actionSignal.emit(ActionSignal.onNewSignal)          }
