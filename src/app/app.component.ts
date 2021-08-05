@@ -121,7 +121,6 @@ export class AppComponent implements OnInit {
       //this.router.navigateByUrl("/list/0");
     }
     if (event === PageCodes.waitForBackend) {
-      this.navbarComponent.setNavbarStyleLogged();
       this.router.navigateByUrl("/list/0");
       this.checkForBackend();
     }
@@ -173,10 +172,6 @@ export class AppComponent implements OnInit {
   //   });
   // }
 
-  clear() {
-    this.navbarComponent.setNavbarStyleNotLogged();
-  }
-
   onLoading(state) {
     this.loading = state;
   }
@@ -197,7 +192,6 @@ export class AppComponent implements OnInit {
       return true;
     } catch (error) {
       //this.appState = AppState.notLogged;
-      this.navbarComponent.setNavbarStyleNotLogged();
       this.router.navigateByUrl("waitForBackend");
       return false;
     }
@@ -302,9 +296,7 @@ export class AppComponent implements OnInit {
   }
   
   async logOut() {
-    this.clear();
     this.loginService.clear();
-    this.navbarComponent.loginComponent.clear();
     try {
       this.loading = true;
       await this.routedComponent.refresh(InputCodes.Refresh);

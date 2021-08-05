@@ -7,6 +7,8 @@ import { User } from '../../modules/user';
 import { HttpClient } from '@angular/common/http';
 import { JwtDecoded } from "../jwtDecoded";
 import { Api } from "./api";
+import { Observable, Subject } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 const localLabelToken: string = 'x-auth-token';
 const localLabelPassw: string = 'userPassword';
@@ -17,6 +19,7 @@ const localLabelPassw: string = 'userPassword';
 export class LoginService extends Api {
 
   private loginApiUrl: string = this.apiBaseUrl + '/auth/';
+  private loginSubject: Subject<boolean> = new Subject();
 
   gCrypto: GCrypto;
   logged = false;
@@ -28,6 +31,10 @@ export class LoginService extends Api {
     private http: HttpClient,
     private localService: LocalService) {
       super();
+  }
+
+  get onLogged$(): Observable<boolean> {
+    return this.loginSubject.asObservable().pipe(distinctUntilChanged());
   }
 
   async decryptList(strList: string[]) {
@@ -71,6 +78,7 @@ export class LoginService extends Api {
       this.localService.setKey(localLabelToken, token);
       this.localService.setKey(localLabelPassw, userPassword);
       this.updateUserLevel();
+      this.loginSubject.next(true);
       return 0;
     } catch (error) {
       if (error.status === 0) {
@@ -100,7 +108,9 @@ export class LoginService extends Api {
   }
 
   check(): boolean {
-    return ((this.getToken() != undefined) && (this.getUserKey() != undefined));
+    const loginState: boolean = ((this.getToken() != undefined) && (this.getUserKey() != undefined));
+    this.loginSubject.next(loginState);
+    return loginState;
   }
   
   checklogged() {
@@ -124,6 +134,7 @@ export class LoginService extends Api {
   clear(): void {
     this.clearUserVars();
     this.clearLocal();
+    this.loginSubject.next(false);
   }
 
   clearUserVars(): void {

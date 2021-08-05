@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
+import { ResizeService } from 'src/app/services/resize.service';
 import { LoginService } from '../../services/api/login.service';
 import { LoginState } from './loginState';
 
@@ -26,7 +27,13 @@ export class LoginComponent implements OnInit {
   errorCodeWrongUserPassword : number = 4;
   errorCodeSessionDestroyed  : number = 5;
 
-  constructor(private loginService: LoginService) { }
+  constructor(
+    private loginService: LoginService,
+    private sizeService: ResizeService) {
+    this.sizeService.onResize$.subscribe((size) => {
+      
+    });
+    }
 
   ngOnInit(): void {
     if (this.loginService.check()) {

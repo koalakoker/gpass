@@ -17,6 +17,8 @@ import { MessageBoxService } from 'src/app/services/message-box.service';
 import * as PageCodes from '../../modules/refreshable/pagesCodes';
 import { ComboBoxComponent } from '../combo-box/combo-box.component';
 import { LoginComponent } from '../login/login.component';
+import { ScreenSize } from '../size-detector/screen-size.enum';
+import { ResizeService } from 'src/app/services/resize.service';
 
 enum AppState {
   notLogged,
@@ -59,8 +61,9 @@ enum MenuItemTag {
 export class NavbarComponent {
 
   @ViewChild('navBar') private navBar: ElementRef;
-  @ViewChild(LoginComponent) loginComponent: LoginComponent;
-  @ViewChild(ComboBoxComponent) comboInput: ComboBoxComponent;
+  @ViewChild('loginBar') private loginBar: ElementRef;
+  @ViewChild('loginComponent') loginComponent: LoginComponent;
+  @ViewChild('comboBox') comboInput: ComboBoxComponent;
   @Output() private onToggle = new EventEmitter();
   @Output() private routerNavigate = new EventEmitter();
   @Output() private onRefresh = new EventEmitter();
@@ -81,23 +84,55 @@ export class NavbarComponent {
   userDropDown: DropDown;
   category: Category[];
   catDataAll: RouterLink = new RouterLink(MenuItemTag.webPass_all, "/list/0", "All", 0, true);
+  screenSize: ScreenSize = ScreenSize.XL;
+  loginState: boolean = false;
   
   constructor(
     private loginService: LoginService,
     private userService: UserService,
     private messageBox: MessageBoxService,
-    private categoryService: CategoryService) {
+    private categoryService: CategoryService,
+    private sizeService: ResizeService) {
       this.menuPopulate();
+      this.sizeService.onResize$.subscribe((size) => {
+        this.screenSize = size;
+        setTimeout(() => {
+          this.adaptStyle();
+        }, 10);
+      });
+      this.loginService.onLogged$.subscribe((loginState) => {
+        this.loginState = loginState;
+        setTimeout(() => {
+          this.adaptStyle();
+        }, 10);
+      })
      }
 
-  setNavbarStyleNotLogged() {
-    this.navBar.nativeElement.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
+  showAppName(): boolean {
+    if (this.isLoggedState()) return true;
+    return ( (this.screenSize === ScreenSize.XXS) ? false : true);
   }
 
-  setNavbarStyleLogged() {
-    this.navBar.nativeElement.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+  adaptStyle() {
+    switch (this.screenSize) {
+      case ScreenSize.XXS:
+        if (this.isLoggedState()) {
+          this.navBar.nativeElement.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+        } else {
+          this.loginBar.nativeElement.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top myNavbarPadding-xxs';
+        } 
+        break;
+    
+      default:
+        if (this.isLoggedState()) {
+          this.navBar.nativeElement.className = 'navbar navbar-expand-xl navbar-dark bg-dark fixed-top'
+        } else {
+          this.loginBar.nativeElement.className = 'navbar navbar-expand navbar-dark bg-dark fixed-top'
+        }
+        break;
+    }
   }
-
+  
   async onGpassLabel() {
     const me = await this.userService.getUserInfo();
     const user = new User();
@@ -268,12 +303,11 @@ export class NavbarComponent {
   test()           { this.actionSignal.emit(ActionSignal.testSignal)           }
 
   isLoggedState() {
-    return this.loginService.logged;
+    return this.loginState;
   }
 
   async userLoggedNow() {
     try {
-      this.setNavbarStyleLogged();
       this.onRefresh.emit();
       await this.dropDownUpdate();
     } catch (error) {
@@ -290,7 +324,6 @@ export class NavbarComponent {
         console.log(error);
         return;
       }
-      this.setNavbarStyleLogged();
     }, 100);
   }
 

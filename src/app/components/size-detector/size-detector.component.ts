@@ -25,6 +25,7 @@ export class SizeDetectorComponent implements AfterViewInit {
       id: ScreenSize.XL, name: 'xl', css: `d-none d-xl-block`
     },
   ];
+  iPhone678ScreenWidth: number = 375;
 
   constructor(private elementRef: ElementRef, private resizeService: ResizeService) { }
 
@@ -38,6 +39,11 @@ export class SizeDetectorComponent implements AfterViewInit {
   }
 
   private detectScreenSize() {
+    console.log();
+    if (window.innerWidth <= this.iPhone678ScreenWidth) {
+      this.resizeService.onResize(ScreenSize.XXS);
+      return;
+    }
 
     const currentSize = this.sizes.find(x => {
       // get the HTML element

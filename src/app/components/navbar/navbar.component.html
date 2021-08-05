@@ -1,4 +1,4 @@
-<nav #navBar class="navbar navbar-expand navbar-dark bg-dark fixed-top">
+<nav #navBar class="navbar navbar-expand navbar-dark bg-dark fixed-top" *ngIf="isLoggedState()">
   <div class="container-fluid">
     <span class="navbar-brand" (click)='onGpassLabel()'>
       GPass</span>
@@ -8,29 +8,18 @@
     </button>
     <div class="navbar-collapse" [class.collapse]="collapsed" id="navbarContent">
       <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="navbar-nav mr-auto" (navChange)="tabChange($event)">
-        <ng-container *ngIf="isLoggedState()">
-          <ng-container *ngFor="let menuItem of menu">
-            <ng-container *ngIf="menuItem.isDropDown()">
-              <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
-            </ng-container>
-            <ng-container *ngIf="menuItem.isRouterLink()">
-              <app-router-link [menuItem]='menuItem'></app-router-link>
-            </ng-container>
+        <ng-container *ngFor="let menuItem of menu">
+          <ng-container *ngIf="menuItem.isDropDown()">
+            <app-drop-down [menuItem]='menuItem' [parent]='this'></app-drop-down>
+          </ng-container>
+          <ng-container *ngIf="menuItem.isRouterLink()">
+            <app-router-link [menuItem]='menuItem'></app-router-link>
           </ng-container>
         </ng-container>
-
-        <app-login 
-          #loginComponent 
-          (userAlreadyLogged)="userAlreadyLogged()" 
-          (userLoggedNow)="userLoggedNow()"
-          (loading)="onLoading($event)"
-          (sendMessage)="printErrorMessage($event)">
-        </app-login>
-
       </ul>
 
-      <div class="d-flex" *ngIf="isLoggedState()">
-        <combo-box (selected)="onSearch()"></combo-box>
+      <div class="d-flex">
+        <combo-box #comboBox (selected)="onSearch()"></combo-box>
         <div class="searchButtonDiv">
           <button class="btn btn-primary searchButton" type="button" (click)="onSearch()">
             <mat-icon>check</mat-icon>
@@ -45,4 +34,10 @@
 
     </div>
   </div>
+</nav>
+
+<nav #loginBar class="navbar navbar-expand navbar-dark bg-dark fixed-top" *ngIf="!isLoggedState()">
+  <app-login #loginComponent (userAlreadyLogged)="userAlreadyLogged()" (userLoggedNow)="userLoggedNow()"
+  (loading)="onLoading($event)" (sendMessage)="printErrorMessage($event)">
+  </app-login>
 </nav>
