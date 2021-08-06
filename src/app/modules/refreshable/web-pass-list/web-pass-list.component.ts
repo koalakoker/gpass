@@ -25,6 +25,8 @@ import { RelWebCatService } from 'src/app/services/api/rel-web-cat.service';
 import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-bar.component';
 import { ImportService } from 'src/app/services/import.service';
 import { ExportService } from 'src/app/services/export.service';
+import { ResizeService } from 'src/app/services/resize.service';
+import { ScreenSize } from 'src/app/components/size-detector/screen-size.enum';
 
 @Component({
   selector: 'app-web-pass-list',
@@ -48,6 +50,8 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   DebugTxt: string = "";
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('progressBar') progressBar: ProgressBarComponent;
+  webPassButtonStyle: string = '';
+  webPassLabelStyle: string = '';
 
   constructor(
     private modalService: NgbModal,
@@ -57,8 +61,24 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     private relWebCatService: RelWebCatService,
     private loginService: LoginService,
     private exportService: ExportService,
-    private importService: ImportService) {
+    private importService: ImportService,
+    private resizeService: ResizeService) {
       this.g = new GCrypto();
+      this.resizeService.onResize$.subscribe((size) => {
+        setTimeout(() => {
+          switch (size) {
+            case ScreenSize.XXS:
+              this.webPassButtonStyle = 'webPassButton-small';
+              this.webPassLabelStyle = 'webPassLabel-small';
+              break;
+          
+            default:
+              this.webPassButtonStyle = 'webPassButton-big';
+              this.webPassLabelStyle = '';
+              break;
+          }
+        }, 10);
+      })
   }
 
   getParameterFromUrl(str: string): string | undefined {

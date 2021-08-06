@@ -15,25 +15,21 @@
       <div class="row">
         <div class="col">
           <button type="button" 
-          class="list-group-item list-group-item-action {{isActive(element)}}"
+          class="list-group-item list-group-item-action {{isActive(element)}} {{webPassLabelStyle}}"
           (click)="openEditModal(i)">
             {{getUrl('name', i).value}}
           </button>
         </div>
-        <div class="col">
+        <div class="col webPassButtonGroup">
           <button 
             type="button"
-            style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);"
-            class="btn btn-primary"
+            class="btn btn-primary {{webPassButtonStyle}}"
             ngxClipboard [cbContent]="getUrl('username', i).value" 
             (cbOnSuccess)="sendMessage('Username copied to clipboard')">Usr
           </button>
           <button 
             type="button"
-            style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);"
-            class="btn btn-primary"
+            class="btn btn-primary {{webPassButtonStyle}}"
             ngxClipboard [cbContent]="getUrl('pass', i).value"
             (cbOnSuccess)="sendMessage('Password copied to clipboard')">Psw
           </button>
@@ -44,23 +40,17 @@
             <input 
               ngxClipboard [cbContent]="getUrl('username', i).value"
               type=button
-              style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);"
-              class="btn btn-success"
+              class="btn btn-success {{webPassButtonStyle}}"
               value="Go">
           </a>
           <button
             *ngIf="getUrl('url', i).value == 'url'"
-            style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);"
-            class="btn btn-secondary"
+            class="btn btn-secondary {{webPassButtonStyle}}"
           >Go
           </button>
           <button 
             type="button" 
-            style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);" 
-            class="btn btn-danger"
+            class="btn btn-danger {{webPassButtonStyle}}"
             (click)="delete(i)">Del
           </button>
         </div>
