@@ -10,3 +10,33 @@ body {
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.GPassButton-big {
+  height: 54px;
+  width: 54px;
+  border: 1px;
+  border-style: solid;
+  border-color: rgb(204, 194, 194);
+  border-radius: 9px;
+}
+
+.GPassButton-small {
+  height: 40px;
+  width: 40px;
+  border: 1px;
+  border-style: solid;
+  border-color: rgb(204, 194, 194);
+  border-radius: 9px;
+  padding: .375rem .60em;
+  font-size: 12px;
+}
+
+.GPassButtonGroup {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.GPassLabel-small {
+  padding: .20rem 0.25rem;
+  font-size: 20px;
+}

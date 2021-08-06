@@ -5,19 +5,21 @@ import { distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable()
 export class ResizeService {
-
+  
+  private resizeSubject: Subject<ScreenSize>;
+  lastSize: ScreenSize = ScreenSize.XL;
+  
+  constructor() {
+    this.resizeSubject = new Subject();
+  }
+  
   get onResize$(): Observable<ScreenSize> {
     return this.resizeSubject.asObservable().pipe(distinctUntilChanged());
   }
 
-  private resizeSubject: Subject<ScreenSize>;
-
-  constructor() {
-    this.resizeSubject = new Subject();
-  }
-
   onResize(size: ScreenSize) {
     this.resizeSubject.next(size);
+    this.lastSize = size;
   }
 
 }

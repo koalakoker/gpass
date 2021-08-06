@@ -66,19 +66,30 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
       this.g = new GCrypto();
       this.resizeService.onResize$.subscribe((size) => {
         setTimeout(() => {
-          switch (size) {
-            case ScreenSize.XXS:
-              this.webPassButtonStyle = 'webPassButton-small';
-              this.webPassLabelStyle = 'webPassLabel-small';
-              break;
-          
-            default:
-              this.webPassButtonStyle = 'webPassButton-big';
-              this.webPassLabelStyle = '';
-              break;
-          }
+          this.styleUpdate(size);
         }, 10);
       })
+  }
+
+  ngOnInit() {
+    this.catID = this.getParameterFromUrl('cat');
+    this.searchStr = this.getParameterFromUrl('str');
+    this.styleUpdate(this.resizeService.lastSize);
+  }
+
+  styleUpdate(size: ScreenSize) {
+    console.log("Update style");
+    switch (size) {
+      case ScreenSize.XXS:
+        this.webPassButtonStyle = 'GPassButton-small';
+        this.webPassLabelStyle = 'GPassLabel-small';
+        break;
+
+      default:
+        this.webPassButtonStyle = 'GPassButton-big';
+        this.webPassLabelStyle = '';
+        break;
+    }
   }
 
   getParameterFromUrl(str: string): string | undefined {
@@ -87,11 +98,6 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     return param;
   }
 
-  ngOnInit() {
-    this.catID     = this.getParameterFromUrl('cat');
-    this.searchStr = this.getParameterFromUrl('str');
-  }
-  
   async refresh(cmd: string): Promise<RefreshReturnData> {
     
     var ret: RefreshReturnData = new RefreshReturnData;
