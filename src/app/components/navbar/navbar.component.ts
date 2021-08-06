@@ -92,21 +92,26 @@ export class NavbarComponent {
     private userService: UserService,
     private messageBox: MessageBoxService,
     private categoryService: CategoryService,
-    private sizeService: ResizeService) {
-      this.menuPopulate();
-      this.sizeService.onResize$.subscribe((size) => {
-        this.screenSize = size;
-        setTimeout(() => {
-          this.adaptStyle();
-        }, 10);
-      });
+    private sizeService: ResizeService) 
+  {  
+    this.menuPopulate();
+    
+    this.sizeService.onResize$.subscribe((size) => {
+      this.screenSize = size;
+      setTimeout(() => {
+        this.adaptStyle();
+      }, 10);
+    });
+    
+    setTimeout(() => {
       this.loginService.onLogged$.subscribe((loginState) => {
         this.loginState = loginState;
         setTimeout(() => {
           this.adaptStyle();
         }, 10);
-      })
-     }
+      });
+    }, 10);
+  }
 
   showAppName(): boolean {
     if (this.isLoggedState()) return true;
