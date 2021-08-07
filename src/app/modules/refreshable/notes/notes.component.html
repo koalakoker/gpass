@@ -5,14 +5,13 @@
       <!-- Button -->
       <div class="row">
         <div class="col">
-          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}}"
+          <button type="button" class="list-group-item list-group-item-action {{isActive(element)}} {{GPassLabelStyle}}"
             (click)="onEdit(i)">
             {{element.title}}
           </button>
         </div>
         <div class="col">
-          <button type="button" style="height: 54px; width: 54px; border: 2px; border-style: solid;
-  border-color: rgb(204, 194, 194);" class="btn btn-danger" (click)="onButtonDelete(i)">Del
+          <button type="button" class="btn btn-danger {{GPassButtonStyle}}" (click)="onButtonDelete(i)">Del
           </button>
         </div>
       </div>

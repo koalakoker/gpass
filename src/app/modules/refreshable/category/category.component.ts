@@ -12,13 +12,17 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { CategoryEditModalComponent } from '../../../bootstrap/modal/category-edit-modal.component';
 import { CategoryService } from 'src/app/services/api/category.service';
+import { Resizable } from '../resizable';
+import { ResizeService } from 'src/app/services/resize.service';
 
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css']
 })
-export class CategoryComponent implements OnInit, Refreshable {
+export class CategoryComponent
+extends Resizable
+implements OnInit, Refreshable {
 
   show: boolean = false;
   edit: boolean;
@@ -31,7 +35,19 @@ export class CategoryComponent implements OnInit, Refreshable {
 
   constructor(private categoryService: CategoryService,
               private loginService: LoginService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private resizeService: ResizeService) {
+    super(resizeService);
+  }
+
+  ngOnInit() {
+    if (this.loginService.checklogged()) {
+      this.show = true;
+      this.enter();
+    } else {
+      console.log("User not logged");
+    }
+    this.styleUpdate(this.resizeService.lastSize);
   }
   
   async enter() {
@@ -49,16 +65,6 @@ export class CategoryComponent implements OnInit, Refreshable {
   queryForAction(action: any): boolean {
     if (action === InputCodes.NewBtnPress) {
       return (this.isNewPosible())
-    }
-  }
-
-  ngOnInit() {
-    if (this.loginService.checklogged())
-    {
-      this.show = true;
-      this.enter();
-    } else {
-      console.log("User not logged");
     }
   }
 

@@ -11,13 +11,16 @@ import { MessageBoxService } from 'src/app/services/message-box.service';
 import { ModalAnswers } from 'src/app/bootstrap/modal/modalAnswers';
 import { NoteEditModalComponent } from 'src/app/bootstrap/modal/note-edit-modal/note-edit-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Resizable } from '../resizable';
+import { ResizeService } from 'src/app/services/resize.service';
 
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html'
 })
-export class NotesComponent implements OnInit, Refreshable {
-
+export class NotesComponent 
+extends Resizable
+implements OnInit, Refreshable {
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   notesList: Note[] = [];
   selectedNote: Note;
@@ -26,10 +29,13 @@ export class NotesComponent implements OnInit, Refreshable {
   constructor(private loginService: LoginService,
               private apiService: NoteService,
               private messageBoxService: MessageBoxService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private resizeService: ResizeService) {
+    super(resizeService);
   }
 
   ngOnInit(): void {
+    this.styleUpdate(this.resizeService.lastSize);
   }
 
   async refresh(cmd: string): Promise<RefreshReturnData> {
