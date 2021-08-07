@@ -30,8 +30,7 @@ import { ScreenSize } from 'src/app/components/size-detector/screen-size.enum';
 
 @Component({
   selector: 'app-web-pass-list',
-  templateUrl: './web-pass-list.component.html',
-  styleUrls: ['./web-pass-list.component.css']
+  templateUrl: './web-pass-list.component.html'
 })
 export class WebPassListComponent implements OnInit, Refreshable, Observer  {
 
