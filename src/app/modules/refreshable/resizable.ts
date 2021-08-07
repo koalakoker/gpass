@@ -15,7 +15,6 @@ export class Resizable {
   }
 
   styleUpdate(size: ScreenSize) {
-    console.log("Update style");
     switch (size) {
       case ScreenSize.XXS:
         this.GPassButtonStyle = 'GPassButton-small';

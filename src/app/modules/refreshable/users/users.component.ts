@@ -14,12 +14,16 @@ import { NewUserModalComponent } from '../../../bootstrap/modal/new-user-modal.c
 import { ConfirmModalComponent } from '../../../bootstrap/modal/confirm-modal.component';
 import { UserEditModalComponent } from '../../../bootstrap/modal/user-edit-modal.component';
 import { UserService } from 'src/app/services/api/user.service';
+import { Resizable } from '../resizable';
+import { ResizeService } from 'src/app/services/resize.service';
 
 @Component({
   selector: 'app-users-component',
   templateUrl: './users.component.html'
 })
-export class UsersComponent implements OnInit, Refreshable {
+export class UsersComponent 
+extends Resizable 
+implements OnInit, Refreshable {
 
   show: boolean = false;
   user: Array<User>;
@@ -28,26 +32,27 @@ export class UsersComponent implements OnInit, Refreshable {
 
   returnUrl: string = '';
   
-  constructor(
-    private loginService: LoginService,
-    private userService: UserService,
-    private modalService: NgbModal) {
-      let baseAddr = 'https://www.koalakoker.com/gpass/';
-      this.returnUrl = baseAddr + '#/newuser'
-    }
-  
-  queryForAction(string: any): boolean {
-    return false;
+  constructor(private loginService: LoginService,
+              private userService: UserService,
+              private modalService: NgbModal,
+              private resizeService: ResizeService) {
+    super(resizeService);
+    let baseAddr = 'https://www.koalakoker.com/gpass/';
+    this.returnUrl = baseAddr + '#/newuser'
   }
 
   ngOnInit(): void {
-    if (this.loginService.checklogged())
-      {
-        this.show = true;
-        this.enter();
-      } else {
-        console.log("User not logged");
-      }
+    if (this.loginService.checklogged()) {
+      this.show = true;
+      this.enter();
+    } else {
+      console.log("User not logged");
+    }
+    this.styleUpdate(this.resizeService.lastSize);
+  }
+  
+  queryForAction(string: any): boolean {
+    return false;
   }
 
   async enter() {
