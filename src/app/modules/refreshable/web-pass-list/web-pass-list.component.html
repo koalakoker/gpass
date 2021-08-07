@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col">
           <button type="button" 
-          class="list-group-item list-group-item-action {{isActive(element)}} {{webPassLabelStyle}}"
+          class="list-group-item list-group-item-action {{isActive(element)}} {{GPassLabelStyle}}"
           (click)="openEditModal(i)">
             {{getUrl('name', i).value}}
           </button>
@@ -23,13 +23,13 @@
         <div class="col GPassButtonGroup">
           <button 
             type="button"
-            class="btn btn-primary {{webPassButtonStyle}}"
+            class="btn btn-primary {{GPassButtonStyle}}"
             ngxClipboard [cbContent]="getUrl('username', i).value" 
             (cbOnSuccess)="sendMessage('Username copied to clipboard')">Usr
           </button>
           <button 
             type="button"
-            class="btn btn-primary {{webPassButtonStyle}}"
+            class="btn btn-primary {{GPassButtonStyle}}"
             ngxClipboard [cbContent]="getUrl('pass', i).value"
             (cbOnSuccess)="sendMessage('Password copied to clipboard')">Psw
           </button>
@@ -40,17 +40,17 @@
             <input 
               ngxClipboard [cbContent]="getUrl('username', i).value"
               type=button
-              class="btn btn-success {{webPassButtonStyle}}"
+              class="btn btn-success {{GPassButtonStyle}}"
               value="Go">
           </a>
           <button
             *ngIf="getUrl('url', i).value == 'url'"
-            class="btn btn-secondary {{webPassButtonStyle}}"
+            class="btn btn-secondary {{GPassButtonStyle}}"
           >Go
           </button>
           <button 
             type="button" 
-            class="btn btn-danger {{webPassButtonStyle}}"
+            class="btn btn-danger {{GPassButtonStyle}}"
             (click)="delete(i)">Del
           </button>
         </div>

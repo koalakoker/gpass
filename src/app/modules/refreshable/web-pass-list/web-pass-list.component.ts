@@ -5,6 +5,7 @@ import { Category } from '../../category';
 import { RelWebCat } from '../../relwebcat';
 
 import { Refreshable, RefreshReturnData } from '../refreshable';
+import { Resizable } from '../resizable'
 import * as PageCodes from '../pagesCodes'
 import * as ReturnCodes from '../returnCodes';
 import * as InputCodes from '../inputCodes';
@@ -26,13 +27,14 @@ import { ProgressBarComponent } from 'src/app/bootstrap/progress-bar/progress-ba
 import { ImportService } from 'src/app/services/import.service';
 import { ExportService } from 'src/app/services/export.service';
 import { ResizeService } from 'src/app/services/resize.service';
-import { ScreenSize } from 'src/app/components/size-detector/screen-size.enum';
 
 @Component({
   selector: 'app-web-pass-list',
   templateUrl: './web-pass-list.component.html'
 })
-export class WebPassListComponent implements OnInit, Refreshable, Observer  {
+export class WebPassListComponent 
+  extends Resizable
+  implements OnInit, Refreshable, Observer  {
 
   catID: string;
   searchStr: string = "";
@@ -49,8 +51,6 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
   DebugTxt: string = "";
   @Output() hasChanged: EventEmitter<string> = new EventEmitter<string>();
   @ViewChild('progressBar') progressBar: ProgressBarComponent;
-  webPassButtonStyle: string = '';
-  webPassLabelStyle: string = '';
 
   constructor(
     private modalService: NgbModal,
@@ -62,33 +62,14 @@ export class WebPassListComponent implements OnInit, Refreshable, Observer  {
     private exportService: ExportService,
     private importService: ImportService,
     private resizeService: ResizeService) {
+      super(resizeService);
       this.g = new GCrypto();
-      this.resizeService.onResize$.subscribe((size) => {
-        setTimeout(() => {
-          this.styleUpdate(size);
-        }, 10);
-      })
   }
 
   ngOnInit() {
     this.catID = this.getParameterFromUrl('cat');
     this.searchStr = this.getParameterFromUrl('str');
     this.styleUpdate(this.resizeService.lastSize);
-  }
-
-  styleUpdate(size: ScreenSize) {
-    console.log("Update style");
-    switch (size) {
-      case ScreenSize.XXS:
-        this.webPassButtonStyle = 'GPassButton-small';
-        this.webPassLabelStyle = 'GPassLabel-small';
-        break;
-
-      default:
-        this.webPassButtonStyle = 'GPassButton-big';
-        this.webPassLabelStyle = '';
-        break;
-    }
   }
 
   getParameterFromUrl(str: string): string | undefined {

@@ -23,12 +23,11 @@ export class NotesComponent implements OnInit, Refreshable {
   selectedNote: Note;
   errorMessage: string = '';
 
-  constructor(
-    private loginService: LoginService,
-    private apiService: NoteService,
-    private messageBoxService: MessageBoxService,
-    private modalService: NgbModal
-  ) { }
+  constructor(private loginService: LoginService,
+              private apiService: NoteService,
+              private messageBoxService: MessageBoxService,
+              private modalService: NgbModal) {
+  }
 
   ngOnInit(): void {
   }
